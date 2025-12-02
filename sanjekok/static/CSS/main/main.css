@@ -1,0 +1,92 @@
+.loginbox {
+  margin-left: 92%;
+}
+
+.loginbox a {
+  text-decoration: none;
+  color: orangered;
+}
+
+.menu > ul {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+    padding: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 0;
+    font-size: 20px;
+    background-color: aqua;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.menu > ul > li {
+  position: relative;
+  left: 250px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #000;
+}
+
+.menu div {
+    text-decoration: none;
+    padding: 10px 80px;
+    display: block;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  opacity: 0;
+  list-style: none;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 0;
+  margin: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+}
+
+.menu ul li:hover .submenu,
+.menu ul li .submenu:hover { 
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.submenu li a {
+  display: block;
+  padding: 14px 20px;
+  text-decoration: none;
+  color: #000;
+  white-space: nowrap;
+}
+
+.submenu li a:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.footer {
+  position: relative;
+}
+
+.footer .info {
+  position: absolute;
+  left: 17%;
+  margin-top: 10px;
+  color: #b2b0b0;
+}
+
+.footer .logos {
+  position: absolute;
+  left: 47%;
+}
+
+.footer .sns {
+  position: absolute;
+  left: 71%;
+}
