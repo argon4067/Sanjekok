@@ -62,3 +62,27 @@
 .visual-card.highlight {
     border: 2px solid #ff7a7a;
 }
+
+.dropdown {
+    margin-top: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    width: 150px;
+    border-radius: 6px;
+    list-style: none;
+    padding: 5px;
+    position: absolute;
+}
+
+.dropdown.hidden {
+    display: none;
+}
+
+.dropdown li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown li:hover {
+    background: #f0f0f0;
+}
