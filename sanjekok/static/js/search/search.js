@@ -1,6 +1,8 @@
 let map, marker;
 let totalCount = 0;
 
+console.log(KAKAO_KEY)
+
 const locations = {
   home: { lat: 37.5700, lng: 126.9768 },
   work: { lat: 37.5665, lng: 126.9780 }
@@ -8,7 +10,7 @@ const locations = {
 
 function loadKakaoMapScript(callback) {
   const script = document.createElement("script");
-  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_API_KEY}&autoload=false`;
+  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_KEY}&autoload=false`;
   script.onload = callback;
   document.head.appendChild(script);
 }
@@ -27,20 +29,23 @@ loadKakaoMapScript(() => {
     marker = new kakao.maps.Marker({
       position: map.getCenter()
     });
-
     marker.setMap(map);
 
     updateTotalCount(15);
+
+    enableMapFunctions();   // 지도 준비 후 기능 활성화
   });
 });
+
 
 function updateTotalCount(count) {
   document.getElementById("totalCount").textContent = count;
 }
 
 function moveToLocation(lat, lng) {
-  const position = new kakao.maps.LatLng(lat, lng);
+  if (!map || !marker) return;  // 지도 준비 전 호출 방지
 
+  const position = new kakao.maps.LatLng(lat, lng);
   map.setCenter(position);
   marker.setPosition(position);
 
@@ -48,28 +53,36 @@ function moveToLocation(lat, lng) {
   updateTotalCount(dummyCount);
 }
 
-document.getElementById("home").addEventListener("click", () => {
-  moveToLocation(locations.home.lat, locations.home.lng);
-});
 
-document.getElementById("loc").addEventListener("click", () => {
-  moveToLocation(locations.work.lat, locations.work.lng);
-});
+// -----------------------------------------------------
+// 지도 로드 완료 후 실행되어야 하는 기능들
+// -----------------------------------------------------
+function enableMapFunctions() {
 
-const incidentBtn = document.getElementById("incidentBtn");
-const incidentMenu = document.getElementById("incidentMenu");
-
-incidentBtn.addEventListener("click", () => {
-  incidentMenu.style.display =
-    incidentMenu.style.display === "block" ? "none" : "block";
-});
-
-incidentMenu.querySelectorAll("div").forEach(item => {
-  item.addEventListener("click", () => {
-    const lat = parseFloat(item.dataset.lat);
-    const lng = parseFloat(item.dataset.lng);
-
-    moveToLocation(lat, lng);
-    incidentMenu.style.display = "none";
+  document.getElementById("home").addEventListener("click", () => {
+    moveToLocation(locations.home.lat, locations.home.lng);
   });
-});
+
+  document.getElementById("loc").addEventListener("click", () => {
+    moveToLocation(locations.work.lat, locations.work.lng);
+  });
+
+  const incidentBtn = document.getElementById("incidentBtn");
+  const incidentMenu = document.getElementById("incidentMenu");
+
+  incidentBtn.addEventListener("click", () => {
+    incidentMenu.style.display =
+      incidentMenu.style.display === "block" ? "none" : "block";
+  });
+
+  incidentMenu.querySelectorAll("div").forEach(item => {
+    item.addEventListener("click", () => {
+      const lat = parseFloat(item.dataset.lat);
+      const lng = parseFloat(item.dataset.lng);
+
+      if (!isNaN(lat) && !isNaN(lng)) moveToLocation(lat, lng);
+
+      incidentMenu.style.display = "none";
+    });
+  });
+}
