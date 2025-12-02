@@ -10,3 +10,5 @@ m_venv
 myvenv
 venv
 env
+__pycache__
+.__pycache__
