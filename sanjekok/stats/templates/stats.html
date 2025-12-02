@@ -1,25 +1,48 @@
-
 {% load static %}
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>맞춤 산재 통계</title>
+  <link rel="stylesheet" href="{% static 'CSS/stats/stats.css' %}">
+</head>
+<body>
 {% block content %}
-<link rel="stylesheet" href="{% static 'CSS/stats.css' %}">
 
 <div class="stats-container">
 
-    <!-- 1. 프로필 영역 (회원 없어도 표시 가능) -->
+    <!-- 1. 프로필 영역 -->
     <section class="profile-box">
         <div class="profile-left">
             <div class="profile-icon">👤</div>
             <div class="profile-info">
-                <h2>사용자 프로필</h2>
-                <p>업종 정보 없음 / 성별 정보 없음 / 나이 정보 없음</p>
-                <!--<p>{{ industry }} / {{ user.m_sex }} / {{ age }}세</p>-->
+                <h2>{{ member.m_name }} 님의 프로필</h2>
+
+                <p>
+                    {{ industry.i_industry_type2 }} /
+                    {{ member.m_sex }} /
+                    {{ age }}세
+                </p>
+
+                <!--나의 산재 눌렀을때 나오는 추가 상세 정보-->
+                <div id="injuryDetail"></div>
 
             </div>
         </div>
 
         <div class="profile-edit-btn">
-            <button>정보 수정</button>
+            <button id="myInjuryBtn">나의 산재 ▼</button>
+            <!-- 드롭다운 -->
+            <ul id="injuryDropdown" class="dropdown hidden">
+                {% for ind in individual_list %}
+                <li data-id="{{ ind.id }}" data-title="{{ ind.i_title }}" 
+                    data-injury="{{ ind.i_injury }}"
+                    data-disease="{{ ind.i_disease_type }}"
+                    data-date="{{ ind.i_accident_date }}">
+                    {{ ind.i_title }}
+                </li>
+                {% endfor %}
+            </ul>
         </div>
     </section>
 
@@ -33,13 +56,13 @@
         </div>
     </section>
 
-    <!-- 3. 통계 시각화 영역 (초기에는 숨김) -->
+    <!-- 3. 통계 시각화 영역 -->
     <section id="stats-visual-area" class="stats-visual hidden">
         <div class="visual-grid">
-            <div class="visual-card">내 업종 재해율 </div>
-            <div class="visual-card">내 업종 사망률 </div>
-            <div class="visual-card">재해 유형 </div>
-            <div class="visual-card">사망 유형 </div>
+            <div class="visual-card">내 업종 재해율</div>
+            <div class="visual-card">내 업종 사망률</div>
+            <div class="visual-card">재해 유형</div>
+            <div class="visual-card">사망 유형</div>
             <div class="visual-card">남/녀 재해 현황</div>
             <div class="visual-card">남/녀 사망 현황</div>
             <div class="visual-card">연령대별 재해 현황</div>
@@ -52,5 +75,10 @@
 
 </div>
 
-<script src="{% static 'js/stats.js' %}"></script>
+
+
+
+<script src="{% static 'js/stats/stats.js' %}"></script>
 {% endblock %}
+</body>
+</html>
