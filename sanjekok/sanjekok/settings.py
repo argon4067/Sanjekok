@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 KAKAO_KEY = os.getenv("KAKAO_KEY")
+KOSIS_API_KEY = os.getenv("KOSIS_API_KEY")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

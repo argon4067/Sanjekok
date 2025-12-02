@@ -59,7 +59,15 @@
     <!-- 3. 통계 시각화 영역 -->
     <section id="stats-visual-area" class="stats-visual hidden">
         <div class="visual-grid">
-            <div class="visual-card">내 업종 재해율</div>
+            <div class="visual-card">
+                <h3>내 업종 재해율</h3>
+                <p>내업종 재해자수</p>
+                <ul>
+                    {% for row in accident_list %}
+                    <li>{{ row.PRD_DE }}년 : {{ row.DT }}명</li>
+                    {% endfor %}
+                </ul>
+            </div>
             <div class="visual-card">내 업종 사망률</div>
             <div class="visual-card">재해 유형</div>
             <div class="visual-card">사망 유형</div>
