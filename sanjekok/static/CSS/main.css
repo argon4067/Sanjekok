@@ -1,0 +1,13 @@
+.menu > ul {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu a {
+    text-decoration: none;
+    padding: 10px 80px;
+    display: block;
+}
