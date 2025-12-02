@@ -7,7 +7,13 @@ class Member(models.Model):
         (1, '멤버'),    
         (99, '탈퇴자'),   
     ]
-    m_sex = models.CharField(max_length=6, verbose_name='성')
+
+    SEX_CHOICES = [
+        ('male', '남자'),
+        ('female', '여자'),
+    ]
+
+    m_sex = models.CharField(choices=SEX_CHOICES, verbose_name='성')
     m_birth_date = models.DateField(verbose_name='생년월일')
     m_name = models.CharField(max_length=100, verbose_name='이름')
     m_username = models.CharField(unique=True, max_length=100, verbose_name='회원 아이디')
@@ -16,12 +22,12 @@ class Member(models.Model):
     m_address = models.CharField(max_length=150, verbose_name='회원 거주지 주소')
     m_jaddress = models.CharField(max_length=150, verbose_name='회원 근무지 주소')
     m_email = models.EmailField(max_length=100, null=True, verbose_name='회원 이메일')
-    m_provider = models.CharField(max_length=100, verbose_name='oauth 제공자')
-    m_provider_id = models.CharField(max_length=100, verbose_name='oauth 아이디')
-    m_address_lat = models.FloatField(verbose_name='거주지 위도')
-    m_address_lng = models.FloatField(verbose_name='거주지 경도')
-    m_jaddress_lat = models.FloatField(verbose_name='근무지 위도')
-    m_jaddress_lng = models.FloatField(verbose_name='근무지 위도')
+    m_provider = models.CharField(max_length=100, null=True, verbose_name='oauth 제공자')
+    m_provider_id = models.CharField(max_length=100, null=True, verbose_name='oauth 아이디')
+    m_address_lat = models.FloatField(null=True, verbose_name='거주지 위도')
+    m_address_lng = models.FloatField(null=True, verbose_name='거주지 경도')
+    m_jaddress_lat = models.FloatField(null=True, verbose_name='근무지 위도')
+    m_jaddress_lng = models.FloatField(null=True, verbose_name='근무지 위도')
     m_created_at = models.DateTimeField(auto_now_add=True, verbose_name='회원 가입일')
     m_status = models.IntegerField(choices=STATUS_CHOICES,default=1,verbose_name='회원 상태')
     
