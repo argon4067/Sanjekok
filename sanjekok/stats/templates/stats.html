@@ -1,0 +1,56 @@
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'CSS/stats.css' %}">
+
+<div class="stats-container">
+
+    <!-- 1. 프로필 영역 (회원 없어도 표시 가능) -->
+    <section class="profile-box">
+        <div class="profile-left">
+            <div class="profile-icon">👤</div>
+            <div class="profile-info">
+                <h2>사용자 프로필</h2>
+                <p>업종 정보 없음 / 성별 정보 없음 / 나이 정보 없음</p>
+                <!--<p>{{ industry }} / {{ user.m_sex }} / {{ age }}세</p>-->
+
+            </div>
+        </div>
+
+        <div class="profile-edit-btn">
+            <button>정보 수정</button>
+        </div>
+    </section>
+
+    <!-- 2. 분석 기간 선택 -->
+    <section class="period-section">
+        <h3>분석 기간:</h3>
+        <div class="period-buttons">
+            <button class="period-btn" data-year="1">최근 1년</button>
+            <button class="period-btn" data-year="2">최근 2년</button>
+            <button class="period-btn" data-year="3">최근 3년</button>
+        </div>
+    </section>
+
+    <!-- 3. 통계 시각화 영역 (초기에는 숨김) -->
+    <section id="stats-visual-area" class="stats-visual hidden">
+        <div class="visual-grid">
+            <div class="visual-card">내 업종 재해율 </div>
+            <div class="visual-card">내 업종 사망률 </div>
+            <div class="visual-card">재해 유형 </div>
+            <div class="visual-card">사망 유형 </div>
+            <div class="visual-card">남/녀 재해 현황</div>
+            <div class="visual-card">남/녀 사망 현황</div>
+            <div class="visual-card">연령대별 재해 현황</div>
+            <div class="visual-card">연령대별 사망 현황</div>
+            <div class="visual-card">재해 질병 유형</div>
+            <div class="visual-card">재해 질병 사망 현황</div>
+            <div class="visual-card highlight">종합 위험도 평가</div>
+        </div>
+    </section>
+
+</div>
+
+<script src="{% static 'js/stats.js' %}"></script>
+{% endblock %}

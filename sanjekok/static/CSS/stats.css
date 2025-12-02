@@ -1,0 +1,64 @@
+.stats-container {
+    width: 100%;
+    margin: 20px auto;
+}
+
+.profile-box {
+    background: #e7f9ff;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.profile-left {
+    display: flex;
+    align-items: center;
+}
+
+.profile-icon {
+    font-size: 50px;
+    margin-right: 15px;
+}
+
+.period-section {
+    margin-bottom: 20px;
+}
+
+.period-buttons button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #ddd;
+    cursor: pointer;
+}
+
+.period-buttons .active {
+    background: #14b6f6;
+    color: white;
+}
+
+.stats-visual.hidden {
+    display: none;
+}
+
+.visual-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.visual-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    padding: 25px;
+    min-height: 150px;
+}
+
+.visual-card.highlight {
+    border: 2px solid #ff7a7a;
+}
