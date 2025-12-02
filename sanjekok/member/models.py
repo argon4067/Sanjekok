@@ -7,7 +7,13 @@ class Member(models.Model):
         (1, '멤버'),    
         (99, '탈퇴자'),   
     ]
-    m_sex = models.CharField(max_length=6, verbose_name='성')
+
+    SEX_CHOICES = [
+        ('male', '남자'),
+        ('female', '여자'),
+    ]
+
+    m_sex = models.CharField(choices=SEX_CHOICES, verbose_name='성')
     m_birth_date = models.DateField(verbose_name='생년월일')
     m_name = models.CharField(max_length=100, verbose_name='이름')
     m_username = models.CharField(unique=True, max_length=100, verbose_name='회원 아이디')
