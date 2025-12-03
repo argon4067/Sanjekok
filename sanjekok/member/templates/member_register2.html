@@ -3,9 +3,12 @@
 {% block title %}회원 가입{% endblock %}
 
 {% block script1 %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{% static 'CSS/member/member_register.css' %}">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script src="{% static 'js/member/member_register.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    <script src="{% static 'js/member/member_register2.js' %}"></script>
 {% endblock %}
 {% block contents %}
     <div class="card col-md-6 mx-auto mt-5">
@@ -23,7 +26,13 @@
                 </div>
                 <div class="mb-3">
                     <label for="birth_date" class="form-label">*생년월일 :</label>
-                    <input type="date" class="form-control" placeholder="생년월일을 입력해주세요." id="birth_date" name="m_birth_date">
+                    <input 
+                        type="text" 
+                        id="birth_date" 
+                        name="m_birth_date"
+                        class="form-control"
+                        placeholder="YYYY-MM-DD"
+                    >
                 </div>
                 <div class="mb-3">
                     <label class="form-label">*집 주소 :</label>
@@ -49,7 +58,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="phone" class="form-label">전화번호 :</label>
-                    <input type="number" class="form-control" placeholder="전화번호를 입력해주세요." id="phone" name="m_phone">
+                    <input type="text" id="phone" class="form-control" placeholder="전화번호를 입력해주세요." maxlength="11" name="m_phone">
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">이메일 :</label>
