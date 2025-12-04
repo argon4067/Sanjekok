@@ -93,8 +93,18 @@ def mypage(request):
     member_id = request.session.get('member_id')
     if not member_id:
         return redirect('Member:login')
-    
+
     member = Member.objects.get(id=member_id)
+
+    if request.method == "POST":
+        password = request.POST.get("m_password1")
+        if check_password(password, member.m_password):
+            # 비밀번호 일치
+            return redirect('Member:mypage_profile')
+        else:
+            # 비밀번호 불일치
+            return render(request, 'mypage_checked.html', {'error': '비밀번호가 일치하지 않습니다.'})
+
     return render(request, 'mypage_checked.html', {'member': member})
 
 
@@ -107,7 +117,7 @@ def mypage_profile(request):
     
     if request.method == "GET":
         form = Step2MemberForm(instance=member)
-        return render(request, 'mypage_profile.html', {'form': form})
+        return render(request, 'mypage_profile.html', {'form': form, 'member': member})
     
     elif request.method == "POST":
         form = Step2MemberForm(request.POST, instance=member)
@@ -115,5 +125,5 @@ def mypage_profile(request):
             form.save()
             return redirect('Member:mypage')
         
-        return render(request, 'mypage_profile.html', {'form': form})
+        return render(request, 'mypage_profile.html', {'form': form, 'member': member})
 
