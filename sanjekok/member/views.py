@@ -48,7 +48,7 @@ def registers(request):
 
             del request.session["signup_data"]  # 보안상 제거
 
-            return redirect("Member:login")
+            return redirect("Member:complete")
         else:
             print(form.errors)
 
@@ -84,4 +84,7 @@ def check_username(request):
         'is_taken': Member.objects.filter(m_username=username).exists()
     }
     return JsonResponse(data)
+
+def complete(request):
+    return render(request, 'member_complete.html')
 
