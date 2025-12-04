@@ -1,36 +1,69 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>주변 산재 검색</title>
 
-    <title>지도 검색</title>
+  <link rel="stylesheet" href="{% static 'css/search.css' %}">
 
-    {% load static %}
-
-    <!-- Kakao SDK -->
-    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey={{ KAKAO_KEY }}&libraries=services"></script>
-
-    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+  <!-- Kakao SDK: libraries=services 포함 (coordTrans 사용 위해 필수) -->
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey={{ KAKAO_KEY }}&libraries=services"></script>
 </head>
 <body>
+  <header style="display:flex;align-items:center;gap:12px;padding:8px;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label>위치선택:</label>
+      <button id="homeBtn">집</button>
+      <button id="workBtn">근무지</button>
 
-    <div id="container">
-        <h2>장소 검색</h2>
-
-        <div id="search-box">
-            <input id="keyword-input" type="text" placeholder="검색어를 입력하세요">
-            <button id="search-btn">검색</button>
+      <div class="dropdown" style="position:relative;display:inline-block;">
+        <button id="incidentBtn" aria-haspopup="true" aria-expanded="false">사고지역 ▼</button>
+        <div id="incidentMenu" class="dropdown-menu" style="display:none;position:absolute;top:100%;left:0;min-width:200px;border:1px solid #ccc;background:#fff;z-index:1000;">
+          {% for a in accident_list %}
+            <div data-x="{{ a.x }}" data-y="{{ a.y }}" data-nickname="{{ a.nickname }}" data-address="{{ a.address }}" style="padding:8px;cursor:pointer;border-bottom:1px solid #eee;">
+              {{ a.nickname }} ({{ a.address }})
+            </div>
+          {% empty %}
+            <div class="no-data" style="padding:8px;color:#666;">등록된 사고지역 없음</div>
+          {% endfor %}
         </div>
-
-        <div id="map"></div>
-        <ul id="result-list"></ul>
+      </div>
     </div>
 
-    <script src="{% static 'js/search.js' %}"></script>
+    <div style="margin-left:auto;">
+      총 발생건수: <span id="totalCount">0</span>
+    </div>
+  </header>
 
-    <script>
-        const SEARCH_API_URL = "{% url 'search-api' %}";
-    </script>
+  <main style="padding:8px;">
+    <section class="section-box" style="margin-bottom:8px;">
+      <div class="section-title">
+        <h3>근무지/산업재해 상황</h3>
+        <p>주변 산업재해 발생 현황을 확인하세요</p>
+      </div>
+      <div class="map-wrapper" style="width:100%;height:600px;border:1px solid #ddd;">
+        <div class="map-placeholder" style="width:100%;height:100%;"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 템플릿으로 전달된 TM 좌표와 키를 전역 변수로 노출 -->
+<script>
+  const HOME_TM = {
+    x: parseFloat("{{ home.x|default:'0' }}"),
+    y: parseFloat("{{ home.y|default:'0' }}")
+  };
+
+  const WORK_TM = {
+    x: parseFloat("{{ work.x|default:'0' }}"),
+    y: parseFloat("{{ work.y|default:'0' }}")
+  };
+</script>
+
+
+  <!-- 앱 JS: static/js/search.js 에서 DOMContentLoaded에서 초기화함 -->
+  <script src="{% static 'js/search.js' %}"></script>
 </body>
 </html>
