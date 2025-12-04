@@ -141,8 +141,7 @@ def mypage_individual_list(request):
         return redirect('Member:login')
 
     member = get_object_or_404(Member, id=member_id)
-    individuals = get_object_or_404(Individual, id=member_id)
-    industrys = get_object_or_404(Member_industry, id=member_id)
+    individuals = Individual.objects.filter(member=member)
 
-    return render(request, 'member/mypage_individual_list.html', {'member': member, 'individuals': individuals, 'industrys': industrys})
+    return render(request, 'member/mypage_individual_list.html', {'member': member, 'individuals': individuals})
 

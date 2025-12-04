@@ -14,7 +14,6 @@
                 <thead>
                     <tr>
 
-                        <th scope="col">체크</th>
                         <th scope="col">일련번호</th>
                         <th scope="col">제목</th>
                         <th scope="col">재해일자</th>
@@ -26,18 +25,15 @@
                 </thead>
                 <tbody>
                     {% for individual in individuals %}
-                    {% for industry in industrys %}
-                    {% for member in members %}
                     <tr>
+                        <td>{{ individual.id }}</td>
                         <td>{{ individual.i_title }}</td>
                         <td>{{ individual.i_accident_date }}</td>
-                        <td>{{ industry.i_industry_type2 }}</td>
+                        <td>{% if individual.member.industries.first %}{{ individual.member.industries.first.i_industry_type2 }}{% endif %}</td>
                         <td>{{ individual.i_injury }}</td>
                         <td>{{ individual.i_disease_type }}</td>
                         <td>{{ individual.i_address }}</td>
                     </tr>
-                    {% endfor %}
-                    {% endfor %}
                     {% endfor %}
                 </tbody>
             </table>
