@@ -6,22 +6,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const injuryDetail  = document.getElementById("injuryDetail");
     const accidentSummary = document.getElementById("accidentSummary"); // 재해 요약
     const fatalSummary    = document.getElementById("fatalSummary");    // 사망 요약
-    const genderSummary1   = document.getElementById("genderSummary1");   // 재해 성비 
-    const genderSummary2   = document.getElementById("genderSummary2");   // 재해 사망 성비
-    const ageSummary1     = document.getElementById("ageSummary1");      // 연령별 재해 현황
-    const ageSummary2     = document.getElementById("ageSummary2");      // 연령별 재해 사망 현황
-    const injurySummary1  = document.getElementById("injurySummary1");   // 재해유형 (발생현황 TOP 10)
-    const injurySummary2  = document.getElementById("injurySummary2"); // 사망 발생형태
+    const genderSummary1  = document.getElementById("genderSummary1");  // 재해 성비 
+    const genderSummary2  = document.getElementById("genderSummary2");  // 재해 사망 성비
+    const ageSummary1     = document.getElementById("ageSummary1");     // 연령별 재해 현황
+    const ageSummary2     = document.getElementById("ageSummary2");     // 연령별 재해 사망 현황
+    const injurySummary1  = document.getElementById("injurySummary1");  // 재해유형 (발생현황 TOP 10)
+    const injurySummary2  = document.getElementById("injurySummary2");  // 사망 발생형태
 
     // 산재 선택 여부 + 내가 선택한 발생형태
     let injurySelected = false;
     let selectedInjuryType = null;
 
+    // 발생형태 / 질병 유무 플래그
+    let hasInjury  = false;
+    let hasDisease = false;
 
     let injuryStatsByPeriod = null;
+
+    // 발생형태 통계(JSON) 파싱
     if (visualArea && visualArea.dataset.summary6) {
         try {
-            console.log("raw summary6:", visualArea.dataset.summary6);   // 디버깅용
+            console.log("raw summary6:", visualArea.dataset.summary6);   
             injuryStatsByPeriod = JSON.parse(visualArea.dataset.summary6);
         } catch (e) {
             console.error("summary6_JSON_파싱_실패:", e);
@@ -29,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ★ 사망 발생형태
+    // 사망 발생형태 통계(JSON) 파싱
     let fatalStatsByPeriod = null;
     if (visualArea && visualArea.dataset.summary7) {
         try {
@@ -40,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
             fatalStatsByPeriod = null;
         }
     }
-
 
     // "나의 산재" 버튼 → 드롭다운 열기/닫기
     if (myInjuryBtn && dropdown) {
@@ -71,8 +75,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // 산재 선택 완료
-                injurySelected = true;
+                injurySelected     = true;
                 selectedInjuryType = injury || ""; 
+
+                // DB 값 기준으로 발생형태 / 질병 유무 판별
+                const normInjury  = (injury  || "").trim();
+                const normDisease = (disease || "").trim();
+
+                hasInjury  = !!normInjury;
+                // 혹시 "''" 같은 더미 문자열이 들어간 경우도 제외
+                hasDisease = !!normDisease && normDisease !== "''";
 
                 // 분석기간 초기화 + 통계 숨김 + 요약 초기화
                 periodButtons.forEach((b) => b.classList.remove("active"));
@@ -81,13 +93,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (accidentSummary) accidentSummary.textContent = "";
                 if (fatalSummary)    fatalSummary.textContent    = "";
-                if (genderSummary1)   genderSummary1.textContent   = "";
-                if (genderSummary2)   genderSummary2.textContent   = "";
-                if (ageSummary1)      ageSummary1.innerHTML        = "";
-                if (ageSummary2)      ageSummary2.innerHTML        = "";
+                if (genderSummary1)  genderSummary1.textContent  = "";
+                if (genderSummary2)  genderSummary2.textContent  = "";
+                if (ageSummary1)     ageSummary1.innerHTML       = "";
+                if (ageSummary2)     ageSummary2.innerHTML       = "";
                 if (injurySummary1)  injurySummary1.innerHTML    = "";
                 if (injurySummary2)  injurySummary2.innerHTML    = "";
-
 
                 dropdown.classList.add("hidden");
             });
@@ -200,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     `60대 이상: ${age60pa.toLocaleString()}명`;
             
             }     
-            // 11) ★ 발생형태 TOP10 + 나의 부상형태 순위
+            // 11)  발생형태 TOP10 + 나의 부상형태 순위
             
             if (injurySummary1 && injuryStatsByPeriod) {
                 // data-year("1","2","3") → "최근 1년"/"2년"/"3년" 으로 매핑
