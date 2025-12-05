@@ -6,24 +6,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const injuryDetail  = document.getElementById("injuryDetail");
     const accidentSummary = document.getElementById("accidentSummary"); // 재해 요약
     const fatalSummary    = document.getElementById("fatalSummary");    // 사망 요약
-    const genderSummary1  = document.getElementById("genderSummary1");  // 재해 성비 
-    const genderSummary2  = document.getElementById("genderSummary2");  // 재해 사망 성비
-    const ageSummary1     = document.getElementById("ageSummary1");     // 연령별 재해 현황
-    const ageSummary2     = document.getElementById("ageSummary2");     // 연령별 재해 사망 현황
-    const injurySummary1  = document.getElementById("injurySummary1");  // 재해유형 (발생현황 TOP 10)
+    const genderSummary1   = document.getElementById("genderSummary1");   // 재해 성비 
+    const genderSummary2   = document.getElementById("genderSummary2");   // 재해 사망 성비
+    const ageSummary1     = document.getElementById("ageSummary1");      // 연령별 재해 현황
+    const ageSummary2     = document.getElementById("ageSummary2");      // 연령별 재해 사망 현황
+    const injurySummary1  = document.getElementById("injurySummary1");   // 재해유형 (발생현황 TOP 10)
     const injurySummary2  = document.getElementById("injurySummary2");  // 사망 발생형태
+    const diseaseSummary1  = document.getElementById("diseaseSummary1");  // 질병 발생형태
 
-    // 산재 선택 여부 + 내가 선택한 발생형태
-    let injurySelected = false;
-    let selectedInjuryType = null;
+    
+    let injurySelected = false; //나의 산재 선택 여부
+    let selectedInjuryType = null;  // 나의 발생형태 
 
-    // 발생형태 / 질병 유무 플래그
-    let hasInjury  = false;
-    let hasDisease = false;
+    let selectedDiseaseType = null;// 나의 질병형태
 
     let injuryStatsByPeriod = null;
 
-    // 발생형태 통계(JSON) 파싱
+    // 발생형태 디버깅용 중간 삭제 꼭 
     if (visualArea && visualArea.dataset.summary6) {
         try {
             console.log("raw summary6:", visualArea.dataset.summary6);   
@@ -34,8 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 사망 발생형태 통계(JSON) 파싱
+
     let fatalStatsByPeriod = null;
+
+     // 사망 발생형태
+    // 디버깅용 중간삭제 꼭 
     if (visualArea && visualArea.dataset.summary7) {
         try {
             console.log("raw summary7:", visualArea.dataset.summary7);
@@ -45,6 +47,24 @@ document.addEventListener("DOMContentLoaded", () => {
             fatalStatsByPeriod = null;
         }
     }
+
+    // 질병형태 디버깅용 중간삭제 꼭 
+    let diseaseStatsByPeriod = null;
+    if (visualArea && visualArea.dataset.summary8) {
+        try {
+            console.log("raw summary8:", visualArea.dataset.summary8);
+            diseaseStatsByPeriod = JSON.parse(visualArea.dataset.summary8);
+        } catch (e) {
+            console.error("summary8_JSON_파싱_실패:", e);
+            diseaseStatsByPeriod = null;
+        }
+    }
+
+
+
+
+
+
 
     // "나의 산재" 버튼 → 드롭다운 열기/닫기
     if (myInjuryBtn && dropdown) {
@@ -75,16 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // 산재 선택 완료
-                injurySelected     = true;
-                selectedInjuryType = injury || ""; 
-
-                // DB 값 기준으로 발생형태 / 질병 유무 판별
-                const normInjury  = (injury  || "").trim();
-                const normDisease = (disease || "").trim();
-
-                hasInjury  = !!normInjury;
-                // 혹시 "''" 같은 더미 문자열이 들어간 경우도 제외
-                hasDisease = !!normDisease && normDisease !== "''";
+                injurySelected = true;
+                selectedInjuryType = injury || "";
+                selectedDiseaseType = disease || ""; 
 
                 // 분석기간 초기화 + 통계 숨김 + 요약 초기화
                 periodButtons.forEach((b) => b.classList.remove("active"));
@@ -93,12 +106,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (accidentSummary) accidentSummary.textContent = "";
                 if (fatalSummary)    fatalSummary.textContent    = "";
-                if (genderSummary1)  genderSummary1.textContent  = "";
-                if (genderSummary2)  genderSummary2.textContent  = "";
-                if (ageSummary1)     ageSummary1.innerHTML       = "";
-                if (ageSummary2)     ageSummary2.innerHTML       = "";
+                if (genderSummary1)   genderSummary1.textContent   = "";
+                if (genderSummary2)   genderSummary2.textContent   = "";
+                if (ageSummary1)      ageSummary1.innerHTML        = "";
+                if (ageSummary2)      ageSummary2.innerHTML        = "";
                 if (injurySummary1)  injurySummary1.innerHTML    = "";
                 if (injurySummary2)  injurySummary2.innerHTML    = "";
+                if (diseaseSummary1) diseaseSummary1.innerHTML    = "";
+
 
                 dropdown.classList.add("hidden");
             });
@@ -264,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 injurySummary1.innerHTML = html;
             
 
-                // 12) 사망 발생형태 TOP10 + 나의 순위
+                // 12) 사망 발생형태  + 나의 순위
                 if (injurySummary2 && fatalStatsByPeriod) {
                     const yearFlag = btn.dataset.year;
                     let periodKey = "최근 1년";
@@ -302,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     + `사망 재해 기준으로 <strong>${myRank}위</strong> 입니다.`;
                             } else {
                                 html += `나의 부상형태(<strong>${selectedInjuryType}</strong>)는 `
-                                    + `사망 재해 기준으로 <strong>${myRank}위</strong>입니다..`;
+                                    + `사망 재해 기준으로 <strong>${myRank}위</strong> 입니다.,`;
                             }
                         } else {
                             html += `나의 부상형태(<strong>${selectedInjuryType}</strong>)는 `
@@ -313,6 +328,59 @@ document.addEventListener("DOMContentLoaded", () => {
                     injurySummary2.innerHTML = html;
                 }            
             
+                // 13) 질병형태별 + 나의 질병 순위
+                if (diseaseSummary1 && diseaseStatsByPeriod) {
+                    const yearFlag = btn.dataset.year;
+                    let periodKey = "최근 1년";
+                    if (yearFlag === "2") periodKey = "2년";
+                    else if (yearFlag === "3") periodKey = "3년";
+
+                    const periodData = diseaseStatsByPeriod[periodKey];
+
+                    if (!periodData) {
+                        diseaseSummary1.textContent = "질병형태 데이터가 없습니다.";
+                        return;
+                    }
+
+                    const topList = periodData.top10 || [];
+                    const rankMap = periodData.rank_map || {};
+
+                    let html = "";
+                    if (!topList.length) {
+                        html += "질병형태 데이터가 없습니다.";
+                    } else {
+                        topList.forEach(item => {
+                            const cnt = typeof item.count === "number"
+                                ? item.count.toLocaleString()
+                                : item.count;
+                            html += `${item.rank}위: ${item.name} (${cnt}명)<br>`;
+                        });
+                    }
+
+                    if (selectedDiseaseType) {
+                        const myRank = rankMap[selectedDiseaseType];
+                        html += "<br>";
+                        if (myRank) {
+                            if (myRank <= 10) {
+                                html += `나의 질병(<strong>${selectedDiseaseType}</strong>)은 `
+                                    + `<strong>${myRank}위</strong> 입니다.`;
+                            } else {
+                                html += `나의 질병(<strong>${selectedDiseaseType}</strong>)은 `
+                                    + `<strong>${myRank}위</strong>로, TOP 10에는 포함되지 않습니다.`;
+                            }
+                        } else {
+                            html += `나의 질병(<strong>${selectedDiseaseType}</strong>)은 `
+                                + `해당 업종 질병 통계에 집계되어 있지 않습니다.`;
+                        }
+                    }
+
+                    diseaseSummary1.innerHTML = html;
+                }
+
+
+
+
+
             }
 
         });
