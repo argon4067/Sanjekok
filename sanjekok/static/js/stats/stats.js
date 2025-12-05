@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const injurySummary1  = document.getElementById("injurySummary1");   // 재해유형 (발생현황 TOP 10)
     const injurySummary2  = document.getElementById("injurySummary2");  // 사망 발생형태
     const diseaseSummary1  = document.getElementById("diseaseSummary1");  // 질병 발생형태
+    const diseaseSummary2  = document.getElementById("diseaseSummary2");  // 질병 사망형태 
 
     
     let injurySelected = false; //나의 산재 선택 여부
@@ -60,8 +61,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
-
+    //질병사망형태 디벙깅용 중간 삭제 꼭 
+    let diseaseFatalStatsByPeriod = null;
+    if (visualArea && visualArea.dataset.summary9) {
+        try {
+            console.log("raw summary9:", visualArea.dataset.summary9);
+            diseaseFatalStatsByPeriod = JSON.parse(visualArea.dataset.summary9);
+        } catch (e) {
+            console.error("summary9_JSON_파싱_실패:", e);
+            diseaseFatalStatsByPeriod = null;
+        }
+    }
 
 
 
@@ -113,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (injurySummary1)  injurySummary1.innerHTML    = "";
                 if (injurySummary2)  injurySummary2.innerHTML    = "";
                 if (diseaseSummary1) diseaseSummary1.innerHTML    = "";
+                if (diseaseSummary2) diseaseSummary2.innerHTML    = "";
 
 
                 dropdown.classList.add("hidden");
@@ -280,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
 
                 // 12) 사망 발생형태  + 나의 순위
-                if (injurySummary2 && fatalStatsByPeriod) {
+            if (injurySummary2 && fatalStatsByPeriod) {
                     const yearFlag = btn.dataset.year;
                     let periodKey = "최근 1년";
                     if (yearFlag === "2") periodKey = "2년";
@@ -326,10 +337,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     injurySummary2.innerHTML = html;
-                }            
+            }            
             
                 // 13) 질병형태별 + 나의 질병 순위
-                if (diseaseSummary1 && diseaseStatsByPeriod) {
+            if (diseaseSummary1 && diseaseStatsByPeriod) {
                     const yearFlag = btn.dataset.year;
                     let periodKey = "최근 1년";
                     if (yearFlag === "2") periodKey = "2년";
@@ -376,13 +387,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     diseaseSummary1.innerHTML = html;
                 }
-
-
-
-
-
             }
 
+           if (diseaseSummary2 && diseaseFatalStatsByPeriod) {
+                const yearFlag = btn.dataset.year;
+                let periodKey = "최근 1년";
+                if (yearFlag === "2") periodKey = "2년";
+                else if (yearFlag === "3") periodKey = "3년";
+
+                const periodData = diseaseFatalStatsByPeriod[periodKey];
+
+                if (!periodData) {
+                    diseaseSummary2.textContent = "질병 사망유형 데이터가 없습니다.";
+                } else {
+                    const topList = periodData.top10 || [];
+                    const rankMap = periodData.rank_map || {};
+
+                    let html = "";
+                    if (!topList.length) {
+                        html += "질병 사망유형 데이터가 없습니다.";
+                    } else {
+                        topList.forEach(item => {
+                            const cnt = typeof item.count === "number"
+                                ? item.count.toLocaleString()
+                                : item.count;
+                            html += `${item.rank}위: ${item.name} (${cnt}명)<br>`;
+                        });
+                    }
+
+                    if (selectedDiseaseType) {
+                        const myRank = rankMap[selectedDiseaseType];
+                        html += "<br>";
+                        if (myRank) {
+                            if (myRank <= 10) {
+                                html += `나의 질병(<strong>${selectedDiseaseType}</strong>)은 ` +
+                                        `사망 재해 기준으로 <strong>${myRank}위</strong> 입니다.`;
+                            } else {
+                                html += `나의 질병(<strong>${selectedDiseaseType}</strong>)은 ` +
+                                        `사망 재해 기준으로 <strong>${myRank}위</strong>이며, TOP 10에는 포함되지 않습니다.`;
+                            }
+                        } else {
+                            html += `나의 질병(<strong>${selectedDiseaseType}</strong>)은 ` +
+                                    `질병 사망 통계에 집계되어 있지 않습니다.`;
+                        }
+                    }
+
+                    diseaseSummary2.innerHTML = html;
+                }
+            }     
         });
     });
 });
