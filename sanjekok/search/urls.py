@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("search/api", views.place_search, name="search-api"),
-    path("", views.search_page, name="search-page"),
+    path('', views.search_page, name='search_page'),
+    path('geocode/', views.geocode_api, name='geocode_api'),   # 주소검색/
+    path('incidents/', views.incidents_api, name='incidents_api'), # 산업재해수
 ]

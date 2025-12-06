@@ -1,58 +1,158 @@
-body {
-  font-family: Arial, sans-serif;
+/* 전체 래핑 */
+.wrapper {
+    width: 95%;
+    max-width: 1100px;
+    margin: 20px auto;
+    font-family: 'Noto Sans KR', sans-serif;
 }
 
-h2 {
-  margin-bottom: 20px;
+/* 상단 박스 */
+.top-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
 }
 
-.search-box {
-  margin-bottom: 20px;
-  padding: 10px;
+/* 위치선택 박스 */
+.location-box {
+    border: 2px solid #000;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 6px;
 }
 
-.search-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.location-box .title {
+    font-size: 14px;
+    font-weight: 600;
 }
 
+/* 버튼 스타일 */
+.btn {
+    padding: 6px 18px;
+    border: 2px solid #000;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.btn:hover {
+    background: #eaeaea;
+}
+
+/* 사고지역 드롭다운 */
 .dropdown {
-  position: relative;
-  display: inline-block;
+    position: relative;
 }
 
-#incidentBtn {
-  cursor: pointer;
+.dropdown-btn {
+    font-weight: 600;
 }
 
 .dropdown-menu {
-  display: none;
-  position: absolute;
-  background: #fff;
-  border: 1px solid #ddd;
-  padding: 5px;
-  width: 140px;
-  z-index: 1000;
+    position: absolute;
+    top: 42px;
+    left: 0;
+    background: #f0f0f0;
+    border: 1px solid #333;
+    width: 120px;
+    display: none;
+    z-index: 50;
 }
 
 .dropdown-menu div {
-  padding: 8px;
-  cursor: pointer;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
 }
 
 .dropdown-menu div:hover {
-  background-color: #eee;
+    background: #cfcfcf;
 }
 
-.map-placeholder {
-  width: 70%;
-  height: 500px;
-  border: 1px solid #ccc;
-  margin-top: 10px;
-}
-
+/* 총 발생 건수 박스 */
 .count-box {
-  margin-top: 10px;
-  font-weight: bold;
+    border: 2px solid #000;
+    padding: 6px 18px;
+    border-radius: 6px;
+    text-align: center;
+}
+.count-box .title {
+    font-size: 14px;
+    font-weight: 600;
+}
+.count-box .count {
+    margin-top: 6px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 중간 제목 */
+.mid-title {
+    border: 2px solid #000;
+    border-radius: 6px;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+.main-title {
+    font-size: 18px;
+    font-weight: 700;
+}
+.subtitle {
+    color: #666;
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+/* 지도 영역 */
+.map-wrapper {
+    border: 2px solid #000;
+    padding: 6px;
+    border-radius: 6px;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 450px;
+    border: 1px solid #888;
+}
+
+/* 상세 정보 박스 (말풍선 느낌) */
+.detail-box {
+    margin-top: 8px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #aaa;
+    background: #fafafa;
+    border-radius: 6px;
+}
+
+.infowindow-wrap {
+    text-align: left;
+}
+
+.infowindow-box {
+    padding: 10px 14px;
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 6px;
+    font-size: 13px;
+    box-shadow: 2px 3px 6px rgba(0,0,0,0.3);
+}
+
+.info-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.infowindow-arrow {
+    width: 0;
+    height: 0;
+    margin: 0 auto;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 12px solid #000;
 }

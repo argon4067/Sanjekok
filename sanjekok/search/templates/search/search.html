@@ -2,70 +2,77 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>주변 산재 검색</title>
-
-  <link rel="stylesheet" href="{% static 'CSS/search/search.css' %}">
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/${VERSION}/kakao.min.js"
-  integrity="${INTEGRITY_VALUE}" crossorigin="anonymous"></script>
-  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=e7ccfaeecfe1bdfb39c9f3f00e253bdd&libraries=services"></script>
+    <meta charset="UTF-8">
+    <title>주변 산재 검색</title>
+    <link rel="stylesheet" href="{% static 'CSS/search/search.css' %}">
 </head>
 <body>
-  <header style="display:flex;align-items:center;gap:12px;padding:8px;">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <label>위치선택:</label>
-      <button id="homeBtn">집</button>
-      <button id="workBtn">근무지</button>
 
-      <div class="dropdown" style="position:relative;display:inline-block;">
-        <button id="incidentBtn" aria-haspopup="true" aria-expanded="false">사고지역 ▼</button>
-        <div id="incidentMenu" class="dropdown-menu" style="display:none;position:absolute;top:100%;left:0;min-width:200px;border:1px solid #ccc;background:#fff;z-index:1000;">
-          {% for a in accident_list %}
-            <div data-x="{{ a.x }}" data-y="{{ a.y }}" data-nickname="{{ a.nickname }}" data-address="{{ a.address }}" style="padding:8px;cursor:pointer;border-bottom:1px solid #eee;">
-              {{ a.nickname }} ({{ a.address }})
+<div class="wrapper">
+
+    <!-- 상단 바 -->
+    <div class="top-container">
+
+        <!-- 위치선택 -->
+        <div class="location-box">
+            <div class="title">위치선택:</div>
+            <button class="btn" id="btnHome">집</button>
+            <button class="btn" id="btnWork">근무지</button>
+
+            <!-- 사고지역 -->
+            <div class="dropdown">
+                <button id="accidentDropdownBtn" class="btn dropdown-btn">
+                    사고지역 ▼
+                </button>
+                <div class="dropdown-menu" id="accidentDropdownMenu"></div>
             </div>
-          {% empty %}
-            <div class="no-data" style="padding:8px;color:#666;">등록된 사고지역 없음</div>
-          {% endfor %}
         </div>
-      </div>
+
+        <!-- 총 발생 건수 -->
+        <div class="count-box">
+            <div class="title">총 발생 건수</div>
+            <div class="count">
+                <span id="totalCount">0</span> 건
+            </div>
+        </div>
     </div>
 
-    <div style="margin-left:auto;">
-      총 발생건수: <span id="totalCount">0</span>
+    <!-- 중간 제목 -->
+    <div class="mid-title">
+        <div class="main-title">근무지/산업재해 상황</div>
+        <div class="subtitle">주변 산업재해 발생 현황을 확인해보세요</div>
     </div>
-  </header>
 
-  <main style="padding:8px;">
-    <section class="section-box" style="margin-bottom:8px;">
-      <div class="section-title">
-        <h3>근무지/산업재해 상황</h3>
-        <p>주변 산업재해 발생 현황을 확인하세요</p>
-      </div>
-      <div class="map-wrapper" style="width:100%;height:600px;border:1px solid #ddd;">
-        <div class="map-placeholder" style="width:100%;height:100%;"></div>
-      </div>
-    </section>
-  </main>
+    <!-- 지도 영역 -->
+    <div class="map-wrapper">
+        <div id="map"></div>
 
-  <!-- 템플릿으로 전달된 TM 좌표와 키를 전역 변수로 노출 -->
+        <!-- 상세 정보 -->
+        <div id="detail" class="detail-box">
+            위치를 선택하거나 마커를 클릭하면 상세 정보가 표시됩니다.
+        </div>
+    </div>
+
+</div>
+
 <script>
-  const HOME_TM = {
-    x: parseFloat("{{ home.x|default:'0' }}"),
-    y: parseFloat("{{ home.y|default:'0' }}")
-  };
-
-  const WORK_TM = {
-    x: parseFloat("{{ work.x|default:'0' }}"),
-    y: parseFloat("{{ work.y|default:'0' }}")
-  };
+    window.SEARCH_CONTEXT = {
+        home: "{{ home_address|escapejs }}",
+        work: "{{ work_address|escapejs }}",
+        accidentList: [
+            {% for ac in accidents %}
+            {
+                "alias": "{{ ac.i_title|escapejs }}",
+                "address": "{{ ac.i_address|escapejs }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    };
 </script>
 
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey={{ KAKAO_JS_KEY }}&libraries=services"></script>
+<script src="{% static 'js/search/search.js' %}"></script>
 
-  <script>
-  const KAKAO_KEY = "{{ KAKAO_KEY }}";
-  </script>
-  <script src="{% static 'js/search/search.js' %}"></script>
 </body>
 </html>
+
