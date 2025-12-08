@@ -1,12 +1,11 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.conf import settings
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from member.models import Member, Individual
 from reviews.models import Review
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import check_password
 from django.utils import timezone
 from datetime import timedelta
+from django.core.paginator import Paginator
 
 def login(request):
     if request.method == "GET":
@@ -74,3 +73,21 @@ def dash(request):
     }
 
     return render(request, 'manager_dash.html', context)
+
+def member(request):
+    members = Member.objects.filter(m_status=1).order_by('-member_id')
+
+    paginator = Paginator(members, 5)   # ▶ 한 페이지에 5개씩
+    page_number = request.GET.get('page')  # ▶ URL에서 page 값 받기
+    page_obj = paginator.get_page(page_number)  # ▶ 페이지 객체 생성
+
+    context = {
+        'page_obj': page_obj
+    }
+    return render(request, 'manager_member.html', context)
+
+def delete(request, member_id):
+    member = get_object_or_404(Member, member_id=member_id)
+    member.m_status = 0  # 탈퇴 상태로 변경
+    member.save()
+    return redirect('manager_member.html')
