@@ -117,3 +117,17 @@ def review(request):
     } 
 
     return  render(request, 'manager_review.html', context)
+
+def stats(request):
+
+    total_individual = Individual.objects.all()
+
+    paginator = Paginator(total_individual, 5)   # ▶ 한 페이지에 5개씩
+    page_number = request.GET.get('page')  # ▶ URL에서 page 값 받기
+    page_obj = paginator.get_page(page_number)  # ▶ 페이지 객체 생성
+
+    context = {
+        'page_obj': page_obj
+    }
+
+    return render(request, 'manager_stats.html', context)

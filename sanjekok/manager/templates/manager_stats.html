@@ -1,0 +1,60 @@
+{% extends "manager_base.html" %}
+{% load static %}
+{% block contents %}
+    <div>
+        <h3>회원 산재 조회</h3>
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>회원 아이디</th>
+                    <th>업종</th>
+                    <th>발생 형태</th>
+                    <th>질병</th>
+                    <th>재해 일자</th>
+                    <th>사고 지역</th>
+                </tr>
+            </thead>
+                    {% for stats in page_obj %}
+                <tbody>
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ stats.member_id}}</a> </td>
+                        <td>{{ stats.member.i_industry_type1 }}</td>
+                        <td>{{ stats.i_injury }}</td>
+                        <td>{{ stats.i_disease_type}}</td>
+                        <td>{{ stats.i_accident_date|date:"Y-m-d" }}</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+                    {% endfor %}
+        </table>
+    
+        <div class="pagination justify-content-center mt-3">
+
+            <!-- 이전 페이지 -->
+            {% if page_obj.has_previous %}
+            <a class="btn btn-outline-primary mx-1" href="?page={{ page_obj.previous_page_number }}">이전</a>
+            {% else %}
+            <span class="btn btn-outline-secondary disabled mx-1">이전</span>
+            {% endif %}
+
+            <!-- 페이지 번호 -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="btn btn-primary mx-1">{{ num }}</span>
+                {% else %}
+                    <a class="btn btn-outline-primary mx-1" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            <!-- 다음 페이지 -->
+            {% if page_obj.has_next %}
+            <a class="btn btn-outline-primary mx-1" href="?page={{ page_obj.next_page_number }}">다음</a>
+            {% else %}
+            <span class="btn btn-outline-secondary disabled mx-1">다음</span>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}
