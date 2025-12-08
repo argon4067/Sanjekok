@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from member.models import Member, Individual
+from member.models import Member, Individual, Member_industry
 from reviews.models import Review
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
