@@ -159,13 +159,13 @@
         <div class="visual-grid">
 
             <!-- 내 업종 재해율 -->
-            <div class="visual-card">
+            <div class="visual-card small">
                 <h3>내 업종 재해율</h3>
                 <p id="accidentSummary"></p>
             </div>
 
             <!-- 내 업종 사망만인율 -->
-            <div class="visual-card">
+            <div class="visual-card small">
                 <h3>내 업종 사망만인율</h3>
                 <p id="fatalSummary"></p>
             </div>
@@ -181,43 +181,51 @@
             <div class="visual-card">
                 <h3>남/녀 재해 사망 현황</h3>
                 <p id="genderSummary2"></p>
+                <canvas id="genderChart2"></canvas>
             </div>
 
-            <!-- 연령대별 재해 현황 -->
+
             <div class="visual-card">
                 <h3>연령대별 재해 현황</h3>
                 <p id="ageSummary1"></p>
+                <canvas id="ageChart1"></canvas>
             </div>
 
             <!-- 연령대별 사망 현황 -->
             <div class="visual-card">
-                <h3>연령대별 사망 현황</h3>
+                <h3>연령대별 재해 사망 현황</h3>
                 <p id="ageSummary2"></p>
+                <canvas id="ageChart2"></canvas>
             </div>
 
             <!-- 발생형태별 재해 TOP 10 -->
             <div class="visual-card" id="card-injury">
                 <h3>재해유형 </h3>
                 <p id="injurySummary1"></p>
+                <canvas id="injuryChart1"></canvas>
             </div>
 
             <!-- 사망재해현황 (발생형태 TOP 10) -->
             <div class="visual-card" id="card-injury-fatal">
                 <h3>사망재해현황 </h3>
                 <p id="injurySummary2"></p>
+                <canvas id="injuryChart2"></canvas>
             </div>
 
             <!-- 재해 질병유형 (TOP 10) -->
             <div class="visual-card" id="card-disease">
                 <h3>재해 질병유형 </h3>
                 <p id="diseaseSummary1"></p>
+                <canvas id="diseaseChart1"></canvas>
             </div>
 
             <!-- 재해 질병 사망 현황 -->
             <div class="visual-card" id="card-disease-fatal">
                 <h3>재해 질병 사망 현황</h3>
                 <p id="diseaseSummary2"></p>
+                <canvas id="diseaseChart2"></canvas>
             </div>
+
 
 
 
@@ -226,7 +234,11 @@
     </section>
 
 </div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script src="{% static 'js/stats/chart.js' %}"></script>
 <script src="{% static 'js/stats/stats.js' %}"></script>
 {% endblock %}
 </body>
