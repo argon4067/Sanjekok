@@ -91,3 +91,29 @@ def delete(request, member_id):
     member.m_status = 0  # 탈퇴 상태로 변경
     member.save()
     return redirect('manager_member.html')
+
+def review(request):
+
+    hospital = request.GET.get('hospital', '')
+    member = request.GET.get('member', '')
+
+    reviews = Review.objects.all().order_by('-id')
+
+    # 병원 필터
+    if hospital:
+        reviews = reviews.filter(hospital_id__name__icontains=hospital)
+
+    # 작성자 필터
+    if member:
+        reviews = reviews.filter(member_id__m_username__icontains=member)
+
+    paginator = Paginator(reviews, 5)   # ▶ 한 페이지에 5개씩
+    page_number = request.GET.get('page')  # ▶ URL에서 page 값 받기
+    page_obj = paginator.get_page(page_number)  # ▶ 페이지 객체 생성
+
+    context = {
+        'page_obj': page_obj,
+        'r_list': reviews
+    } 
+
+    return  render(request, 'manager_review.html', context)
