@@ -87,3 +87,11 @@
     background: #f0f0f0;
 }
 
+
+.visual-card canvas {
+    width:50%;
+    max-width: 360px;     
+    height: 260px !important; 
+    margin: 0 auto;       
+    display: block;
+}
