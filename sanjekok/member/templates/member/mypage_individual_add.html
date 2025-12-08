@@ -54,66 +54,26 @@
         onclick="searchAddress('i_address')">
 </div>
 <!-- 발생형태/질병 모달 버튼 -->
-<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#typeModal">
-    발생형태 / 질병 선택
-</button>
+<h3>*발생형태 : <input type="radio" name="mode" value="occ" onclick="changeMode()"></h3>
+<h3>*질병 : <input type="radio" name="mode" value="dis" onclick="changeMode()"></h3>
+<h3>*모두 : <input type="radio" name="mode" value="all" onclick="changeMode()" checked></h3>
 
-<!-- 선택 결과 표시 -->
-<input type="text" id="selectedType" class="form-control mt-2" readonly>
-
-<!-- hidden inputs -->
-<input type="hidden" id="i_injury" name="i_injury">
-<input type="hidden" id="i_disease_type" name="i_disease_type">
-
-<hr>
+<input id="occInput" type="text" placeholder="발생형태" disabled onclick="openModal('occ')">
+<br>
+<input id="disInput" type="text" placeholder="질병" disabled onclick="openModal('dis')">
 
 
 <button type="submit" class="btn btn-primary">등록하기</button>
 </form>
 
 
-<!-- Modal -->
-<div class="modal fade" id="typeModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title">발생형태 / 질병 선택</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body">
-        
-        <!-- 발생형태 -->
-        <label class="fw-bold">발생형태</label>
-        <select id="occurrenceType" class="form-select mb-3">
-            <option value="">선택</option>
-            <option>떨어짐</option>
-            <option>넘어짐</option>
-            <option>부딪힘</option>
-            <option>끼임</option>
-            <option>맞음</option>
-        </select>
-
-        <!-- 질병 -->
-        <label class="fw-bold">질병</label>
-        <select id="diseaseType" class="form-select">
-            <option value="">선택</option>
-            <option>근골격계질환</option>
-            <option>호흡기질환</option>
-            <option>뇌심혈관질환</option>
-            <option>청각장애</option>
-            <option>피부질환</option>
-        </select>
-
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-primary" id="applyType" data-bs-dismiss="modal">적용</button>
-      </div>
-
+<!-- 모달 -->
+<div id="modal" class="modal-bg">
+    <div class="modal-box">
+        <span class="close-btn" onclick="closeModal()">×</span>
+        <div id="modalTitle" class="modal-title"></div>
+        <div id="modalGrid" class="grid"></div>
     </div>
-  </div>
 </div>
 
 
