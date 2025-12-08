@@ -1,0 +1,76 @@
+{% extends "manager_base.html" %}
+{% load static %}
+
+{% block contents %}
+    <div>
+        <h3>리뷰 관리</h3>
+        <form method="get" class="mb-3 d-flex" style="gap: 3px;">
+            <select name="filter_by" class="form-select" style="width: 150px;">
+                <option value="">필터 선택</option>
+                <option value="hospital" {% if request.GET.filter_by == "hospital" %}selected{% endif %}>병원이름</option>
+                <option value="member" {% if request.GET.filter_by == "member" %}selected{% endif %}>작성자</option>
+            </select>
+
+            <input type="text"
+                name="keyword"
+                placeholder="검색어 입력"
+                value="{{ request.GET.keyword }}"
+                class="form-control"
+                style="width: 200px;">
+
+            <button type="submit" class="btn btn-primary">검색</button>
+
+            {% if request.GET.filter_by or request.GET.keyword %}
+                <a href="{% url 'manager_review' %}" class="btn btn-secondary">초기화</a>
+            {% endif %}
+        </form>
+
+        <table class="table table-hover">
+            <thead class="table-success">
+                <tr>
+                    <th>No.</th>
+                    <th>병원이름</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                    </tr>
+                </thead>
+                    {% for review in r_list %}
+                <tbody>
+                    <tr>
+                        <td>{{ review.id }}</td>
+                        <td>{{ review.hospital_id }}</a> </td>
+                        <td>{{ review.member_id }}</td>
+                        <td>{{ review.r_created_at|date:"Y-m-d" }}</td>
+                    </tr>
+                </tbody>
+                    {% endfor %}
+            </table>
+
+        <div class="pagination justify-content-center mt-3">
+
+            <!-- 이전 페이지 -->
+            {% if page_obj.has_previous %}
+            <a class="btn btn-outline-primary mx-1" href="?page={{ page_obj.previous_page_number }}">이전</a>
+            {% else %}
+            <span class="btn btn-outline-secondary disabled mx-1">이전</span>
+            {% endif %}
+
+            <!-- 페이지 번호 -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="btn btn-primary mx-1">{{ num }}</span>
+                {% else %}
+                    <a class="btn btn-outline-primary mx-1" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            <!-- 다음 페이지 -->
+            {% if page_obj.has_next %}
+            <a class="btn btn-outline-primary mx-1" href="?page={{ page_obj.next_page_number }}">다음</a>
+            {% else %}
+            <span class="btn btn-outline-secondary disabled mx-1">다음</span>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}
