@@ -6,6 +6,8 @@ class NewsConfig(AppConfig):
     name = 'news'
     
     def ready(self):
+        # 스케줄러 실행 연결 
         # from .tasks import start_scheduler
         # start_scheduler()
-        pass
+        
+        pass # 실행 연결 X

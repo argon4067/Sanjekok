@@ -12,6 +12,7 @@ def save_news(data):
     # 작성일자(문자열) → 날짜(datetime) 변환
     try:
         created_at = datetime.strptime(data["created_at_raw"], "%Y-%m-%d")
+
     except:
         created_at = timezone.now() # 작성일자 값이 없으면 DB저장날짜로
 

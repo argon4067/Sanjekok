@@ -161,7 +161,8 @@ LOGGING = {
         },
     },
 }
-
-CRONJOBS = [
-    ('*/5 * * * *', 'news.crawler.run.crawl_news'),  
-]
+# (django-crontab)
+# CRONJOBS = [
+#     # 매일 새벽 3시 크롤링 (django-crontab)
+#     ('0 3 * * *', 'news.crawler.run.crawl_news'),  
+# ]

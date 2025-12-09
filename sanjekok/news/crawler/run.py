@@ -6,12 +6,11 @@ import traceback
 
 def crawl_news():
     """
-    뉴스 전체 크롤링 (1~5페이지)
+    뉴스 전체 크롤링 (1~3페이지)(임시)
     fetch → parse → detail fetch → detail parse → save
     """
-
-    for page in range(1, 6):
-        print(f"💛 {page} 페이지 수집 중...")
+    print(f"🧡 크롤링 시작")
+    for page in range(1, 4):
 
         try:
             list_url = f"http://sanjaenews.co.kr/news/list.php?mcode=m641vf2&vg=photo&page={page}"
@@ -27,6 +26,7 @@ def crawl_news():
 
         except Exception as e:
             print("❌ 목록 페이지 수집 실패:", e)
+            traceback.print_exc()
             continue
 
         # 상세페이지 처리
