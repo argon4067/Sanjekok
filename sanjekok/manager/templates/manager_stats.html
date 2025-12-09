@@ -3,9 +3,59 @@
 {% block contents %}
     <div>
         <h3>회원 산재 조회</h3>
+
+        <h4 style="margin-top: 50px;">검색/필터</h4>
+        <form method="get" class="row g-2 mb-3">
+
+            <!-- 대분류 -->
+            <div class="col-md-2">
+                <label class="form-label">업종(대분류)</label>
+                <select name="industry1" id="i_industry_type1" class="form-select">
+                    <option value="">대분류 선택</option>
+                </select>
+            </div>
+
+            <!-- 중분류 -->
+            <div class="col-md-2">
+                <label class="form-label">업종(중분류)</label>
+                <select name="industry2" id="i_industry_type2" class="form-select">
+                    <option value="">중분류 선택</option>
+                </select>
+            </div>
+
+            <!-- 발생형태 -->
+            <div class="col-md-2">
+                <label class="form-label">발생형태</label>
+                <select name="injury" id="i_injury" class="form-select">
+                    <option value="">발생형태 선택</option>
+                </select>
+            </div>
+
+            <!-- 질병 -->
+            <div class="col-md-1">
+                <label class="form-label">질병</label>
+                <select name="disease" id="i_disease" class="form-select">
+                    <option value="">질병 선택</option>
+                </select>
+            </div>
+
+            <div class="col-md-1">
+                <label class="form-label">재해일자</label>
+                <input type="text" name="accident_date" class="form-control" placeholder="날짜입력">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">    </label>
+                <br>
+                <button class="btn btn-primary">검색</button>
+                <a href="{% url 'Manager:stats' %}" class="btn btn-secondary">초기화</a>
+            </div>
+
+        </form>
+        <h4 style="margin-top: 40px;">회원 산재등록 목록</h4>
         <table class="table table-hover">
             <thead class="table-dark">
-                <tr>
+                <tr style="white-space: nowrap;">
                     <th>No.</th>
                     <th>회원명</th>
                     <th>업종(대분류)</th>
@@ -18,7 +68,7 @@
             </thead>
                     {% for stats in page_obj %}
                 <tbody>
-                    <tr>
+                    <tr style="white-space: nowrap;">
                         <td>{{ forloop.counter }}</td>
                         <td>{{ stats.member_industry.member.m_name }}</td>
                         <td>{{ stats.member_industry.i_industry_type1 }}</td>
@@ -59,4 +109,6 @@
 
         </div>
     </div>
+
+    <script src="{% static 'js/manager/manager_stats.js' %}"></script>
 {% endblock %}

@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from member.models import Member, Individual, Member_industry
+from member.models import Member, Individual
 from reviews.models import Review
 from django.contrib.auth.hashers import check_password
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from django.core.paginator import Paginator
+from django.utils.dateparse import parse_date
+from django.db.models.functions import Cast
+from django.db.models import CharField
 
 def login(request):
     if request.method == "GET":
@@ -121,18 +124,79 @@ def review(request):
     return  render(request, 'manager_review.html', context)
 
 def stats(request):
-
+    
     total_individual = Individual.objects.all()
 
-    paginator = Paginator(total_individual, 5)   # ▶ 한 페이지에 5개씩
-    page_number = request.GET.get('page')  # ▶ URL에서 page 값 받기
-    page_obj = paginator.get_page(page_number)  # ▶ 페이지 객체 생성
+    industry1 = request.GET.get("industry1")
+    industry2 = request.GET.get("industry2")
+    injury = request.GET.get("injury")
+    disease = request.GET.get("disease")
+    raw_date = request.GET.get("accident_date", "")
 
-    context = {
-        'page_obj': page_obj
-    }
+    # -------- 날짜 정규화 --------
+    accident_date = raw_date.replace("-", "").strip()
 
-    return render(request, 'manager_stats.html', context)
+    # 필터들
+    if industry1:
+        total_individual = total_individual.filter(member_industry__i_industry_type1=industry1)
+
+    if industry2:
+        total_individual = total_individual.filter(member_industry__i_industry_type2=industry2)
+
+    if injury:
+        total_individual = total_individual.filter(i_injury=injury)
+
+    if disease:
+        total_individual = total_individual.filter(i_disease_type=disease)
+
+    # -------- 날짜 처리 --------
+    if accident_date.isdigit():
+
+        # YYYY (연도)
+        if len(accident_date) == 4:
+            year = int(accident_date)
+            start_date = date(year, 1, 1)
+            end_date = date(year + 1, 1, 1)
+
+        # YYYYMM (년월)
+        elif len(accident_date) == 6:
+            year = int(accident_date[:4])
+            month = int(accident_date[4:6])
+
+            start_date = date(year, month, 1)
+            if month == 12:
+                end_date = date(year + 1, 1, 1)
+            else:
+                end_date = date(year, month + 1, 1)
+
+        # YYYYMMDD (년월일)
+        elif len(accident_date) == 8:
+            try:
+                start_date = date(
+                    int(accident_date[:4]),
+                    int(accident_date[4:6]),
+                    int(accident_date[6:8])
+                )
+                end_date = start_date + timedelta(days=1)
+            except:
+                start_date = end_date = None
+        else:
+            start_date = end_date = None
+
+        # 실제 필터 적용
+        if start_date and end_date:
+            total_individual = total_individual.filter(
+                i_accident_date__gte=start_date,
+                i_accident_date__lt=end_date
+            )
+
+    # -------- 페이징 --------
+    paginator = Paginator(total_individual, 5)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "manager_stats.html", {"page_obj": page_obj})
+
 
 def logout(request):
     request.session.flush()  # 세션 완전 삭제
