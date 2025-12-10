@@ -141,6 +141,7 @@ function GenderChart1(male, female) {
             maintainAspectRatio: false,
             plugins: {
                 legend: { position: "bottom" }
+                
             }
         }
     });
