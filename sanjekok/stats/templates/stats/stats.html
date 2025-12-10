@@ -221,10 +221,12 @@
                 {% if risk_analysis and risk_analysis.has_data %}
                 <div class="risk-section">
                     <p class="risk-condition">
+                        <span style="font-size:20px;"> 
                         <strong>{{ risk_analysis.industry }}</strong>, 
                         <strong>{{ risk_analysis.age_group }}</strong>, 
                         <strong>{{ risk_analysis.gender }}</strong> 조건에서<br>
-                        최근 3년간 가장 많이 발생한 위험 요인입니다.
+                        최근 3년간 가장 많이 발생한 위험 요인입니다. 
+                        </span>
                     </p>
                     
                     <div class="risk-grid">

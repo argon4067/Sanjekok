@@ -81,7 +81,7 @@ function createHorizontalBarChart(chartRefName, canvasId, labels, data, options 
                     formatter: (v) => `${(v ?? 0).toLocaleString()}명`,
                     color: "#111827",
                     font: {
-                        size: 13,      // 글씨 크게
+                        size: 20,      // 글씨 크게
                         weight: "600"
                     }
                 }
@@ -94,13 +94,13 @@ function createHorizontalBarChart(chartRefName, canvasId, labels, data, options 
                         color: "rgba(148, 163, 184, 0.25)"
                     },
                     ticks: {
-                        font: { size: 13 },
+                        font: { size: 20 },
                     }
                 },
                 y: {
                     grid: { display: false },
                     ticks: {
-                        font: { size: 13 },
+                        font: { size: 20 },
                     }
                 }
             }

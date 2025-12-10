@@ -194,7 +194,7 @@
 
 
 .risk-condition {
-    font-size: 21px;
+    font-size: 30px;
     color: #64748b;
     margin-bottom: 16px;
     line-height: 1.5;
@@ -275,12 +275,6 @@
     color: #ef4444;
 }
 
-.risk-no-data {
-    text-align: center;
-    padding: 20px;
-    color: #94a3b8;
-    font-size: 13px;
-}
 
 
 /* 화면이 좁을 때는 1열 */
