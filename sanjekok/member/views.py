@@ -8,7 +8,6 @@ from .decorators import login_required
 from . import services
 from django.conf import settings
 import requests
-from django.urls import reverse
 # Create your views here.
 
 # 회원가입 1단계
@@ -74,6 +73,7 @@ def registers(request):
             
             request.session['member_id'] = int(member.member_id)
             request.session['member_username'] = member.m_username
+            request.session['member_provider'] = member.m_provider
 
             if member.m_provider != 'local':
                 # Social login user
@@ -108,6 +108,7 @@ def login(request):
 
         request.session['member_id'] = int(member.member_id)
         request.session['member_username'] = member.m_username
+        request.session['member_provider'] = member.m_provider
 
         messages.success(request, f"{member.m_name}님 환영합니다!")
         return redirect("Main:main")
@@ -191,6 +192,7 @@ def kakao_callback(request):
         
         request.session['member_id'] = int(user.member_id)
         request.session['member_username'] = user.m_username
+        request.session['member_provider'] = user.m_provider
         messages.success(request, f"{user.m_name}님 환영합니다!")
         return redirect("Main:main")
     except Member.DoesNotExist:
@@ -221,6 +223,10 @@ def complete(request):
 def mypage(request):
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)
+
+    # 소셜 로그인 사용자는 비밀번호 확인 없이 바로 프로필 페이지로 이동
+    if member.m_provider != 'local':
+        return redirect("Member:mypage_profile")
 
     if request.method == "POST":
         password = request.POST.get("m_password1")
@@ -386,6 +392,10 @@ def logout(request):
 # 마이페이지 - 비밀번호 변경
 @login_required
 def mypage_password_change(request):
+    if request.session.get('member_provider') != 'local':
+        messages.error(request, "소셜 로그인 사용자는 비밀번호를 변경할 수 없습니다.")
+        return redirect("Main:main")
+        
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)
 
