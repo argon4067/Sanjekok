@@ -7,8 +7,14 @@ urlpatterns = [
     path('registerf/', views.registerf, name='registerf'),  # 회원가입
     path('registers/', views.registers, name='registers'),  # 회원가입 두번쨰
     path('login/', views.login, name='login'),  # 로그인
+
     path('kakao/login/', views.kakao_login, name='kakao_login'),  # 카카오 로그인
     path('kakao/callback/', views.kakao_callback, name='kakao_callback'),  # 카카오 로그인 콜백
+
+    path("naver/login/", views.naver_login, name="naver_login"),    # 네이버 로그인
+    path("naver/callback/", views.naver_callback, name="naver_callback"),   # 네이버 로그인 콜백
+    # path("naver/logout/", views.naver_logout, name="naver_logout"),  # 네이버 로그아웃
+
     path('check-username/', views.check_username, name='check_username'), # 아이디 중복 확인
     path('complete/', views.complete, name='complete'),  # 회원가입 완료
     path('logout/', views.logout, name='logout'),  # 로그아웃

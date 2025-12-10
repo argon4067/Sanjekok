@@ -69,7 +69,7 @@ def handle_kakao_login(code):
             - user (Member, optional): 로그인 성공 시 사용자 객체
             - signup_data (dict, optional): 회원가입 필요 시 사용자 정보
     """
-    # 1. Get Access Token
+    # 엑세스 토큰 받기
     token_url = "https://kauth.kakao.com/oauth/token"
     data = {
         "grant_type": "authorization_code",
@@ -88,7 +88,7 @@ def handle_kakao_login(code):
     if not access_token:
         return {'status': 'error', 'message': '액세스 토큰을 받아올 수 없습니다.'}
 
-    # 2. Get User Profile
+    # 2. 사용자 정보 받기
     profile_url = "https://kapi.kakao.com/v2/user/me"
     headers = {"Authorization": f"Bearer {access_token}"}
     try:
@@ -108,7 +108,7 @@ def handle_kakao_login(code):
     if not nickname:
         nickname = f"사용자_{kakao_id}"
 
-    # 3. Login or Prepare for Registration
+    # 3. 기존 사용자 확인 및 처리
     username = f"kakao_{kakao_id}"
     try:
         user = Member.objects.get(m_username=username)
@@ -121,3 +121,80 @@ def handle_kakao_login(code):
             'm_provider_id': kakao_id,
         }
         return {'status': 'register', 'signup_data': signup_data}
+    
+# 네이버 로그인 처리 함수
+def handle_naver_login(code, state):
+    """
+    네이버 인증 코드를 사용하여 로그인 또는 회원가입을 처리합니다.
+
+    Returns:
+        dict: {
+            status: "error" | "login" | "register",
+            message: str,
+            user: Member,
+            signup_data: dict
+        }
+    """
+
+    # 1) Access Token 요청
+    token_url = "https://nid.naver.com/oauth2.0/token"
+    token_params = {
+        "grant_type": "authorization_code",
+        "client_id": settings.NAVER_CLIENT_ID,
+        "client_secret": settings.NAVER_CLIENT_SECRET,
+        "code": code,
+        "state": state,
+    }
+
+    token_res = requests.get(token_url, params=token_params).json()
+    access_token = token_res.get("access_token")
+
+    if not access_token:
+        return {
+            "status": "error",
+            "message": "액세스 토큰 발급 실패"
+        }
+
+    # 2) 유저 정보 요청
+    profile_url = "https://openapi.naver.com/v1/nid/me"
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    profile_res = requests.get(profile_url, headers=headers).json()
+
+    if profile_res.get("resultcode") != "00":
+        return {
+            "status": "error",
+            "message": profile_res.get("message", "네이버 프로필 조회 실패")
+        }
+
+    profile = profile_res["response"]
+    naver_id = profile["id"]
+    nickname = profile.get("nickname") or f"naver_user_{naver_id}"
+
+    username = f"naver_{naver_id}"
+
+    # 3) 기존 회원인지 체크
+    try:
+        user = Member.objects.get(m_username=username)
+        return {
+            "status": "login",
+            "user": user
+        }
+    except Member.DoesNotExist:
+        pass
+
+    # 4) 회원가입 필요
+    signup_data = {
+        "m_username": username,
+        "m_name": nickname,
+        "m_provider": "naver",
+        "m_provider_id": naver_id,
+    }
+
+    return {
+        "status": "register",
+        "signup_data": signup_data
+    }
+    
+
+

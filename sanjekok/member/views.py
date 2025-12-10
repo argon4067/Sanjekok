@@ -8,6 +8,7 @@ from .decorators import login_required
 from . import services
 from django.conf import settings
 import requests
+import urllib.parse
 # Create your views here.
 
 # 회원가입 1단계
@@ -146,6 +147,43 @@ def kakao_callback(request):
     elif result['status'] == 'register':
         request.session['social_signup_data'] = result['signup_data']
         return redirect('Member:registers')
+
+# 네이버 로그인
+def naver_login(request):
+    base_url = "https://nid.naver.com/oauth2.0/authorize"
+    params = {
+        "response_type": "code",
+        "client_id": settings.NAVER_CLIENT_ID,
+        "redirect_uri": settings.NAVER_REDIRECT_URI,
+        "state": "RANDOM_STATE_STRING",
+    }
+    return redirect(f"{base_url}?{urllib.parse.urlencode(params)}")
+
+# 네이버 로그인 콜백
+def naver_callback(request):
+    code = request.GET.get("code")
+    state = request.GET.get("state")
+
+    result = services.handle_naver_login(code, state)
+
+    if result['status'] == 'error':
+        messages.error(request, f"네이버 로그인 실패: {result['message']}")
+        return redirect("Member:login")
+
+    elif result['status'] == 'login':
+        user = result['user']
+        request.session['member_id'] = int(user.member_id)
+        request.session['member_username'] = user.m_username
+        request.session['member_provider'] = user.m_provider
+        messages.success(request, f"{user.m_name}님 환영합니다!")
+        return redirect("Main:main")
+
+    elif result['status'] == 'register':
+        request.session['social_signup_data'] = result['signup_data']
+        return redirect("Member:registers")
+
+
+
 
 
 
@@ -303,14 +341,14 @@ def mypage_individual_bulk_delete(request):
 @login_required
 def logout(request):
     member_id = request.session.get('member_id')
-    provider = 'local' # Default provider
+    provider = 'local' 
 
     if member_id:
         try:
             member = Member.objects.get(member_id=member_id)
             provider = member.m_provider
         except Member.DoesNotExist:
-            pass # Member not found, proceed with default logout
+            pass 
 
     # 세션 데이터를 삭제하여 우리 앱에서 로그아웃
     request.session.flush()
@@ -327,6 +365,12 @@ def logout(request):
             f"&logout_redirect_uri={logout_redirect_uri}"
         )
         return redirect(kakao_logout_url)
+    
+    # --- 네이버 로그아웃 ---
+    if provider == 'naver':
+        # 네이버는 서버 API 로그아웃 없음 → 로그인 페이지 세션만 끊음
+        naver_logout_url = "https://nid.naver.com/nidlogin.logout"
+        return redirect(naver_logout_url)
 
     # 로컬 사용자는 메인 페이지로 리디렉션
     return redirect("Main:main")
