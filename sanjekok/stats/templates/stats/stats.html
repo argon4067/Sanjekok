@@ -140,7 +140,8 @@
         data-summary6='{{ summary6_json}}'
         data-summary7='{{ summary7_json}}'
         data-summary8='{{ summary8_json}}'
-        data-summary9='{{ summary9_json}}'>
+        data-summary9='{{ summary9_json}}'
+        data-age-band="{{ age_group }}">
         
         <div class="visual-grid">
             <!-- 내 업종 재해율 -->
@@ -236,17 +237,20 @@
                                 <span class="risk-icon">⚠️</span>
                                 발생형태 TOP 3
                             </div>
-                            {% if risk_analysis.injury_top3 %}
-                                {% for item in risk_analysis.injury_top3 %}
-                                <div class="risk-item">
-                                    <span class="risk-rank rank-{{ item.rank }}">{{ item.rank }}</span>
-                                    <span class="risk-name">{{ item.name }}</span>
-                                    <span class="risk-percentage">{{ item.percentage }}%</span>
+                            <div class="risk-category-inner">
+                                <div class="risk-list">
+                                    {% for item in risk_analysis.injury_top3 %}
+                                    <div class="risk-item">
+                                        <span class="risk-rank rank-{{ item.rank }}">{{ item.rank }}</span>
+                                        <span class="risk-name">{{ item.name }}</span>
+                                        <span class="risk-percentage">{{ item.percentage }}%</span>
+                                    </div>
+                                    {% endfor %}
+                            </div>
+                                <div class="risk-chart-wrap">
+                                    <canvas id="riskAccidentPie"></canvas>
                                 </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="risk-no-data">데이터가 없습니다</div>
-                            {% endif %}
+                            </div>
                         </div>
                         
                         <!-- 질병형태 TOP 3 -->
@@ -255,7 +259,8 @@
                                 <span class="risk-icon">🏥</span>
                                 질병형태 TOP 3
                             </div>
-                            {% if risk_analysis.disease_top3 %}
+                            <div class="risk-category-inner">
+                                <div class="risk-list">
                                 {% for item in risk_analysis.disease_top3 %}
                                 <div class="risk-item">
                                     <span class="risk-rank rank-{{ item.rank }}">{{ item.rank }}</span>
@@ -263,9 +268,10 @@
                                     <span class="risk-percentage">{{ item.percentage }}%</span>
                                 </div>
                                 {% endfor %}
-                            {% else %}
-                                <div class="risk-no-data">데이터가 없습니다</div>
-                            {% endif %}
+                            </div>
+                            <div class="risk-chart-wrap">
+                                <canvas id="riskDiseasePie"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>

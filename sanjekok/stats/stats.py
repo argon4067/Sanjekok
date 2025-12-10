@@ -753,7 +753,7 @@ def _calculate_age_weight(industry_name, age_group):
     return age_weight
 
 
-def _get_weighted_top3(industry_name, model_list, weight):
+def _get_weighted_top5(industry_name, model_list, weight):
     """
     여러 모델에서 데이터를 가져와 가중치를 적용하고 TOP 3 추출
     
@@ -805,21 +805,21 @@ def _get_weighted_top3(industry_name, model_list, weight):
     if filtered.empty:
         return []
     
-    # TOP 3 추출
-    top3 = filtered.head(3)
+    # TOP 5 추출
+    top5 = filtered.head(5)
     total_weighted = filtered.sum()
     
-    top3_list = []
-    for rank, (name, weighted_count) in enumerate(top3.items(), start=1):
+    top5_list = []
+    for rank, (name, weighted_count) in enumerate(top5.items(), start=1):
         percentage = (weighted_count / total_weighted * 100) if total_weighted > 0 else 0
-        top3_list.append({
+        top5_list.append({
             "rank": rank,
             "name": name,
             "count": int(weighted_count),  # 가중치 적용된 건수
             "percentage": round(percentage, 1)
         })
     
-    return top3_list
+    return top5_list
 
 def get_risk_analysis(industry_name, age, gender):
 
@@ -833,27 +833,27 @@ def get_risk_analysis(industry_name, age, gender):
     total_weight = gender_weight * age_weight
     
     # 2. 발생형태별 위험 분석
-    injury_top3 = _get_weighted_top3(
+    injury_top5 = _get_weighted_top5(
         industry_name, 
         [Stats6, Stats7],  # 일반 재해 + 사망 재해
         total_weight
     )
     
     # 3. 질병형태별 위험 분석
-    disease_top3 = _get_weighted_top3(
+    disease_top5 = _get_weighted_top5(
         industry_name,
         [Stats8, Stats9],  # 일반 질병 + 사망 질병
         total_weight
     )
     
-    has_data = len(injury_top3) > 0 or len(disease_top3) > 0
+    has_data = len(injury_top5) > 0 or len(disease_top5) > 0
     
     result = {
         "age_group": age_group,
         "gender": gender,
         "industry": industry_name,
-        "injury_top3": injury_top3,
-        "disease_top3": disease_top3,
+        "injury_top3": injury_top5,
+        "disease_top3": disease_top5,
         "has_data": has_data,
         "gender_weight_pct": round(gender_weight * 100, 1),
         "age_weight_pct": round(age_weight * 100, 1),

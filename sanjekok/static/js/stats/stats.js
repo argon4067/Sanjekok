@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let fatalStatsByPeriod = null;
     let diseaseStatsByPeriod = null;
     let diseaseFatalStatsByPeriod = null;
+    const memberageband = visualArea ? (visualArea.dataset.ageBand || null) : null;
 
     /* ========================= 
      * 0. 백엔드에서 넘긴 JSON 파싱
@@ -207,10 +208,10 @@ document.addEventListener("DOMContentLoaded", () => {
              * 2-3. 연령대별 현황 + 차트
              * ========================= */
             if (window.AgeChart1) {
-                window.AgeChart1(ageU18, age20s, age30s, age40s, age50s, age60p);
+                window.AgeChart1(ageU18, age20s, age30s, age40s, age50s, age60p,memberageband);
             }
             if (window.AgeChart2) {
-                window.AgeChart2(ageU18a, age20sa, age30sa, age40sa, age50sa, age60pa);
+                window.AgeChart2(ageU18a, age20sa, age30sa, age40sa, age50sa, age60pa,memberageband);
             }
 
             /* ========================= 

@@ -8,7 +8,7 @@ from member.models import Member, Individual
 from stats.stats import (
     get_stats1, get_stats2, get_stats3, get_stats4, get_stats5,
     get_stats6, get_stats7, get_stats8, get_stats9,
-    get_risk_analysis  
+    get_risk_analysis,get_age_group 
 )
 
 
@@ -37,6 +37,9 @@ def stats_home(request):
         (today.month, today.day) < (birth.month, birth.day)
     )
 
+    #나이대 계산 
+    age_group = get_age_group(age) 
+
     # 5. 선택된 산재(사고) 결정
     selected_individual = None
     industry = None
@@ -62,6 +65,7 @@ def stats_home(request):
             "member": member,
             "industry": None,
             "age": age,
+            "age_group": age_group,
             "individual_list": individual_list,
             "selected_individual": None,
             "summary1": None,
@@ -116,6 +120,7 @@ def stats_home(request):
         "member": member,
         "industry": industry,
         "age": age,
+        "age_group": age_group,
         "individual_list": individual_list,
         "selected_individual": selected_individual,
         "summary1": summary1,
