@@ -3,7 +3,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>산재지정의료기관 찾기</title>
+  <title>주변 산재지정의료기관 검색</title>
   <link rel="stylesheet" href="{% static 'CSS/hospital/hospital.css' %}">
 </head>
 <body data-hospital-api-url="{% url 'hospital_api' %}">
@@ -12,74 +12,76 @@
 
 <div class="search-box">
 
-  <!-- 위치 선택 -->
-  <div class="search-row">
-    <label class="search-label">위치선택:</label>
+  <!-- 1. 위치 선택 -->
+<div class="search-row">
+  <label class="search-label">위치선택:</label>
 
-    <button id="btn-home"
-            class="btn-location"
-            {% if HOME_LAT %}
-              data-lat="{{ HOME_LAT }}"
-              data-lng="{{ HOME_LNG }}"
-            {% else %}
-              disabled
-            {% endif %}>
-      집
-    </button>
+  <button id="btn-home" class="btn-location">집</button>
+  <button id="btn-work" class="btn-location">근무지</button>
 
-    <button id="btn-work"
-            class="btn-location"
-            {% if WORK_LAT %}
-              data-lat="{{ WORK_LAT }}"
-              data-lng="{{ WORK_LNG }}"
-            {% else %}
-              disabled
-            {% endif %}>
-      근무지
-    </button>
-
-    <button id="btn-accident"
-            class="btn-location"
-            {% if ACC_LAT %}
-              data-lat="{{ ACC_LAT }}"
-              data-lng="{{ ACC_LNG }}"
-            {% else %}
-              disabled
-            {% endif %}>
-      사고지역
-    </button>
+    <div class="accident-wrapper">
+      <div class="dropdown accident-dropdown">
+        <button id="btn-accident" type="button" class="btn-location">
+          사고지역 ▼
+        </button>
+        <div id="accidentMenu" class="dropdown-menu">
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- 안내 문구 -->
-  <div class="info-box">
-    집 / 근무지 / 사고지역 중 하나를 선택하면,
-    해당 위치를 기준으로 가까운 산재지정의료기관 Top 10을 보여줍니다.
-  </div>
+  <p class="search-help">
+    선택한 위치를 기준으로 가까운 산재지정의료기관을 찾아드립니다.
+  </p>
 
-  <!-- 정렬 -->
+  <!-- 3. 정렬 기준 선택 -->
   <div class="sort-row">
     <span class="sort-label">구분</span>
     <div class="dropdown sort-dropdown">
-      <button id="sortBtn" class="dropdown-btn">거리순 ▼</button>
+      <button id="sortBtn" type="button" class="dropdown-btn">
+        거리순 ▼
+      </button>
       <div id="sortMenu" class="dropdown-menu">
-        <div class="sort-option" data-sort="rating">평점순</div>
         <div class="sort-option" data-sort="distance">거리순</div>
+        <div class="sort-option" data-sort="rating">평점순</div>
         <div class="sort-option" data-sort="review">리뷰 많은 순</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 메시지/에러 표시 -->
+<!-- 2. 안내 텍스트 영역(이미지 2번 위치) -->
+<div class="notice-box">
+  <p class="notice-text">
+    근로복지공단이 지정한 협의기관으로, 산재치료비를 당사 근로자가 요양급여를 받을 수 있는 병원입니다.
+    산재보험 적용을 받으려면 산재지정의료기관을 이용해야 합니다.
+  </p>
+</div>
+
+<!-- 메시지 영역 -->
 <div id="hospital-message" class="hospital-message"></div>
 
-<!-- 리스트 -->
+<!-- 2. 병원 리스트 -->
 <div class="result-box">
-  <h3 class="result-title">주변 산재지정의료기관 Top 10</h3>
+  <h3 class="result-title">주변 산재지정의료기관</h3>
   <ul id="hospital-list" class="hospital-list"></ul>
 </div>
 
+<script>
+  window.HOSPITAL_CONTEXT = {
+    home: "{{ home_address|default:''|escapejs }}",
+    work: "{{ work_address|default:''|escapejs }}",
+    accidents: [
+      {% for a in accidents %}
+      {
+        id: "{{ a.id }}",
+        title: "{{ a.title|escapejs }}",
+        address: "{{ a.address|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  };
+</script>
 <script src="{% static 'js/hospital/hospital.js' %}"></script>
-
 </body>
 </html>

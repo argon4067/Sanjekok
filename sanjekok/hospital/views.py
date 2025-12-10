@@ -1,32 +1,26 @@
+# hospital/views.py
+
 from django.conf import settings
-from django.http import JsonResponse, Http404
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+from django.views.decorators.http import require_GET
 
-import math
 import requests
-from pyproj import Transformer
 
-from member.models import Member, Individual, Member_industry
+from member.models import Member, Individual
+from .models import Hospital  # t_hospital 테이블과 연결된 모델
 
-SAFEMAP_HOSPITAL_URL = "https://www.safemap.go.kr/openapi2/IF_0025"
+
+# 카카오 주소 검색 API (병원 상세 페이지에서만 사용)
 KAKAO_GEOCODE_URL = "https://dapi.kakao.com/v2/local/search/address.json"
-TRANSFORMER = Transformer.from_crs("EPSG:5179", "EPSG:4326", always_xy=True)
-
-
-def haversine_km(lat1, lng1, lat2, lng2):
-    R = 6371.0
-    d_lat = math.radians(lat2 - lat1)
-    d_lng = math.radians(lng2 - lng1)
-    a = (math.sin(d_lat / 2) ** 2 +
-         math.cos(math.radians(lat1)) *
-         math.cos(math.radians(lat2)) *
-         math.sin(d_lng / 2) ** 2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return R * c
 
 
 def geocode_address(address: str):
+    """
+    카카오 주소 검색 API를 이용해 주소 → (lat, lng) 변환
+    (병원 상세 페이지용. 목록 조회에는 사용하지 않음)
+    """
     if not address:
         return None, None
 
@@ -34,7 +28,9 @@ def geocode_address(address: str):
     params = {"query": address}
 
     try:
-        resp = requests.get(KAKAO_GEOCODE_URL, headers=headers, params=params, timeout=5)
+        resp = requests.get(
+            KAKAO_GEOCODE_URL, headers=headers, params=params, timeout=5
+        )
         resp.raise_for_status()
         docs = resp.json().get("documents", [])
         if not docs:
@@ -48,275 +44,168 @@ def geocode_address(address: str):
         return None, None
 
 
-def get_current_member(request):
-    member_id = request.session.get("member_id")
-    if not member_id:
-        return None
+def _address_rank(base_addr: str, target_addr: str) -> int:
+    """
+    문자열 주소 기준으로 '가까움' 등급을 계산.
+    0: 같은 시/도 + 같은 구/군 + 같은 읍/면/동
+    1: 같은 시/도 + 같은 구/군
+    2: 같은 시/도만 같음
+    3: 나머지
+    """
+    if not base_addr or not target_addr:
+        return 3
 
-    try:
-        return Member.objects.get(member_id=member_id)
-    except Member.DoesNotExist:
-        return None
+    parts = base_addr.split()
+    si = parts[0] if len(parts) >= 1 else ""
+    gungu = parts[1] if len(parts) >= 2 else ""
+    dong = parts[2] if len(parts) >= 3 else ""
 
+    rank = 3
 
-def get_latest_accident_address(member: Member):
-    industries = member.industries.all()
-    accident = (
-        Individual.objects
-        .filter(member_industry__in=industries)
-        .order_by("-i_accident_date", "-accident_id")
-        .first()
-    )
-    if accident:
-        return accident.i_address
-    return None
+    if si and si in target_addr:
+        rank = 2
+        if gungu and gungu in target_addr:
+            rank = 1
+            if dong and dong in target_addr:
+                rank = 0
 
-
-def _fetch_all_items():
-    params = {
-        "serviceKey": settings.SAFEMAP_KEY,
-        "pageNo": 1,
-        "numOfRows": 10000,
-        "returnType": "json",
-    }
-    resp = requests.get(SAFEMAP_HOSPITAL_URL, params=params, timeout=10)
-    resp.raise_for_status()
-    data = resp.json()
-
-    body = data.get("body")
-    if body is None and "response" in data:
-        body = data["response"].get("body")
-
-    if body is None:
-        items = data.get("items") or data.get("item") or []
-    else:
-        items = body.get("items") or body.get("item") or []
-
-    if isinstance(items, dict):
-        items = [items]
-
-    return items
-
-
-def _extract_lat_lng(item):
-    lat = None
-    lng = None
-
-    for lat_key in ("latitude", "LAT", "lat", "Lat"):
-        if lat_key in item:
-            try:
-                lat = float(item[lat_key])
-                break
-            except (TypeError, ValueError):
-                pass
-
-    for lng_key in ("longitude", "LNG", "lng", "Lng", "lon"):
-        if lng_key in item:
-            try:
-                lng = float(item[lng_key])
-                break
-            except (TypeError, ValueError):
-                pass
-
-    if lat is not None and lng is not None:
-        return lat, lng
-
-    try:
-        x = float(item.get("x") or item.get("X"))
-        y = float(item.get("y") or item.get("Y"))
-        lng, lat = TRANSFORMER.transform(x, y)
-        return lat, lng
-    except (TypeError, ValueError):
-        return None, None
+    return rank
 
 
 def hospital_search(request):
-    member = get_current_member(request)
+    """
+    병원 검색 화면
+    - 세션의 member_id 로 Member 조회
+    - 집/근무지/사고목록(여러 건)을 템플릿에 내려보냄
+    """
+    home_address = ""
+    work_address = ""
+    accidents_ctx = []   # [{id, title(i_title), address}, ...]
 
-    home_lat = home_lng = None
-    work_lat = work_lng = None
-    acc_lat = acc_lng = None
+    member_id = request.session.get("member_id")
 
-    if member:
-        home_lat, home_lng = geocode_address(member.m_address)
-        work_lat, work_lng = geocode_address(member.m_jaddress)
+    if member_id:
+        try:
+            member = Member.objects.get(member_id=member_id)
 
-        accident_addr = get_latest_accident_address(member)
-        acc_lat, acc_lng = geocode_address(accident_addr)
+            # 집 / 근무지 주소
+            home_address = member.m_address or ""
+            work_address = member.m_jaddress or ""
+
+            # 회원이 속한 업종들의 모든 사고 (최신순)
+            industries = member.industries.all()
+            accidents = (
+                Individual.objects
+                .filter(member_industry__in=industries)
+                .order_by("-i_accident_date", "-accident_id")
+            )
+
+            for acc in accidents:
+                accidents_ctx.append({
+                    "id": acc.accident_id,
+                    "title": acc.i_title,        # ★ 산재제목 필드 그대로 사용
+                    "address": acc.i_address or "",
+                })
+
+        except Member.DoesNotExist:
+            pass
 
     ctx = {
-        "HOME_LAT": home_lat,
-        "HOME_LNG": home_lng,
-        "WORK_LAT": work_lat,
-        "WORK_LNG": work_lng,
-        "ACC_LAT": acc_lat,
-        "ACC_LNG": acc_lng,
+        "home_address": home_address,
+        "work_address": work_address,
+        "accidents": accidents_ctx,   # ★ JS 에서 ctx.accidents 로 사용
     }
     return render(request, "hospital/hospital.html", ctx)
 
 
 def hospital_api(request):
     """
-    전국 산재 병원 전체(IF_0025)에서
-    집/근무지/사고지역 기준 가장 가까운 병원 Top10만 반환.
-    - Top10 후보는 항상 거리(distance_km) 기준으로 먼저 자른 뒤
-      sort 파라미터(distance/rating/review)에 따라 Top10 안에서만 정렬.
+    기준 주소(addr)와 t_hospital의 h_address 를 문자열로 비교해서
+    '가까운 순(행정구 단위)' Top10을 반환.
     """
-    try:
-        base_lat = float(request.GET.get("lat"))
-        base_lng = float(request.GET.get("lng"))
-    except (TypeError, ValueError):
-        return JsonResponse({"error": "lat, lng 파라미터가 필요합니다."}, status=400)
-
+    base_addr = (request.GET.get("addr") or "").strip()
     sort = request.GET.get("sort", "distance")
 
-    try:
-        items = _fetch_all_items()
-    except Exception as e:
-        return JsonResponse({"error": f"SAFEMAP 병원 API 호출 실패: {e}"}, status=500)
-
     hospitals = []
-    for it in items:
-        lat, lng = _extract_lat_lng(it)
-        if lat is None or lng is None:
-            continue
-
-        distance = haversine_km(base_lat, base_lng, lat, lng)
-
-        objt_id = str(
-            it.get("objt_id")
-            or it.get("OBJT_ID")
-            or it.get("hosp_id")
-            or it.get("HOSP_ID")
-            or ""
-        )
-
-        name = (
-            it.get("fclty_nm")
-            or it.get("FCLTY_NM")
-            or it.get("hname")
-            or it.get("HNAME")
-            or it.get("yadmNm")
-            or it.get("YADM_NM")
-        )
-
-        address = (
-            it.get("adres")
-            or it.get("ADRES")
-            or it.get("addr")
-            or it.get("ADDR")
-        )
-
-        road_address = (
-            it.get("rn_adres")
-            or it.get("RN_ADRES")
-            or it.get("road_addr")
-            or it.get("ROAD_ADDR")
-        )
-
-        tel = (
-            it.get("telno")
-            or it.get("TELNO")
-            or it.get("tel")
-            or it.get("TEL")
-        )
-
-        # 실제 평점/리뷰 데이터가 없으면 0으로 기본값
-        rating = float(it.get("rating", 0.0))
-        review_count = int(it.get("review_count", 0))
+    for h in Hospital.objects.all():
+        addr = h.h_address or ""
+        rank = _address_rank(base_addr, addr)
 
         hospitals.append({
-            "id": objt_id,
-            "name": name,
-            "address": address,
-            "road_address": road_address,
-            "tel": tel,
-            "lat": lat,
-            "lng": lng,
-            "distance_km": round(distance, 2),
-            "rating": rating,
-            "review_count": review_count,
-            "detail_url": reverse("hospital_detail", args=[objt_id]),
+            "id": h.id,
+            "name": h.h_hospital_name,
+            "address": addr,
+            "road_address": addr,
+            "tel": h.h_phone_number,
+            "addr_rank": rank,   # 정렬용
+            "rating": 0.0,       # 형식만 유지
+            "review_count": 0,
+            "detail_url": reverse("hospital_detail", args=[h.id]),
         })
 
-    # 1단계: 전국 기준으로 "거리순" 정렬 후 Top10 추출
-    hospitals.sort(key=lambda h: h["distance_km"])
+    # 1단계: 주소 랭크 + 주소 문자열 기준 정렬
+    hospitals.sort(key=lambda h: (h["addr_rank"], h["address"]))
     top10 = hospitals[:10]
 
-    # 2단계: 그 Top10 안에서만 정렬 옵션 적용
+    # 2단계: 정렬 옵션 (rating/review 는 현재 0이므로 형식상만)
     if sort == "rating":
-        top10.sort(key=lambda h: (-h["rating"], h["distance_km"]))
+        top10.sort(key=lambda h: (-h["rating"], h["addr_rank"], h["address"]))
     elif sort == "review":
-        top10.sort(key=lambda h: (-h["review_count"], h["distance_km"]))
-    # sort == distance 인 경우에는 이미 거리순이라 추가 정렬 불필요
+        top10.sort(key=lambda h: (-h["review_count"], h["addr_rank"], h["address"]))
 
-    return JsonResponse({"hospitals": top10})
+    # 프론트에 보내는 필드만 추려서 응답
+    result = []
+    for h in top10:
+        result.append({
+            "id": h["id"],
+            "name": h["name"],
+            "address": h["address"],
+            "road_address": h["road_address"],
+            "tel": h["tel"],
+            "detail_url": h["detail_url"],
+        })
+
+    return JsonResponse({"hospitals": result})
 
 
-def hospital_detail(request, objt_id: str):
-    try:
-        items = _fetch_all_items()
-    except Exception as e:
-        raise Http404(f"SAFEMAP 병원 API 호출 실패: {e}")
-
-    target = None
-    for it in items:
-        cur_id = str(
-            it.get("objt_id")
-            or it.get("OBJT_ID")
-            or it.get("hosp_id")
-            or it.get("HOSP_ID")
-            or ""
-        )
-        if cur_id == objt_id:
-            target = it
-            break
-
-    if not target:
-        raise Http404("해당 병원을 찾을 수 없습니다.")
-
-    lat, lng = _extract_lat_lng(target)
-    if lat is None or lng is None:
-        raise Http404("병원 좌표 정보를 찾을 수 없습니다.")
-
-    name = (
-        target.get("fclty_nm")
-        or target.get("FCLTY_NM")
-        or target.get("hname")
-        or target.get("HNAME")
-        or target.get("yadmNm")
-        or target.get("YADM_NM")
-    )
-
-    address = (
-        target.get("adres")
-        or target.get("ADRES")
-        or target.get("addr")
-        or target.get("ADDR")
-    )
-
-    road_address = (
-        target.get("rn_adres")
-        or target.get("RN_ADRES")
-        or target.get("road_addr")
-        or target.get("ROAD_ADDR")
-    )
-
-    tel = (
-        target.get("telno")
-        or target.get("TELNO")
-        or target.get("tel")
-        or target.get("TEL")
-    )
+def hospital_detail(request, hospital_id: int):
+    """
+    단일 병원 상세 정보
+    - t_hospital 에서 병원 1개 조회 후 주소를 지오코딩해서 지도 표시용 lat/lng 전달
+    """
+    hospital = get_object_or_404(Hospital, pk=hospital_id)
+    lat, lng = geocode_address(hospital.h_address)
 
     context = {
         "KAKAO_KEY": settings.KAKAO_KEY,
-        "objt_id": objt_id,
-        "name": name,
-        "address": address,
-        "road_address": road_address,
-        "tel": tel,
+        "hospital_id": hospital.id,
+        "name": hospital.h_hospital_name,
+        "address": hospital.h_address,
+        "road_address": hospital.h_address,
+        "tel": hospital.h_phone_number,
         "lat": lat,
         "lng": lng,
     }
     return render(request, "hospital/hospital_detail.html", context)
+
+
+@require_GET
+def hospital_geocode(request):
+    """
+    필요하다면 사용할 수 있는 지오코딩 API (현재 목록에서는 사용하지 않음).
+    """
+    query = request.GET.get("query")
+    if not query:
+        return JsonResponse({"documents": []})
+
+    headers = {"Authorization": f"KakaoAK {settings.KAKAO_REST_KEY}"}
+    params = {"query": query}
+
+    try:
+        resp = requests.get(
+            KAKAO_GEOCODE_URL, headers=headers, params=params, timeout=5
+        )
+        resp.raise_for_status()
+        return JsonResponse(resp.json())
+    except requests.RequestException as e:
+        return JsonResponse({"documents": [], "error": str(e)}, status=500)
