@@ -12,14 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     borderWidth: 2,
                     tension: 0.3,
                     pointRadius: 5
-                },
-                {
-                    label: '전체 산재 등록 수',
-                    data: Array(DAYS.length).fill(TOTAL_INDIVIDUAL), // 고정값을 가로로 뿌림
-                    borderWidth: 2,
-                    borderDash: [5, 5],   // 점선 (구분용)
-                    tension: 0.3,
-                    pointRadius: 5
                 }
             ]
         },
@@ -28,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
             plugins: {
                 title: {
                     display: true,
-                    text: '월별 신규가입 & 전체 산재 등록 수',
+                    text: '월별 신규가입',
                     font: { size: 20 }
                 },
                 legend: { display: true }

@@ -42,7 +42,7 @@ def dash(request):
 
 
     # 오늘 신규 가입
-    today = date.today()  # timezone 사용 안함
+    today = date.today()
     days_ago = today - timedelta(days=6)
 
     new_members_today = Member.objects.filter(
@@ -51,7 +51,7 @@ def dash(request):
 
 	# 전체 산재 수
     total_individual = Individual.objects.count()
-
+    
     #  전체 리뷰수
 
     review_count = Review.objects.count()
