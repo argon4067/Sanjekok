@@ -4,10 +4,11 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponseBadRequest
 from .models import Member, Individual, Member_industry
 from .forms import Step1MemberForm, Step2MemberForm
-from .decorators import login_required
+from .decorators import login_required, mypage_auth_required
 from . import services
 from django.conf import settings
 import requests
+import urllib.parse
 # Create your views here.
 
 # 회원가입 1단계
@@ -107,7 +108,7 @@ def login(request):
             return render(request, "member/member_login.html")
 
         request.session['member_id'] = int(member.member_id)
-        request.session['member_username'] = member.m_username
+        request.session['member_name'] = member.m_name
         request.session['member_provider'] = member.m_provider
 
         messages.success(request, f"{member.m_name}님 환영합니다!")
@@ -138,7 +139,7 @@ def kakao_callback(request):
     elif result['status'] == 'login':
         user = result['user']
         request.session['member_id'] = int(user.member_id)
-        request.session['member_username'] = user.m_username
+        request.session['member_name'] = user.m_name
         request.session['member_provider'] = user.m_provider
         messages.success(request, f"{user.m_name}님 환영합니다!")
         return redirect("Main:main")
@@ -147,7 +148,39 @@ def kakao_callback(request):
         request.session['social_signup_data'] = result['signup_data']
         return redirect('Member:registers')
 
+# 네이버 로그인
+def naver_login(request):
+    base_url = "https://nid.naver.com/oauth2.0/authorize"
+    params = {
+        "response_type": "code",
+        "client_id": settings.NAVER_CLIENT_ID,
+        "redirect_uri": settings.NAVER_REDIRECT_URI,
+        "state": "RANDOM_STATE_STRING",
+    }
+    return redirect(f"{base_url}?{urllib.parse.urlencode(params)}")
 
+# 네이버 로그인 콜백
+def naver_callback(request):
+    code = request.GET.get("code")
+    state = request.GET.get("state")
+
+    result = services.handle_naver_login(code, state)
+
+    if result['status'] == 'error':
+        messages.error(request, f"네이버 로그인 실패: {result['message']}")
+        return redirect("Member:login")
+
+    elif result['status'] == 'login':
+        user = result['user']
+        request.session['member_id'] = int(user.member_id)
+        request.session['member_name'] = user.m_name
+        request.session['member_provider'] = user.m_provider
+        messages.success(request, f"{user.m_name}님 환영합니다!")
+        return redirect("Main:main")
+
+    elif result['status'] == 'register':
+        request.session['social_signup_data'] = result['signup_data']
+        return redirect("Member:registers")
 
 # 아이디 중복 확인
 def check_username(request):
@@ -162,18 +195,24 @@ def complete(request):
 
 # 마이페이지 - 비밀번호 확인
 @login_required
-def mypage(request):
+def mypage_check(request):
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)
 
-    # 소셜 로그인 사용자는 비밀번호 확인 없이 바로 프로필 페이지로 이동
+    # 소셜 로그인 사용자는 이 페이지에 접근할 이유가 없음
     if member.m_provider != 'local':
+        request.session['mypage_authorized'] = True
         return redirect("Member:mypage_profile")
 
     if request.method == "POST":
         password = request.POST.get("m_password1")
 
         if check_password(password, member.m_password):
+            request.session['mypage_authorized'] = True
+            # 원래 가려던 URL이 있으면 거기로 리디렉션
+            next_url = request.session.pop('next_url', None)
+            if next_url:
+                return redirect(next_url)
             return redirect("Member:mypage_profile")
 
         return render(request, 'member/mypage_checked.html', {'member': member, 'error': '비밀번호가 일치하지 않습니다.'})
@@ -181,7 +220,7 @@ def mypage(request):
     return render(request, 'member/mypage_checked.html', {'member': member})
 
 # 마이페이지 - 프로필
-@login_required
+@mypage_auth_required
 def mypage_profile(request):
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)
@@ -190,7 +229,7 @@ def mypage_profile(request):
 
 
 # 마이페이지 - 프로필 수정
-@login_required
+@mypage_auth_required
 def mypage_profile_modify(request):
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)
@@ -217,7 +256,7 @@ def mypage_profile_modify(request):
         return render(request, 'member/mypage_profile_modify.html', context)
     
 # 마이페이지 - 산재 관리
-@login_required
+@mypage_auth_required
 def mypage_individual_list(request):
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)
@@ -227,7 +266,7 @@ def mypage_individual_list(request):
     return render(request, 'member/mypage_individual_list.html', {'member': member, 'individuals': individuals})
 
 # 마이페이지 - 산재 추가
-@login_required
+@mypage_auth_required
 def mypage_individual_add(request):
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)
@@ -261,12 +300,15 @@ def mypage_individual_add(request):
 
 
 # 마이페이지 - 산재 삭제
-@login_required
+@mypage_auth_required
 def mypage_individual_delete(request, individual_id):
     member_id = request.session.get('member_id')
     individual = get_object_or_404(Individual, accident_id=individual_id)
     
-    if individual.member_industry.member.member_id != member_id:
+    try:
+        # 해당 산재 정보가 현재 로그인한 사용자의 것인지 확인
+        Member_industry.objects.get(member=member_id, industries__accident_id=individual_id)
+    except Member_industry.DoesNotExist:
         messages.error(request, "삭제할 권한이 없습니다.")
         return redirect('Member:mypage_individual_list')
 
@@ -278,7 +320,7 @@ def mypage_individual_delete(request, individual_id):
 
 
 # 마이페이지 - 산재 다중 삭제
-@login_required
+@mypage_auth_required
 def mypage_individual_bulk_delete(request):
     member_id = request.session.get('member_id')
 
@@ -303,14 +345,14 @@ def mypage_individual_bulk_delete(request):
 @login_required
 def logout(request):
     member_id = request.session.get('member_id')
-    provider = 'local' # Default provider
+    provider = 'local' 
 
     if member_id:
         try:
             member = Member.objects.get(member_id=member_id)
             provider = member.m_provider
         except Member.DoesNotExist:
-            pass # Member not found, proceed with default logout
+            pass 
 
     # 세션 데이터를 삭제하여 우리 앱에서 로그아웃
     request.session.flush()
@@ -327,12 +369,17 @@ def logout(request):
             f"&logout_redirect_uri={logout_redirect_uri}"
         )
         return redirect(kakao_logout_url)
+    
+    # --- 네이버 로그아웃 ---
+    if provider == 'naver':
+        # 네이버는 서버 API 로그아웃 없음 → 로그인 페이지 세션만 끊음
+        return redirect("Main:main")
 
     # 로컬 사용자는 메인 페이지로 리디렉션
     return redirect("Main:main")
 
 # 마이페이지 - 비밀번호 변경
-@login_required
+@mypage_auth_required
 def mypage_password_change(request):
     if request.session.get('member_provider') != 'local':
         messages.error(request, "소셜 로그인 사용자는 비밀번호를 변경할 수 없습니다.")
@@ -367,7 +414,7 @@ def mypage_password_change(request):
 
 
 # 마이페이지 - 회원 탈퇴
-@login_required
+@mypage_auth_required
 def mypage_withdrawal(request):
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)
@@ -381,4 +428,3 @@ def mypage_withdrawal(request):
         return redirect("Main:main")
 
     return render(request, 'member/mypage_withdrawal.html', {'member': member})
-
