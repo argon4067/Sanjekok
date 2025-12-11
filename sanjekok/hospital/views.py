@@ -173,6 +173,12 @@ def calc_distance_km(lat1, lng1, lat2, lng2):
 
     return R * c
 
+def _or_dash(value):
+    """값이 없거나 공백이면 '-' 로 치환"""
+    if value is None:
+        return "-"
+    s = str(value).strip()
+    return s if s else "-"
 
 def ensure_hospital_coords(hospital: Hospital):
     """
@@ -411,10 +417,16 @@ def hospital_detail(request, hospital_id: int):
         "lat": lat,
         "lng": lng,
 
-        # 상단 우측에 쓸 값들
-        "distance_km": distance_km,  # 예: 0.8 (실패 시 None)
-        "avg_rating": avg_rating,    # 리뷰 평균 (없으면 0.0)
+        "distance_km": distance_km,
+        "avg_rating": avg_rating,
         "review_count": review_count,
+
+        # 기본정보용 값들 (없으면 '-')
+        "hospital_type": _or_dash(getattr(hospital, "h_hospital_type", None)),  # 종별
+        "hospital_rc": _or_dash(getattr(hospital, "h_rc", None)),               # 부가기능
+        "hospital_rc_info": _or_dash(getattr(hospital, "h_rc_info", None)),     # 재활인증(만료일)
+        "hospital_tr": _or_dash(getattr(hospital, "h_tr", None)),               # 진료제한(기간)
+        "hospital_ei": _or_dash(getattr(hospital, "h_ei", None)),               # 의료기관평가(평가연도)
     }
     return render(request, "hospital/hospital_detail.html", context)
 
