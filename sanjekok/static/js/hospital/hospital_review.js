@@ -74,7 +74,6 @@
     });
   });
 
-  // 리뷰 DOM 생성
   function createReviewItemDOM(item) {
     const wrapper = document.createElement("div");
     wrapper.className = "review-item";
@@ -112,38 +111,13 @@
     bodyP.className = "review-body";
     bodyP.textContent = item.contents;
 
-    // 평점 표시 (반칸 지원)
+    // 평점 표시 (★/☆) – 반칸은 지금은 숫자로만 사용 중이면 그대로 둬도 됨
     const ratingP = document.createElement("p");
-    ratingP.className = "review-rating-line";
-
-    const labelSpan = document.createElement("span");
-    labelSpan.textContent = "평점: ";
-    ratingP.appendChild(labelSpan);
-
-    // item.rating : 1~10 → 별 5개 (반칸 포함)
-    for (let i = 1; i <= 5; i++) {
-      const starSpan = document.createElement("span");
-      starSpan.classList.add("review-star");
-      starSpan.textContent = "★";
-
-      const fullValue = i * 2;       // 2,4,6,8,10
-      const halfValue = fullValue - 1; // 1,3,5,7,9
-
-      if (item.rating >= fullValue) {
-        starSpan.classList.add("full");
-      } else if (item.rating === halfValue) {
-        starSpan.classList.add("half");
-      } else {
-        starSpan.classList.add("empty");
-      }
-
-      ratingP.appendChild(starSpan);
-    }
-
-    const scoreSpan = document.createElement("span");
-    scoreSpan.className = "review-score-text";
-    scoreSpan.textContent = ` (${item.rating})`;
-    ratingP.appendChild(scoreSpan);
+    const starCount = Math.round(item.rating / 2); // 0~5
+    let stars = "";
+    for (let i = 0; i < starCount; i++) stars += "★";
+    for (let i = starCount; i < 5; i++) stars += "☆";
+    ratingP.textContent = `평점: ${stars} (${item.rating})`;
 
     wrapper.appendChild(header);
     wrapper.appendChild(ratingP);
@@ -209,7 +183,9 @@
     }
   }
 
-  // 리뷰 등록
+  /* ======================
+   * 리뷰 등록: 성공 후 페이지 새로고침
+   * ====================== */
   if (formEl) {
     formEl.addEventListener("submit", async function (e) {
       e.preventDefault();
@@ -239,17 +215,10 @@
         });
 
         if (!resp.ok) throw new Error("HTTP " + resp.status);
-        const data = await resp.json();
-        const item = data;
+        await resp.json();  // 저장은 이미 끝났으므로 내용은 쓰지 않아도 됨
 
-        if (item) {
-          const dom = createReviewItemDOM(item);
-          listRoot.insertBefore(dom, listRoot.firstChild);
-        }
-
-        textEl.value = "";
-        currentRating = 0;
-        renderStars();
+        // 새 리뷰가 반영된 평균 평점/리뷰 수를 보기 위해 전체 새로고침
+        window.location.reload();
       } catch (error) {
         console.error("리뷰 등록 실패:", error);
       }
