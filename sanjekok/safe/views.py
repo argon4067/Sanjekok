@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
+from .decorators import login_required
+
 from .crawler.run import crawl_safe
 from .models import Safe
-
-from .decorators import login_required
 
 # 1) 관리자용: 수동 크롤링 실행
 
