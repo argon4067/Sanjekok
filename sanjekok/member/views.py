@@ -11,6 +11,24 @@ import requests
 import urllib.parse
 # Create your views here.
 
+# 약관 동의
+def agree(request):
+    return render(request, 'member/member_agree.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 회원가입 1단계
 def registerf(request):
 

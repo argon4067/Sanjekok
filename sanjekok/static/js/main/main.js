@@ -51,7 +51,10 @@ function toggleMenu() {
 
     // 페이지 로드 시 연령별 차트 표시
     window.onload = function() {
-        showChart('age');
+        // 'mainChart'라는 ID를 가진 캔버스 요소가 존재하는 페이지에서만 차트를 그립니다.
+        if (document.getElementById('mainChart')) {
+            showChart('age');
+        }
     };
 
 document.addEventListener('DOMContentLoaded', function() {
