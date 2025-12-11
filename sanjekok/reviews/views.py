@@ -24,7 +24,7 @@ def _get_login_member(request):
 def _mask_member_id(member_id: str) -> str:
     """
     아이디 뒤 4글자를 **** 로 마스킹.
-    예) abcdefg -> abc***  (길이 4 이하이면 전부 *)
+    예) abcdefg -> abc****  (길이 4 이하이면 전부 *로 표시)
     """
     if not member_id:
         return ""
@@ -43,7 +43,7 @@ def review_create(request):
       - rating      : 1~10 정수 (별 5개로 표현)
       - contents    : 리뷰 내용
     세션:
-      - member_id   : 로그인한 회원 아이디 (세션에 저장돼 있다고 가정)
+      - member_id   : 로그인한 회원 PK (세션에 저장돼 있다고 가정)
     """
     member = _get_login_member(request)
     if not member:
@@ -76,10 +76,13 @@ def review_create(request):
         # r_created_at 은 auto_now_add 로 자동 저장된다고 가정
     )
 
+    # 화면에 보여줄 아이디: 로그인 ID(m_username) 기준, 없으면 PK 문자열 사용
+    raw_id = member.m_username or str(member.member_id)
+
     return JsonResponse(
         {
             "id": review.id,
-            "writer": _mask_member_id(member.member_id),
+            "writer": _mask_member_id(raw_id),
             "contents": review.r_contents,
             "rating": review.r_rating,
             "created_at": review.r_created_at.strftime("%Y-%m-%d"),
@@ -133,28 +136,36 @@ def review_list(request, hospital_id: int):
         .order_by("-r_created_at")
     )
     total = qs.count()
-    reviews = list(qs[offset : offset + size])
+    reviews = list(qs[offset: offset + size])
 
     login_member = _get_login_member(request)
-    login_member_id = login_member.member_id if login_member else None
+    login_member_pk = login_member.member_id if login_member else None  # PK
 
     data = []
     for r in reviews:
-        mid = r.member.member_id if r.member else ""
+        # 표시용 아이디: m_username이 있으면 그걸, 없으면 PK 문자열
+        if r.member:
+            raw_id = r.member.m_username or str(r.member.member_id)
+            writer_masked = _mask_member_id(raw_id)
+        else:
+            raw_id = ""
+            writer_masked = ""
+
         data.append(
             {
                 "id": r.id,
-                "writer": _mask_member_id(mid),
+                "writer": writer_masked,
                 "contents": r.r_contents,
                 "rating": r.r_rating,
                 "created_at": r.r_created_at.strftime("%Y-%m-%d"),
-                "is_owner": (login_member_id == mid),
+                "is_owner": (login_member_pk == r.member_id),
             }
         )
 
     has_more = offset + len(reviews) < total
 
     return JsonResponse({"reviews": data, "has_more": has_more})
+
 
 @require_POST
 def review_delete(request):
@@ -176,7 +187,7 @@ def review_delete(request):
     except (Review.DoesNotExist, ValueError):
         return JsonResponse({"error": "리뷰를 찾을 수 없습니다."}, status=404)
 
-    # 자신의 리뷰인지 확인
+    # 자신의 리뷰인지 확인 (PK 비교)
     if not review.member or review.member.member_id != member.member_id:
         return JsonResponse({"error": "삭제 권한이 없습니다."}, status=403)
 

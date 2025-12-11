@@ -34,6 +34,16 @@
   }
   const csrftoken = getCookie("csrftoken");
 
+  // 아이디 뒤 4글자 마스킹 (len <= 4 이면 전부 *)
+  function maskMemberId(id) {
+    if (!id) return "";
+    const s = String(id);
+    if (s.length <= 4) {
+      return "*".repeat(s.length);
+    }
+    return s.slice(0, -4) + "****";
+  }
+
   // 별 표시 (0~10점, 5개 별 / 반칸)
   function renderStars() {
     starEls.forEach((el, idx) => {
@@ -84,7 +94,10 @@
 
     const writerSpan = document.createElement("span");
     writerSpan.className = "review-writer";
-    writerSpan.textContent = `작성자ID: ${item.writer}`;
+
+    // 여기서 아이디 마스킹 적용
+    const maskedWriter = maskMemberId(item.writer || "");
+    writerSpan.textContent = `작성자ID: ${maskedWriter}`;
 
     const rightBox = document.createElement("div");
 
@@ -111,7 +124,7 @@
     bodyP.className = "review-body";
     bodyP.textContent = item.contents;
 
-    // 평점 표시 (★/☆) – 반칸은 지금은 숫자로만 사용 중이면 그대로 둬도 됨
+    // 평점 표시 (★/☆) – 반칸은 숫자로만 사용 중이면 그대로 둬도 됨
     const ratingP = document.createElement("p");
     ratingP.className = "review-rating-line";
 
