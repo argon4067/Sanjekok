@@ -37,49 +37,48 @@
     {% endif %}
     
     <header class="header">
-        <div class="Logoimg">
-            <a href="{% url 'Main:main' %}">
-                <img src="{% static 'img/LOGO1.png' %}" alt="산재콕 로고" class="logo-img">
-            </a>
+        <div class="header-container">
+            <!-- 왼쪽: 로고 -->
+            <div class="Logoimg">
+                <a href="{% url 'Main:main' %}">
+                    <img src="{% static 'img/LOGO1.png' %}" alt="산재콕 로고">
+                </a>
+            </div>
+
+            <!-- 가운데: 메뉴 -->
+            <nav class="menu">
+                <ul>
+                    <li>
+                        <a href="#">소개 ▾</a>
+                        <ul class="submenu">
+                            <li><a href="{% url 'Main:service' %}">서비스 소개</a></li>
+                            <li><a href="{% url 'Main:tech' %}">핵심 기능</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'Stats:stats_home' %}">산재 통계</a></li>
+                    <li><a href="#">지도 검색 ▾</a>
+                        <ul class="submenu">
+                            <li><a href="#">주변 산재 검색</a></li>
+                            <li><a href="#">주변 병원 검색</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'Safe:safe_main' %}">안전 자료실</a></li>
+                </ul>
+            </nav>
+
+            <!-- 오른쪽: 로그인 / 회원가입 -->
+            <button class="hamburger" onclick="toggleMenu()" aria-label="메뉴 열기">☰</button>
+            <div class="auth-buttons">
+                {% if request.session.member_id %}
+                    <span>{{ request.session.member_name }}님</span>
+                    <a href="{% url 'Member:mypage_profile' %}" class="btn btn-outline-dark">마이페이지</a>
+                    <a href="{% url 'Member:logout' %}" class="btn btn-dark">로그아웃</a>
+                {% else %}
+                    <a href="{% url 'Member:login' %}" class="btn btn-outline-dark">로그인</a>
+                    <a href="{% url 'Member:registerf' %}" class="btn btn-dark">회원가입</a>
+                {% endif %}
+            </div>
         </div>
-        <div class="loginbox">
-            {% if request.session.member_id %}
-                <span>{{ request.session.member_name }}님</span>
-                <a href="{% url 'Member:mypage_profile' %}">마이페이지</a>
-                /
-                <a href="{% url 'Member:logout' %}" id="logout-link">로그아웃</a>
-            {% else %}
-                <a href="{% url 'Member:login' %}">로그인</a>
-                /
-                <a href="{% url 'Member:registerf' %}">회원가입</a>
-            {% endif %}
-        </div>
-
-        <hr style="opacity: 10%;">
-        <button class="hamburger" onclick="toggleMenu()" aria-label="메뉴 열기">☰</button>
-        <nav class="menu" id="menu">
-            <ul>
-                <li>
-                    <a href="#">소개</a>
-                    <ul class="submenu">
-                        <li><a href="{% url 'Main:service' %}">서비스 소개</a></li>
-                        <li><a href="{% url 'Main:tech' %}">핵심 기능</a></li>
-                    </ul>
-                </li>
-
-               <li><a href="{% url 'Stats:stats_home' %}">산재 통계</a></li>
-
-                <li>
-                    <a href="#">지도 검색</a>
-                    <ul class="submenu">
-                        <li><a href="#">주변 산재 검색</a></li>
-                        <li><a href="#">주변 병원 검색</a></li>
-                    </ul>
-                </li>
-
-                <li><a href="{% url 'Safe:safe_main' %}">안전 자료실</a></li>
-            </ul>
-        </nav>
     </header>
 
     {% block contents %}

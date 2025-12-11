@@ -2,47 +2,49 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-    background: #f8f9fa;
+    background: #ffffff;
     color: #222;
 }
-/*로고 이미지*/
-header .Logoimg {
-    background-repeat: no-repeat;
-    width: 15px;
-    height: 15px;
-}
-
-
-/* 로그인 영역 */
-header .loginbox {
-    font-size: 15px;
-    margin-left: 10px;
-    padding-top: 8px;
-}
-
-header .loginbox a {
-    text-decoration: none;
-    color: #555;
-}
-
-header .loginbox a:hover {
-    color: #000;
-}
-
-/* 상단 메뉴 */
-header .menu {
-    font-size: 1rem;
-    display: flex;
-    justify-content: center;
-    padding: 12px 0;
-    background: #ffffff;
+/* ---------------------- */
+/* 기본 헤더 스타일       */
+/* ---------------------- */
+.header {
+    background-color: #fefefe;
     border-bottom: 1px solid #e5e5e5;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.menu > ul {
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+}
+
+/* ---------------------- */
+/* 로고 이미지             */
+/* ---------------------- */
+.Logoimg img {
+    height: 100px;
+    width: 170px;
+    cursor: pointer;
+}
+
+
+/* ---------------------- */
+/* 메뉴 기본 스타일        */
+/* ---------------------- */
+.menu ul {
     display: flex;
     list-style: none;
-    gap: 50px;
+    gap: 40px;
+    margin: 0;
     padding: 0;
 }
 
@@ -52,48 +54,58 @@ header .menu {
 
 .menu a {
     text-decoration: none;
-    color: #333;
+    color: #222;
     font-weight: 500;
-    padding: 6px 8px;
+    font-size: 15px;
+    transition: color 0.2s;
 }
 
 .menu a:hover {
     color: #0d6efd;
 }
 
-/* 서브메뉴 */
+/* ---------------------- */
+/* 드롭다운(서브메뉴)      */
+/* ---------------------- */
 .submenu {
-    top: 100%;
-    left: 0;
     position: absolute;
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    padding: 8px 0;
-    visibility: hidden;
-    opacity: 0;
-    transition: 0.25s;
-    z-index: 50;
+    top: 110%;
+    left: 0;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     list-style: none;
+    padding: 10px 0;
+    min-width: 160px;
+
+    /* hover 전엔 숨김 */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.25s ease;
 }
 
 .submenu li {
+    padding: 8px 20px;
     white-space: nowrap;
-    padding: 8px 16px;
 }
 
 .submenu li a {
-    color: #555;
+    color: #333;
+    font-size: 14px;
 }
 
 .submenu li a:hover {
     color: #0d6efd;
 }
 
-.menu ul li:hover .submenu {
-    visibility: visible;
+/* hover 시 부드럽게 나타남 */
+.menu li:hover .submenu {
     opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
+
 
 /* PC 메인 이미지 */
 main img {
