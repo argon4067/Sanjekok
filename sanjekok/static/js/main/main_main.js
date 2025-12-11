@@ -1,29 +1,22 @@
-function toggleMenu() {
-    const nav = document.getElementById("menu");
-    nav.classList.toggle("open");
-}
+let currentChart;
 
- let currentChart;
+function showChart(type) {
+    let labels = [];
+    let data = [];
 
-    function showChart(type) {
-        let labels = [];
-        let data = [];
-
-        if (type === 'age') {
-            labels = Object.keys(ageData);
-            data = Object.values(ageData);
-        } else if (type === 'gender') {
-            labels = Object.keys(genderData);
-            data = Object.values(genderData);
-        } else if (type === 'industry') {
-            labels = Object.keys(industryData);
-            data = Object.values(industryData);
-        }
-
+    if (type === 'age') {
+        labels = Object.keys(ageData);
+        data = Object.values(ageData);
+    } else if (type === 'gender') {
+        labels = Object.keys(genderData);
+        data = Object.values(genderData);
+    } else if (type === 'industry') {
+        labels = Object.keys(industryData);
+        data = Object.values(industryData);
+    }   
         if (currentChart) {
             currentChart.destroy();
-        }
-
+        }   
         const ctx = document.getElementById('mainChart').getContext('2d');
         currentChart = new Chart(ctx, {
             type: 'doughnut',  // 도넛 모양으로 변경
@@ -47,8 +40,7 @@ function toggleMenu() {
                 }
             }
         });
-    }
-
+    }   
     // 페이지 로드 시 연령별 차트 표시
     window.onload = function() {
         showChart('age');
