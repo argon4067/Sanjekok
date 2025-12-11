@@ -8,63 +8,67 @@
 <section class="hero">
     <div class="hero-overlay">
         <div class="hero-content">
-            <h1>산업안전 정보의 허브</h1>
-            <p>산재 예방과 정보 제공의 최전선</p>
+            <h1>산재 예방과 정보 제공의 최전선</h1>
+            <p>산업재해 정보를 한눈에, 콕콕 짚어드립니다</p>
             <a href="{% url 'Main:service' %}" class="hero-btn">VIEW SERVICES</a>
         </div>
     </div>
 </section>
 
 <section class="stats-section">
-    <h2>산재 통계</h2>
-        <p style="text-align: right;"><a href="#" style="text-decoration: none;">View more</a></p>
-            <div class="chart" style="margin-bottom: 30px;">
-                <div class="chart-buttons">
-                    <button onclick="showChart('age')">연령별 통계</button>
-                    <button onclick="showChart('gender')">성별 통계</button>
-                    <button onclick="showChart('industry')">산업별 통계</button>
-                </div>
-            </div>
+        <h2>전국 산업재해 통계</h2>
 
-            <div id="chartArea" style="width: 400px; margin: 30px auto;">
-                <p>산출년도:2021년~2023년</p>
-                <canvas id="mainChart"></canvas>
+        <div class="chart">
+            <div class="chart-buttons">
+            <button onclick="showChart('age')">연령</button>
+            <button onclick="showChart('gender')">성별</button>
+            <button onclick="showChart('industry')">산업</button>
             </div>
+        </div>
+
+        <div id="chartArea">
+            <p>산출년도: 2021년~2023년</p>
+            <canvas id="mainChart"></canvas>
+        </div>
+
+        <!-- 기사 더보기 버튼 -->
+        <div class="stats-more">
+            <a href="{% url 'Stats:stats_home' %}" class="more-btn1">나만의 통계정보 보러가기 ▾</a>
+        </div>
 </section>
 
-
 <section class="news-section">
-  <div class="news-header">
-    <p class="subtitle">산업재해 예방 정보</p>
-    <h2>산재뉴스</h2>
-  </div>
-
-  <!-- 뉴스 카드 8개 -->
-  <div class="news-grid">
-    {% for news in list|slice:":4" %}
-    <article class="news-card">
-      <a href="{{ news.n_link }}" target="_blank">
-        <div class="news-thumb">
-          <img src="{{ news.n_image_url }}" alt="뉴스 이미지">
+        <div class="news-header">
+            <p class="subtitle">산업재해 예방 정보</p>
+            <h2>산재뉴스</h2>
         </div>
-      </a>
-      <div class="news-body">
-        <h3 class="news-title">
-          <a href="{{ news.n_link }}" target="_blank">{{ news.n_title }}</a>
-        </h3>
-        <div class="news-meta">
-          <span class="category">{{ news.n_writer }}</span>
-          <span class="date">| {{ news.n_created_at }}</span>
-        </div>
-      </div>
-    </article>
-    {% endfor %}
-  </div>
 
-  <!-- 기사 더보기 버튼 -->
-  <div class="news-more">
-    <a href="{% url 'News:news_list' %}" class="more-btn">기사 더보기 ▾</a>
-  </div>
+        
+        <div class="news-grid">
+            {% for news in list %}
+            <article class="news-card">
+                <a href="{{ news.n_link }}" target="_blank">
+                    <div class="news-thumb">
+                    <img src="{{ news.n_image_url }}" alt="뉴스 이미지">
+                    </div>
+                </a>
+                <div class="news-body">
+                    <h3 class="news-title">
+                    <a href="{{ news.n_link }}" target="_blank">{{ news.n_title }}</a>
+                    </h3>
+                    <div class="news-meta">
+                    <span class="category">{{ news.n_writer }}</span>
+                    <span class="date">| {{ news.n_created_at }}</span>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        <!-- 기사 더보기 버튼 -->
+        <div class="news-more">
+            <a href="{% url 'News:news_list' %}" class="more-btn2">기사 더보기 ▾</a>
+        </div>
 </section>
 
 
