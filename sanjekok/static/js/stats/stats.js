@@ -112,6 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
      * ========================= */
     periodButtons.forEach(btn => {
         btn.addEventListener("click", () => {
+
+        const hasInjury = visualArea ? visualArea.dataset.hasInjury === "1" : false;
+
+            // 1) 산재 정보 자체가 없는 경우
+            if (!hasInjury) {
+                alert("산재 정보가 없습니다. 마이페이지에서 산재 정보를 등록해주세요.");
+                window.location.href = "/member/mypage_individual_list/";
+                return;
+            }
+
             // 1) 산재를 아직 선택 안 했으면 막기
             if (!injurySelected) {
                 alert("먼저 '나의 산재'를 선택해주세요.");
