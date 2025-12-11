@@ -31,7 +31,7 @@ def main(request):
         if industry == "총계" or year < 2021 or year > 2023:
             continue
 
-        if age_group != "50~54세" or age_group != "55~59세" or age_group != "60세 이상":
+        if age_group != "50~54세" and age_group != "55~59세" and age_group != "60세 이상":
             continue
 
         if age_group not in age_total:
