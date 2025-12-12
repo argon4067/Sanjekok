@@ -11,8 +11,8 @@ class Member(models.Model):
     ]
 
     SEX_CHOICES = [
-        ('male', '남자'),
-        ('female', '여자'),
+        ('남성', '남성'),
+        ('여성', '여성'),
     ]
 
     m_sex = models.CharField(max_length=6, choices=SEX_CHOICES, verbose_name='성')
