@@ -1,12 +1,17 @@
 // static/JS/hospital/hospital_detail.js
 
 document.addEventListener("DOMContentLoaded", function () {
-  const body = document.body;
+  // body가 아니라, data-*가 붙어 있는 루트 div에서 읽기
+  const root = document.getElementById("hospital-detail-page");
+  if (!root) {
+    console.error("hospital-detail-page element not found.");
+    return;
+  }
 
-  const KAKAO_KEY = body.dataset.kakaoKey;
-  const LAT = parseFloat(body.dataset.lat || "0");
-  const LNG = parseFloat(body.dataset.lng || "0");
-  const HOSPITAL_NAME = body.dataset.hospitalName || "";
+  const KAKAO_KEY = root.dataset.kakaoKey;
+  const LAT = parseFloat(root.dataset.lat || "0");
+  const LNG = parseFloat(root.dataset.lng || "0");
+  const HOSPITAL_NAME = root.dataset.hospitalName || "";
 
   /* =======================
    * 1. 상단 평균 평점 별(반칸) 표시
@@ -54,14 +59,22 @@ document.addEventListener("DOMContentLoaded", function () {
   /* =======================
    * 2. 지도 표시 (카카오맵)
    * ======================= */
-  // 좌표가 없으면 지도만 생략 (위 별 표시에는 영향 없음)
-  if (!KAKAO_KEY || !LAT || !LNG) {
+  // 좌표나 키가 없으면 지도 생략
+  if (!KAKAO_KEY || isNaN(LAT) || isNaN(LNG) || (!LAT && !LNG)) {
+    console.warn("Map not rendered. KAKAO_KEY or coords missing.", {
+      KAKAO_KEY,
+      LAT,
+      LNG,
+    });
     return;
   }
 
   function initDetailMap() {
     const container = document.getElementById("detail-map");
-    if (!container) return;
+    if (!container) {
+      console.error("#detail-map element not found.");
+      return;
+    }
 
     const options = {
       center: new kakao.maps.LatLng(LAT, LNG),
