@@ -394,5 +394,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.RiskDiseasePieChart(riskDiseaseTop5);
             }
         });
+
+        if (injurySelected) {
+            const defaultBtn = document.querySelector('.period-btn[data-year="1"]');
+            if (defaultBtn) {
+                defaultBtn.click();
+            }
+        }
     });
 });

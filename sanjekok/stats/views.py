@@ -12,6 +12,52 @@ from stats.stats import (
 )
 
 
+INDUSTRY_TYPE2_TO_TYPE1 = {
+    # 광업
+    "석탄광업 및 채석업": "광업",
+    "석회석·금속·비금속광업 및 기타광업": "광업",
+
+    # 제조업
+    "식료품제조업": "제조업",
+    "섬유 및 섬유제품 제조업": "제조업",
+    "목재 및 종이제품 제조업": "제조업",
+    "출판·인쇄·제본업·":"제조업",
+    "화학 및 고무제품 제조업": "제조업",
+    "의약품·화장품·연탄·석유제품제조업": "제조업",
+    "기계가구·금속·비금속광물제품제조업": "제조업",
+    "금속제련업": "제조업",
+    "전기기계기구·정밀기구·전자제품제조업": "제조업",
+    "선박건조 및 수리업": "제조업",
+    "수제품 및 기타제품 조업": "제조업",
+
+    # 전기가스
+    "전기·가스·증기 및 수도사업": "전기·가스·증기 및 수도사업",
+
+    # 건설
+    "건설업": "건설업",
+
+    # 운수창고
+    "철도·항공·창고·운수관련서비스업": "운수·창고 및 통신업",
+    "육상 및 수상운수업": "운수·창고 및 통신업",
+    "통신업": "운수·창고 및 통신업",
+
+    # 기타
+    "임업": "기타",
+    "어업": "기타",
+    "농업": "기타",
+    "금융 및 보험업": "기타",
+    "시설관리및사업지원서비스업": "기타",
+    "해외파견자": "기타",
+    "전문·보건·교육·여가관련서비스업": "기타",
+    "도소매·음식·숙박업": "기타",
+    "부동산업 및 임대업": "기타",
+    "국가 및 지방자치단체의 사업": "기타",
+    "주한미군": "기타",
+    "기타의 각종사업": "기타",
+}
+
+
+
 def stats_home(request):
     # 1. 로그인 체크
     member_id = request.session.get('member_id')
@@ -82,16 +128,20 @@ def stats_home(request):
             "risk_analysis": None,
         })
 
+    industry_type2 = industry.i_industry_type2
+    
+    industry_type1_from_map = INDUSTRY_TYPE2_TO_TYPE1.get(industry_type2, None)
+
     # 6. 업종명 추출
-    industry_name1 = industry.i_industry_type2
-    industry_name2 = industry.i_industry_type1
-    industry_name3 = industry.i_industry_type1
-    industry_name4 = industry.i_industry_type2
-    industry_name5 = industry.i_industry_type2
-    industry_name6 = industry.i_industry_type2
-    industry_name7 = industry.i_industry_type2
-    industry_name8 = industry.i_industry_type2
-    industry_name9 = industry.i_industry_type2
+    industry_name1 = industry.i_industry_type2 # 재해율, 사망자율
+    industry_name2 = industry_type1_from_map# 성별 재해
+    industry_name3 = industry_type1_from_map # 성별 사망재해
+    industry_name4 = industry.i_industry_type2 # 연령대 재해
+    industry_name5 = industry.i_industry_type2 # 연령대 사망
+    industry_name6 = industry.i_industry_type2 # 발생형태
+    industry_name7 = industry.i_industry_type2 # 발생형태 사망
+    industry_name8 = industry.i_industry_type2 # 질병형태
+    industry_name9 = industry.i_industry_type2 # 질병형태 사망 
 
     # 7. 통계 계산
     summary1 = get_stats1(industry_name1)
