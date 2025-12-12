@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 import math
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote  # ✅ quote 추가
 
 import re
 import requests
@@ -24,28 +24,13 @@ from reviews.models import Review
 KAKAO_GEOCODE_URL = "https://dapi.kakao.com/v2/local/search/address.json"
 
 
+# ✅ 네이버 지도 검색 URL 생성
+def build_naver_map_search_url(name: str, address: str = "") -> str:
+    q = " ".join([x for x in [name.strip(), (address or "").strip()] if x]).strip()
+    return f"https://map.naver.com/v5/search/{quote(q)}"
+
+
 def geocode_address(address: str):
-    """
-    카카오 주소 검색 API를 이용해 주소 → (lat, lng) 변환
-
-    지저분한 주소 예:
-      - '대전 중구 계백로 1727 (오류동)'
-      - '인천광역시 서구 새오개로111번안길 32 2,3층'
-      - '경기 화성시 향남읍 발안양감로 187 4,5층 (센트럴프라자)'
-      - '경북 안동시 서후면 광평리 211-2'
-
-    처리 전략:
-      1) 괄호 안(동/빌딩명 등) 제거
-      2) 쉼표(,)를 공백으로 바꾸고
-         - '호', '층' 이 들어간 토큰(101호, 3층, 4,5층 등)은 제거
-      3) 정리된 문자열로 여러 쿼리를 만들어 순서대로 시도
-         - 첫 숫자까지 자른 형태 (도로명 + 건물번호)           → 최우선
-         - '시/도/특별시/광역시' 이후만 남긴 형태
-         - 전체 cleaned 문자열
-         - 괄호 제거 전 main
-         - 마지막으로 원본 raw
-      4) 숫자에 '-' 가 들어가면(211-2) 지번 앞부분(211)도 추가 시도
-    """
     if not address:
         return None, None
 
@@ -131,7 +116,7 @@ def geocode_address(address: str):
                 KAKAO_GEOCODE_URL,
                 headers=headers,
                 params={"query": q},
-                timeout=3,   # 타임아웃 살짝 줄임
+                timeout=3,
             )
             resp.raise_for_status()
             docs = resp.json().get("documents", [])
@@ -154,9 +139,6 @@ def geocode_address(address: str):
 
 
 def calc_distance_km(lat1, lng1, lat2, lng2):
-    """
-    두 좌표(위도/경도) 사이 거리를 km 단위로 계산 (하버사인 공식)
-    """
     if None in (lat1, lng1, lat2, lng2):
         return None
 
@@ -177,7 +159,6 @@ def calc_distance_km(lat1, lng1, lat2, lng2):
 
 
 def _or_dash(value):
-    """값이 없거나 공백이면 '-' 로 치환"""
     if value is None:
         return "-"
     s = str(value).strip()
@@ -185,11 +166,6 @@ def _or_dash(value):
 
 
 def ensure_hospital_coords(hospital: Hospital):
-    """
-    Hospital.h_lat/h_lng 에 좌표가 없으면 한 번만 지오코딩해서 DB에 저장하고,
-    (lat, lng)를 반환한다.
-    지오코딩 실패(None, None)인 경우 DB는 건드리지 않는다.
-    """
     if getattr(hospital, "h_lat", None) is not None and getattr(hospital, "h_lng", None) is not None:
         return hospital.h_lat, hospital.h_lng
 
@@ -378,10 +354,8 @@ def hospital_api(request):
         # 리뷰 많은 순, 같으면 거리 가까운 순
         top10.sort(key=lambda x: (-x["review_count"], dist_key(x)))
     else:
-        # distance 또는 기타 값이면 이미 거리순으로 정렬돼 있음
         pass
 
-    # 6) JSON 응답
     result = []
     for item in top10:
         h = item["hospital"]
@@ -403,10 +377,8 @@ def hospital_api(request):
 def hospital_detail(request, hospital_id: int):
     hospital = get_object_or_404(Hospital, pk=hospital_id)
 
-    # 병원 좌표 확보 (DB에 없으면 한 번만 지오코딩해서 저장)
     lat, lng = ensure_hospital_coords(hospital)
 
-    # 1) 기준 주소(base_addr) 지오코딩
     base_addr = (request.GET.get("base_addr") or "").strip()
     base_lat = base_lng = None
     if base_addr:
@@ -416,9 +388,8 @@ def hospital_detail(request, hospital_id: int):
     if base_lat is not None and base_lng is not None and lat is not None and lng is not None:
         d = calc_distance_km(base_lat, base_lng, lat, lng)
         if d is not None:
-            distance_km = round(d, 1)  # 소수점 1자리까지
+            distance_km = round(d, 1)
 
-    # 2) 리뷰 평균 / 개수 집계
     agg = (
         Review.objects
         .filter(hospital=hospital)
@@ -427,7 +398,12 @@ def hospital_detail(request, hospital_id: int):
     avg_rating_raw = agg["avg_rating"] or 0
     review_count = agg["review_count"] or 0
 
-    avg_rating = f"{avg_rating_raw:.1f}"  # 예: "4.3"
+    avg_rating = f"{avg_rating_raw:.1f}"
+
+    naver_map_url = build_naver_map_search_url(
+        "",
+        hospital.h_address or "",
+    )
 
     context = {
         "KAKAO_KEY": settings.KAKAO_JS_KEY,
@@ -443,7 +419,8 @@ def hospital_detail(request, hospital_id: int):
         "avg_rating": avg_rating,
         "review_count": review_count,
 
-        # 기본정보용 값들 (없으면 '-')
+        "naver_map_url": naver_map_url,
+
         "hospital_type": _or_dash(getattr(hospital, "h_hospital_type", None)),  # 종별
         "hospital_rc": _or_dash(getattr(hospital, "h_rc", None)),               # 부가기능
         "hospital_rc_info": _or_dash(getattr(hospital, "h_rc_info", None)),     # 재활인증(만료일)

@@ -13,8 +13,10 @@
      data-kakao-key="{{ KAKAO_KEY }}"
      data-lat="{{ lat|default:0 }}"
      data-lng="{{ lng|default:0 }}"
-     data-hospital-name="{{ name }}"
-     data-hospital-id="{{ hospital_id }}">
+     data-hospital-name="{{ name|escape }}"
+     data-hospital-id="{{ hospital_id }}"
+     data-hospital-address="{{ road_address|default:address|escape }}"
+     data-naver-map-url="{{ naver_map_url|default:''|escape }}">
 
   <h2 class="page-title">주변 산재지정의료기관 검색</h2>
 
@@ -25,7 +27,7 @@
         <div class="hospital-title">
           <span class="hospital-name">{{ name }}</span>
         </div>
-        
+
         <div class="hospital-meta">
           <span class="meta-distance">
             거리 :

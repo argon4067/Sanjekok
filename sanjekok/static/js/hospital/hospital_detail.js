@@ -13,6 +13,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const LNG = parseFloat(root.dataset.lng || "0");
   const HOSPITAL_NAME = root.dataset.hospitalName || "";
 
+  // ✅ 네이버 지도 검색용 (서버에서 URL을 내려주면 그걸 우선 사용)
+  const HOSPITAL_ADDR = root.dataset.hospitalAddress || "";
+  const NAVER_MAP_URL =
+    root.dataset.naverMapUrl ||
+    `https://map.naver.com/v5/search/${encodeURIComponent(
+      (HOSPITAL_ADDR || HOSPITAL_NAME).trim()
+    )}`;
+
   /* =======================
    * 1. 상단 평균 평점 별(반칸) 표시
    * ======================= */
@@ -87,6 +95,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const marker = new kakao.maps.Marker({
       position: markerPosition,
       map: map,
+    });
+
+    // ✅ 마커 클릭 → 네이버 지도 새 탭
+    kakao.maps.event.addListener(marker, "click", () => {
+      window.open(NAVER_MAP_URL, "_blank", "noopener");
     });
 
     const iwContent =
