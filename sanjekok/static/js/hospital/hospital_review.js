@@ -36,13 +36,19 @@
 
   // 아이디 뒤 4글자 마스킹 (len <= 4 이면 전부 *)
   function maskMemberId(id) {
-    if (!id) return "";
-    const s = String(id);
-    if (s.length <= 4) {
-      return "*".repeat(s.length);
-    }
-    return s.slice(0, -4) + "****";
-  }
+  if (!id) return "";
+  const s = String(id);
+
+  // 4자리 이하면 전부 마스킹
+  if (s.length <= 4) return "*".repeat(s.length);
+
+  // 길면 왼쪽을 버려서 마지막 8자리만 남김
+  const last8 = s.length > 8 ? s.slice(-8) : s;
+
+  // 마지막 8자리(또는 원본)에서 앞부분(최대 4) + ****
+  const visible = last8.slice(0, last8.length - 4); // 5~8자리면 1~4글자
+  return visible + "****";
+}
 
   // 별 표시 (0~10점, 5개 별 / 반칸)
   function renderStars() {
