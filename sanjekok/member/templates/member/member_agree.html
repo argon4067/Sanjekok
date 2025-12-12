@@ -3,79 +3,7 @@
 {% block title %}약관 동의{% endblock %}
 
 {% block script1 %}
-<style>
-/* -----------------------------------------------------------
-   커스텀 모달 공통 스타일
------------------------------------------------------------ */
-
-/* 모달 오버레이 */
-.custom-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-/* 모달 박스 */
-.custom-modal {
-    background: #fff;
-    width: 70%;
-    max-width: 900px;
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    max-height: 80vh;
-}
-
-/* 헤더 */
-.custom-modal-header {
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* 닫기 버튼 */
-.custom-modal-close {
-    cursor: pointer;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-/* 바디 */
-.custom-modal-body {
-    padding: 0 1rem 1rem 1rem;
-}
-
-/* 약관 스크롤 영역 */
-.terms-content {
-    max-height: 60vh;
-    overflow-y: auto;
-    padding-right: 12px;
-    white-space: pre-wrap;
-}
-
-/* 푸터 */
-.custom-modal-footer {
-    padding: 15px;
-    border-top: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* 기타 스타일 */
-.card { padding: 1rem; border-radius: 8px; }
-.btn { cursor: pointer; }
-</style>
+<link rel="stylesheet" href="{% static 'CSS/member/member_agree.css' %}">
 <script src="{% static 'js/member/member_agree.js' %}"></script>
 {% endblock %}
 
@@ -109,9 +37,9 @@
           </div>
 
           <div class="form-check">
-            <input class="form-check-input optional-agree" type="checkbox" id="agree_marketing" name="agree_marketing" value="1">
+            <input class="form-check-input required-agree" type="checkbox" id="agree_marketing" name="agree_marketing" value="1">
             <label class="form-check-label" for="agree_marketing">
-              [선택] 마케팅 정보 수신 동의 (이메일 / SMS)
+              [필수] 마케팅 정보 수신 동의 (이메일 / SMS)
               <button type="button" class="btn btn-link p-0" id="show-marketing-modal-btn">약관보기</button>
             </label>
           </div>
@@ -157,16 +85,6 @@
 다만, 필수 항목에 대한 동의를 거부할 경우 서비스 이용이 제한될 수 있습니다.
 
 본인은 위 내용을 충분히 이해하였으며, 개인정보 수집·이용에 동의합니다.</div>
-    </div>
-    <div class="custom-modal-footer">
-      <div class="form-check me-auto">
-        <input type="checkbox" class="form-check-input" id="privScrolledAgree" disabled>
-        <label class="form-check-label" for="privScrolledAgree">스크롤 끝까지 확인했습니다</label>
-      </div>
-      <div>
-        <button type="button" class="btn btn-secondary" data-close="modalPrivOverlay">취소</button>
-        <button type="button" class="btn btn-primary" id="privAgreeBtn" disabled>동의</button>
-      </div>
     </div>
   </div>
 </div>
@@ -236,16 +154,6 @@
 
 본 약관은 회원이 서비스 이용을 개시한 때부터 효력이 발생합니다.</div>
     </div>
-    <div class="custom-modal-footer">
-      <div class="form-check me-auto">
-        <input type="checkbox" class="form-check-input" id="termScrolledAgree" disabled>
-        <label class="form-check-label" for="termScrolledAgree">스크롤 끝까지 확인했습니다</label>
-      </div>
-      <div>
-        <button type="button" class="btn btn-secondary" data-close="modalTermOverlay">취소</button>
-        <button type="button" class="btn btn-primary" id="termAgreeBtn" disabled>동의</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -275,19 +183,8 @@
 3. 보유·이용 기간
 - 동의 철회 또는 회원 탈퇴 시까지
 
-4. 동의 거부 시 불이익
-마케팅 정보 수신은 선택 사항이며, 거부하더라도 서비스 이용에 불이익은 없습니다.
-
 본인은 회사의 마케팅 정보 수신에 동의합니다.</div>
     </div>
-
-    <div class="custom-modal-footer">
-      <div>
-        <button type="button" class="btn btn-secondary" data-close="modalMarketingOverlay">취소</button>
-        <button type="button" class="btn btn-primary" id="marketingAgreeBtn">동의</button>
-      </div>
-    </div>
-
   </div>
 </div>
 
