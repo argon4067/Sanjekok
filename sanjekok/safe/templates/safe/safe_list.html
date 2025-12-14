@@ -65,6 +65,20 @@
 
     </form>
 
+    <!-- ------------------------------ -->
+    <!-- 정렬 드롭다운 -->
+    <!-- ------------------------------ -->
+    <div class="filter-group">
+      <div class="filter-label">정렬</div>
+      <div class="filter-controls">
+        <select name="sort" class="form-select">
+          <option value="latest" {% if sort == "latest" %}selected{% endif %}>최신순</option>
+          <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>과거순</option>
+          <option value="views" {% if sort == "views" %}selected{% endif %}>조회순</option>
+        </select>
+      </div>
+    </div>
+
 
     <!-- ------------------------------ -->
     <!-- 자료 카드 리스트 -->
@@ -72,7 +86,7 @@
     <div class="safe-card-list">
 
       {% for s in list %}
-      <a href="#" class="safe-card">
+      <a href="{% url 'Safe:safe_detail' s.id %}" class="safe-card">
 
         <!-- 텍스트 영역 -->
         <div class="card-left">

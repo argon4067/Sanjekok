@@ -20,7 +20,23 @@ def parse_list(data, shpCd):
         content_type = item.get("contsFbctnShpNm")
 
         # 자료 등록일자
-        reg_dt = item.get("constRegYmd")
+        reg_dt = item.get("contsRegYmd")
+   
+        # 자료고유번호
+        seq = item.get("medSeq") 
+        
+        # 조회수 
+        views = item.get("totHitSum")   
+        
+        # 내용
+        note = item.get("medNote") 
+        
+        # 동영상 url
+        video_url = item.get("ytbUrlAddr")     
+        
+        # 공공누리
+        publisher = item.get("medGonggongnuriNm")           
+            
 
         # 키워드 문자열 → 리스트
         keywords_raw = item.get("medKeyword")  # 예: "사다리,이동식 사다리,작업수칙"
@@ -37,22 +53,7 @@ def parse_list(data, shpCd):
         else:
             language = "외국어"       # 외국어 자료
             
-            
-        # 자료고유번호
-        seq = item.get("medSeq") 
-        
-        # 조회수 
-        hit_count = item.get("totHitsum")   
-        
-        # 내용
-        note = item.get("medNote") 
-        
-        # 동영상 url
-        video_url = item.get("ytbUrlAddr")     
-        
-        # 공공누리
-        publisher = item.get("medGonggongnuriNm")           
-            
+       
         # ---------------------------------------------------
 
         results.append({
@@ -60,8 +61,8 @@ def parse_list(data, shpCd):
             "img": img_url,     # 썸네일 이미지 url
             "type": content_type,   # 자료형태   
             "content": note,    # 자료내용
-            "created_at": reg_dt,     # 자료 작성일
-            "hit": hit_count,   # 조회수
+            "reg_dt": reg_dt,     # 자료 작성일
+            "views": views,   # 조회수
             "seq": seq,         # 링크에 덭붙일 자료고유번호
             "language": language,  # 안전자료언어
             "video_url": video_url, # 동영상자료 시 동영상 url

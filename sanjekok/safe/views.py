@@ -14,8 +14,7 @@ def is_admin(user):
     """
     return user.is_staff or user.is_superuser
 
-@login_required
-@user_passes_test(is_admin)
+
 # 1) 관리자용: 수동 크롤링 실행
 def crawl_safe_view(request):
     """
@@ -34,7 +33,7 @@ def crawl_safe_view(request):
 def safe_list(request):
 
     # 기본 목록
-    materials = Safe.objects.all().order_by("s_created_at")
+    materials = Safe.objects.all().order_by("-s_created_at")
 
     # ----------------------------------------
     # 필터 목록 제공 (템플릿 사용용)

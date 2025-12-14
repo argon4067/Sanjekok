@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (cbAll.checked) {
             cbItems.forEach(cb => cb.checked = false);
         }
-        form.submit();
     });
 
     // 하위 유형 클릭 시 → 전체 상태 자동 관리
@@ -30,8 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 // 하나라도 빠짐 → 전체 체크 해제
                 cbAll.checked = false;
             }
-
-            form.submit();
         });
     });
 
@@ -47,8 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
             langCheckboxes.forEach(other => {
                 if (other !== cb) other.checked = false;
             });
-
-            form.submit();
         });
     });
 
