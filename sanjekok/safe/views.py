@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import user_passes_test
 
 from .crawler.run import crawl_safe
 from .models import Safe
+from .models import History
+from member.models import Member
 
 def is_admin(user):
     """
@@ -31,6 +33,25 @@ def crawl_safe_view(request):
 # 2) 안전자료 목록 페이지
 @login_required
 def safe_list(request):
+
+    # ----------------------------------------
+    # 최근 조회한 자료
+    # ----------------------------------------
+    member_id = request.session.get("member_id")
+
+    recent_list = []
+
+    if member_id:
+        try:
+            member = Member.objects.get(member_id=member_id)
+            recent_list = (
+                History.objects
+                .filter(member=member)
+                .select_related("safe")
+                .order_by("-h_vdate")[:6]
+            )
+        except Member.DoesNotExist:
+            recent_list = []
 
     # 기본 목록
     materials = Safe.objects.all()
@@ -132,6 +153,9 @@ def safe_list(request):
         "end_page": end_page,
         "page_range": page_range,
 
+        # 최근 조회한 자료 리스트
+        "recent_list": recent_list,
+
         # 필터 유지용
         "selected_types": selected_types,
         "selected_language": selected_language,
@@ -153,13 +177,29 @@ def safe_list(request):
 # 3) 안전자료 상세페이지
 def safe_detail(request, pk):
     safe = get_object_or_404(Safe, pk=pk)
-    
 
-    # 태그 기준으로 연관 콘텐츠 검색
+    # -----------------------------
+    # 최근 조회 기록 저장 (세션 기반)
+    # -----------------------------
+    member_id = request.session.get("member_id")
+
+    if member_id:
+        try:
+            member = Member.objects.get(member_id=member_id)
+
+            History.objects.update_or_create(
+                member=member,
+                safe=safe
+            )
+
+            print("✅ History 저장:", member.m_username, safe.id)
+
+        except Member.DoesNotExist:
+            print("❌ Member 없음:", member_id)
+
+    # 연관 콘텐츠
     tags = safe.tags.all()
     related = Safe.objects.filter(tags__in=tags).exclude(id=safe.id).distinct()
-
-    # 추천 기준: 1) 태그 겹침 → 2) 조회수 → 3) 최신순
     related = related.order_by('-s_view_count', '-s_created_at')[:8]
 
     return render(request, "safe/safe_detail.html", {
