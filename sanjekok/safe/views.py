@@ -33,7 +33,7 @@ def crawl_safe_view(request):
 def safe_list(request):
 
     # 기본 목록
-    materials = Safe.objects.all().order_by("-s_created_at")
+    materials = Safe.objects.all()
 
     # ----------------------------------------
     # 필터 목록 제공 (템플릿 사용용)
@@ -44,7 +44,7 @@ def safe_list(request):
     BASE_TYPES = ["OPS", "동영상", "책자", "교안(PPT)"]
 
     # ----------------------------------------
-    # 1) 자료유형 체크박스
+    #  자료유형 체크박스
     # ----------------------------------------
     selected_types = request.GET.getlist("type")
 
@@ -69,7 +69,7 @@ def safe_list(request):
         materials = materials.filter(id__in=filtered_ids)
 
     # ----------------------------------------
-    # 2) 언어 필터링
+    #  언어 필터링
     # ----------------------------------------
     selected_language = request.GET.get("lang", "전체")
 
@@ -79,7 +79,7 @@ def safe_list(request):
         materials = materials.exclude(s_language="한국어")
 
     # ----------------------------------------
-    # 3) 검색
+    #  검색
     # ----------------------------------------
     q = request.GET.get("q", "").strip()
 
@@ -87,7 +87,21 @@ def safe_list(request):
         materials = materials.filter(s_title__icontains=q)
 
     # ----------------------------------------
-    # 페이지네이션
+    #  정렬
+    # ----------------------------------------
+    sort = request.GET.get("sort", "latest")
+
+    if sort == "latest":
+        materials = materials.order_by("-s_created_at", "-id")
+    elif sort == "oldest":
+        materials = materials.order_by("s_created_at", "id")
+    elif sort == "views":
+        materials = materials.order_by("-s_view_count", "-s_created_at")
+
+
+
+    # ----------------------------------------
+    #  페이지네이션
     # ----------------------------------------
     WRITE_PAGES = 5
     PER_PAGE = 12
@@ -122,11 +136,12 @@ def safe_list(request):
         "selected_types": selected_types,
         "selected_language": selected_language,
         "search_keyword": q,
+        "sort" : sort,
 
         # 템플릿용
         "type_list": type_list,
         "language_list": language_list,
-        
+
         # 파라미터
         "querystring": querystring,
         
@@ -135,9 +150,10 @@ def safe_list(request):
 
     return render(request, "safe/safe_list.html", context)
 
-
+# 3) 안전자료 상세페이지
 def safe_detail(request, pk):
     safe = get_object_or_404(Safe, pk=pk)
+    
 
     # 태그 기준으로 연관 콘텐츠 검색
     tags = safe.tags.all()

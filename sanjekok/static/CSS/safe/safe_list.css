@@ -48,6 +48,19 @@
 .search-input {
     width: 400px;
 }
+/* 정렬 드롭다운 */
+.sort-wrapper {
+  display: flex;
+  justify-content: flex-end;   /* 오른쪽 끝 */
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sort-select {
+  width: 120px;
+}
+
 
 /* -------------------------
    카드 레이아웃

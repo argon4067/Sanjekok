@@ -19,7 +19,6 @@
       <h2 class="fw-bold" style="color:#23333d;">안전자료실</h2>
     </div>
 
-
     <!-- ------------------------------ -->
     <!-- 필터 박스 전체 -->
     <!-- ------------------------------ -->
@@ -66,18 +65,29 @@
     </form>
 
     <!-- ------------------------------ -->
-    <!-- 정렬 드롭다운 -->
+    <!-- 정렬 전용 form -->
     <!-- ------------------------------ -->
-    <div class="filter-group">
-      <div class="filter-label">정렬</div>
+    <form method="get" id="sortForm" class="sort-wrapper">
+
+      {% for key, value in request.GET.items %}
+        {% if key != "sort" %}
+          <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endif %}
+      {% endfor %}
+
+      <div class="sort-label">정렬:</div>
       <div class="filter-controls">
-        <select name="sort" class="form-select">
-          <option value="latest" {% if sort == "latest" %}selected{% endif %}>최신순</option>
-          <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>과거순</option>
-          <option value="views" {% if sort == "views" %}selected{% endif %}>조회순</option>
+        <select name="sort"
+                class="form-select sort-select"
+                onchange="this.form.submit()">
+          <option value="latest"{% if sort == "latest" %} selected{% endif %}>최신순</option>
+          <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>과거순</option>
+          <option value="views"{% if sort == "views" %} selected{% endif %}>조회순</option>
         </select>
       </div>
-    </div>
+    </form>
+
+
 
 
     <!-- ------------------------------ -->
