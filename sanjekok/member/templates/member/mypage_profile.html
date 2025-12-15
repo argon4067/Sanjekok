@@ -1,57 +1,46 @@
 {% extends "member/mypage_base.html" %}
 {% load static %}
-{% block title %}회원 정보{% endblock %}
+{% block title %}회원 정보 | 산재콕{% endblock %}
 
 {% block script1 %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'CSS/member/mypage_profile.css' %}">
 {% endblock %}
+
 {% block mypage_contents %}
-<div class="card col-md-6 mx-auto mt-5">
-    <div class="card-header text-center">
-        <h2>회원 정보</h2>
+<div class="mypage-wrapper">
+  <div class="mypage-card">
+    <div class="mypage-header">
+      <h2>회원 정보</h2>
+      <p>회원님의 등록 정보를 확인할 수 있습니다.</p>
     </div>
-    <div class="card-body">
-    {% if messages %}
+
+    <div class="mypage-body">
+      {% if messages %}
         <script>
-        {% for message in messages %}
+          {% for message in messages %}
             alert("{{ message }}");
-        {% endfor %}
+          {% endfor %}
         </script>
-    {% endif %}
-        <h4 class="card-title mb-3">회원 정보</h4>
-        <div class="info-group mb-3">
-            <p class="info-label">아이디:</p>
-            <p class="info-value">{{ member.m_username }}</p>
+      {% endif %}
+
+      <h4 class="section-title">기본 정보</h4>
+
+      <div class="info-list">
+        <div class="info-row"><span class="info-label">아이디</span><span class="info-value">{{ member.m_username }}</span></div>
+        <div class="info-row"><span class="info-label">이름</span><span class="info-value">{{ member.m_name }}</span></div>
+        <div class="info-row"><span class="info-label">생년월일</span><span class="info-value">{{ member.m_birth_date }}</span></div>
+        <div class="info-row"><span class="info-label">집 주소</span><span class="info-value">{{ member.m_address }}</span></div>
+        <div class="info-row"><span class="info-label">직장 주소</span><span class="info-value">{{ member.m_jaddress }}</span></div>
+        <div class="info-row"><span class="info-label">전화번호</span><span class="info-value">{{ member.m_phone }}</span></div>
+        <div class="info-row"><span class="info-label">이메일</span><span class="info-value">{{ member.m_email }}</span></div>
+        <div class="info-row"><span class="info-label">성별</span>
+          <span class="info-value">
+            {% if member.m_sex == "남성" %}남성{% elif member.m_sex == "여성" %}여성{% else %}미선택{% endif %}
+          </span>
         </div>
-        <div class="info-group mb-3">
-            <p class="info-label">이름:</p>
-            <p class="info-value">{{ member.m_name }}</p>
-        </div>
-        <div class="info-group mb-3">
-            <p class="info-label">생년월일:</p>
-            <p class="info-value">{{ member.m_birth_date }}</p>
-        </div>
-        <div class="info-group mb-3">
-            <p class="info-label">집 주소:</p>
-            <p class="info-value">{{ member.m_address }}</p>
-        </div>
-        <div class="info-group mb-3">
-            <p class="info-label">직장 주소:</p>
-            <p class="info-value">{{ member.m_jaddress }}</p>
-        </div>
-        <div class="info-group mb-3">
-            <p class="info-label">전화번호:</p>
-            <p class="info-value">{{ member.m_phone }}</p>
-        </div>
-        <div class="info-group mb-3">
-            <p class="info-label">이메일:</p>
-            <p class="info-value">{{ member.m_email }}</p>
-        </div>
-        <div class="info-group mb-3">
-            <p class="info-label">성별:</p>
-            <p class="info-value">{% if member.m_sex == "남성" %}남성{% elif member.m_sex == "여성" %}여성{% else %}미선택{% endif %}</p>
-        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock mypage_contents %}

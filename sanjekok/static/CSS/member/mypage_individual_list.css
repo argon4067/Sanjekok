@@ -1,145 +1,169 @@
-/* ================================
-   1. 전체 페이지 기본
-================================ */
+/* ==============================
+   기본 설정
+============================== */
 body {
   font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
   background-color: #f6f8f7;
   color: #23333d;
   margin: 0;
-  padding-bottom: 80px;
+  padding: 0;
 }
 
-/* ================================
-   2. 카드 박스
-================================ */
-.card {
+/* ✅ 중앙정렬용 래퍼 */
+.mypage-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 50px 20px;
+}
+
+/* ==============================
+   카드
+============================== */
+.mypage-card {
   background: #ffffff;
-  border: none;
   border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  max-width: 900px;
-  margin: 60px auto;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+  max-width: 1000px;
+  width: 100%;
   overflow: hidden;
 }
 
-.card-header {
+/* 헤더 */
+.mypage-header {
   background-color: #23333d;
   color: #ffffff;
   text-align: center;
-  padding: 22px;
-  font-size: 1.5rem;
-  font-weight: 700;
+  padding: 28px 20px 22px;
 }
 
-.card-body {
+.mypage-header h2 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.mypage-header p {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin: 0;
+}
+
+/* 본문 */
+.mypage-body {
   padding: 35px 40px 45px;
 }
 
-/* ================================
-   3. 테이블 스타일
-================================ */
-.table {
+/* ==============================
+   테이블
+============================== */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.custom-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 6px;
   font-size: 0.92rem;
 }
 
-.table thead {
+.custom-table thead {
   background-color: #f0f3f2;
   color: #23333d;
   font-weight: 600;
 }
 
-.table th,
-.table td {
+.custom-table th,
+.custom-table td {
   padding: 10px 14px;
+  text-align: center;
   vertical-align: middle;
-  border-top: none !important;
+  border-top: none;
 }
 
-.table tbody tr {
-  background-color: #fff;
+.custom-table tbody tr {
+  background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   transition: background-color 0.2s;
 }
 
-.table tbody tr:hover {
+.custom-table tbody tr:hover {
   background-color: #f9fbf9;
 }
 
-/* 테이블 헤더 첫 행 둥근 모서리 */
-.table thead tr:first-child th:first-child {
-  border-top-left-radius: 8px;
-}
-.table thead tr:first-child th:last-child {
-  border-top-right-radius: 8px;
-}
-
-/* 체크박스 */
+/* 체크박스 스타일 */
 input[type="checkbox"] {
-  accent-color: #0044ff;
+  accent-color: #2fb34a;
   transform: scale(1.1);
   cursor: pointer;
 }
 
-/* ================================
-   4. 버튼 스타일
-================================ */
-.btn-primary {
-  background-color: #23333d !important;
+/* ==============================
+   버튼 그룹
+============================== */
+.btn-group-center {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.btn-primary,
+.btn-danger {
   border: none;
-  color: #ffffff !important;
+  color: #fff;
   font-weight: 600;
-  padding: 10px 20px;
+  padding: 10px 22px;
   border-radius: 8px;
-  transition: background-color 0.25s ease;
+  transition: background-color 0.25s;
   margin: 6px;
+  display: inline-block;
+}
+
+.btn-primary {
+  background-color: #23333d;
 }
 
 .btn-primary:hover {
-  background-color: #f99b18 !important;
+  background-color: #f99b18;
 }
 
 .btn-danger {
-  background-color: #e63946 !important;
-  border: none;
-  color: #fff !important;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 8px;
-  transition: background-color 0.25s ease;
-  margin: 6px;
+  background-color: #e63946;
 }
 
 .btn-danger:hover {
-  background-color: #c82333 !important;
+  background-color: #c82333;
 }
 
-/* ================================
-   5. 비어있는 데이터 안내
-================================ */
-.text-center p {
+/* ==============================
+   비어 있는 데이터
+============================== */
+.empty-wrap {
+  padding: 40px 0;
+}
+
+.empty-wrap p {
   font-size: 1rem;
   color: #555;
   margin-bottom: 16px;
 }
 
-/* ================================
-   6. 반응형
-================================ */
+/* ==============================
+   반응형
+============================== */
 @media (max-width: 768px) {
-  .card {
-    margin: 30px auto;
-  }
-
-  .card-body {
+  .mypage-body {
     padding: 25px 20px 35px;
   }
 
-  .table th,
-  .table td {
+  .mypage-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .custom-table th,
+  .custom-table td {
     font-size: 0.85rem;
     padding: 8px 10px;
   }
