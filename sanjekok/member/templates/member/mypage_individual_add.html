@@ -43,10 +43,15 @@
 <div class="mb-3">
     <label class="form-label">*발생형태/질병 :</label>
     <div id="mode-error" class="text-danger" style="display: none; font-size: 0.875em;">발생형태, 질병, 모두 중 하나를 선택하고 값을 입력해주세요.</div>
-    <div>
-        <input type="radio" name="mode" value="occ" id="mode_occ" required> <label for="mode_occ">발생형태</label>
-        <input type="radio" name="mode" value="dis" id="mode_dis"> <label for="mode_dis">질병</label>
-        <input type="radio" name="mode" value="all" id="mode_all" checked> <label for="mode_all">모두</label>
+    <div class="radio-group">
+        <input type="radio" name="mode" value="occ" id="mode_occ" required>
+        <label for="mode_occ">발생형태</label>
+
+        <input type="radio" name="mode" value="dis" id="mode_dis">
+        <label for="mode_dis">질병</label>
+
+        <input type="radio" name="mode" value="all" id="mode_all" checked>
+        <label for="mode_all">모두</label>
     </div>
     <div class="input-group mt-2">
         <input id="occInput" name="i_injury" type="text" class="form-control" placeholder="발생형태" disabled>

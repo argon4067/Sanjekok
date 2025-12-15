@@ -1,16 +1,31 @@
 {% extends "member/mypage_base.html" %}
 {% load static %}
-{% block title %}회원 탈퇴{% endblock %}
+{% block title %}회원 탈퇴 | 산재콕{% endblock %}
 
 {% block script1 %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'CSS/member/mypage_withdrawal.css' %}">
 {% endblock %}
-{% block mypage_contents %}
 
-    <h1>정말 탈퇴하시겠습니까?</h1>
-    <form method="post" action="{% url 'Member:mypage_withdrawal' %}">
+{% block mypage_contents %}
+<div class="mypage-wrapper">
+  <div class="mypage-card">
+    <div class="mypage-header">
+      <h2>회원 탈퇴</h2>
+      <p>탈퇴 시 계정 및 모든 정보가 삭제됩니다.</p>
+    </div>
+
+    <div class="mypage-body text-center">
+      <h3 class="withdraw-title">정말 탈퇴하시겠습니까?</h3>
+      <p class="warning-text">
+        신중히 결정해 주세요.<br>
+      </p>
+
+      <form method="post" action="{% url 'Member:mypage_withdrawal' %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">탈퇴하기</button>
-    </form>
+        <button type="submit" class="btn-withdraw">탈퇴하기</button>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock mypage_contents %}

@@ -1,6 +1,6 @@
-/* ==============================
+/* ===========================
    기본 설정
-============================== */
+=========================== */
 body {
   font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
   background-color: #f6f8f7;
@@ -9,7 +9,7 @@ body {
   padding: 0;
 }
 
-/* ✅ 중앙정렬용 래퍼 */
+/* 중앙정렬 컨테이너 */
 .register-wrapper {
   display: flex;
   justify-content: center;
@@ -18,14 +18,12 @@ body {
   padding: 50px 20px;
 }
 
-/* ==============================
-   카드 박스
-============================== */
+/* 카드 */
 .register-card {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
-  max-width: 480px;
+  max-width: 500px;
   width: 100%;
   overflow: hidden;
 }
@@ -41,7 +39,7 @@ body {
 .register-header h2 {
   font-size: 1.7rem;
   font-weight: 700;
-  margin: 0 0 8px;
+  margin-bottom: 6px;
 }
 
 .register-header p {
@@ -55,9 +53,7 @@ body {
   padding: 35px 35px 45px;
 }
 
-/* ==============================
-   섹션 제목
-============================== */
+/* 제목 */
 .section-title {
   font-weight: 700;
   font-size: 1.15rem;
@@ -67,9 +63,7 @@ body {
   margin-bottom: 25px;
 }
 
-/* ==============================
-   입력 폼
-============================== */
+/* 입력 필드 */
 .input-group-wrap {
   margin-bottom: 20px;
   display: flex;
@@ -96,50 +90,58 @@ body {
   outline: none;
 }
 
-/* --- 추가 또는 수정 --- */
-.input-group {
+/* 주소 검색 그룹 */
+.address-group {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.input-group input.form-control {
-  flex: 1; 
-  min-width: 0;
+.address-group input {
+  flex: 1;
 }
 
-.btn-idcheck {
+.btn-addr {
   flex-shrink: 0;
   background-color: #23333d;
   color: #fff;
   font-weight: 600;
   border: none;
   border-radius: 8px;
-  padding: 9px 14px;
+  padding: 9px 12px;
   cursor: pointer;
   transition: background-color 0.25s;
 }
 
-.btn-idcheck:hover {
+.btn-addr:hover {
   background-color: #f99b18;
 }
 
-
-
-/* ==============================
-   에러 메시지
-============================== */
-#usernameCheckMsg,
-#passwordError,
-#rePasswordError {
+/* 에러 텍스트 */
+.error-text {
   font-size: 0.85rem;
   color: #e63946;
   margin-top: 5px;
 }
 
-/* ==============================
-   다음 버튼
-============================== */
+/* 성별 선택 */
+.gender-group {
+  margin-top: 10px;
+}
+
+.gender-options {
+  display: flex;
+  gap: 25px;
+  margin-top: 6px;
+}
+
+.gender-options input[type="radio"] {
+  accent-color: #2fb34a;
+  margin-right: 5px;
+  transform: scale(1.1);
+}
+
+/* 가입 버튼 */
 .btn-next {
   background-color: #23333d;
   color: #fff;
@@ -158,17 +160,7 @@ body {
   background-color: #f99b18;
 }
 
-/* ==============================
-   에러 강조
-============================== */
-.input-error {
-  border-color: #e63946 !important;
-  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15) !important;
-}
-
-/* ==============================
-   반응형
-============================== */
+/* 반응형 */
 @media (max-width: 576px) {
   .register-body {
     padding: 25px 20px 35px;
