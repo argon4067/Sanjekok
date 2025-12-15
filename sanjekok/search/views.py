@@ -5,6 +5,8 @@ from member.models import Member, Individual
 import requests
 import traceback
 from math import radians, sin, cos, sqrt, atan2, exp, atan, pi
+from django.shortcuts import redirect
+from django.contrib import messages
 
 
 # 위·경도 거리 계산 (단위: km) 
@@ -34,7 +36,11 @@ def search_page(request):
     accidents = []
 
     member_id = request.session.get("member_id")
-
+    
+    if not member_id:
+        messages.error(request, "로그인이 필요합니다.")
+        return redirect('Member:login')
+    
     if member_id:
         try:
             member = Member.objects.get(member_id=member_id)
