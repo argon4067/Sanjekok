@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 import math
-from urllib.parse import urlencode, quote  # ✅ quote 추가
+from urllib.parse import urlencode, quote
 
 import re
 import requests
@@ -24,7 +24,7 @@ from reviews.models import Review
 KAKAO_GEOCODE_URL = "https://dapi.kakao.com/v2/local/search/address.json"
 
 
-# ✅ 네이버 지도 검색 URL 생성
+# 네이버 지도 검색 URL 생성
 def build_naver_map_search_url(name: str, address: str = "") -> str:
     q = " ".join([x for x in [name.strip(), (address or "").strip()] if x]).strip()
     return f"https://map.naver.com/v5/search/{quote(q)}"
@@ -188,9 +188,6 @@ BASE_COORD_CACHE: dict[str, tuple[float | None, float | None]] = {}
 
 
 def get_base_coords(base_addr: str):
-    """
-    기준 주소 문자열을 지오코딩 + 캐싱
-    """
     if not base_addr:
         return None, None
 
@@ -214,7 +211,7 @@ def hospital_search(request):
 
     home_address = ""
     work_address = ""
-    accidents_ctx = []   # [{id, title(i_title), address}, ...]
+    accidents_ctx = []
 
     
 

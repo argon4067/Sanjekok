@@ -204,32 +204,36 @@
     }
   }
 
+  // 리뷰 삭제 후 페이지 새로고침
   async function deleteReview(reviewId, domNode) {
-    try {
-      const formData = new FormData();
-      formData.append("review_id", reviewId);
+  try {
+    const formData = new FormData();
+    formData.append("review_id", reviewId);
 
-      const resp = await fetch(deleteUrl, {
-        method: "POST",
-        headers: {
-          "X-CSRFToken": csrftoken,
-        },
-        body: formData,
-      });
+    const resp = await fetch(deleteUrl, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrftoken,
+      },
+      body: formData,
+    });
 
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-      const data = await resp.json();
-      if (data.success && domNode && domNode.parentNode) {
-        domNode.parentNode.removeChild(domNode);
-      }
-    } catch (e) {
-      console.error("리뷰 삭제 실패:", e);
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const data = await resp.json();
+
+    if (data.success) {
+      // 삭제 후 평균 평점/리뷰 수 등 전체 UI 반영을 위해 새로고침
+      window.location.reload();
+      return;
     }
-  }
 
-  /* ======================
-   * 리뷰 등록: 성공 후 페이지 새로고침
-   * ====================== */
+    console.error("리뷰 삭제 실패(서버 응답):", data);
+  } catch (e) {
+    console.error("리뷰 삭제 실패:", e);
+  }
+}
+
+  // 리뷰 등록: 성공 후 페이지 새로고침
   if (formEl) {
     formEl.addEventListener("submit", async function (e) {
       e.preventDefault();
