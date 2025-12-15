@@ -1,94 +1,88 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}회원 가입{% endblock %}
+{% block title %}회원 가입 | 산재콕{% endblock %}
 
 {% block script1 %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="{% static 'CSS/member/member_register.css' %}">
+<link rel="stylesheet" href="{% static 'CSS/member/member_register2.css' %}">
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
 <script>
-    
-    window.firstErrorField = '{{ first_error_field|default_if_none:"" }}';
+  window.firstErrorField = '{{ first_error_field|default_if_none:"" }}';
 </script>
 <script src="{% static 'js/member/member_register2.js' %}"></script>
 {% endblock %}
 
 {% block contents %}
-<div class="card col-md-6 mx-auto mt-5">
-    <div class="card-header text-center">
-        <h2>회원 가입</h2>  
+<div class="register-wrapper">
+  <div class="register-card">
+    <div class="register-header">
+      <h2>회원 가입</h2>
+      <p>회원 정보를 입력하고 가입을 완료하세요.</p>
     </div>
-    <div class="card-body">
-        <form action="" method="post">
-            {% csrf_token %}
-            <h4 class="card-title mb-3">회원 정보</h4>
 
-            <div class="mb-3">
-                <label for="m_name" class="form-label">*이름 :</label>
-                <input type="text" class="form-control" placeholder="이름을 입력해주세요." id="m_name" name="m_name" value="{{ form.m_name.value|default_if_none:'' }}">
-            </div>
-            <div class="mb-3">
-                <label for="m_birth_date" class="form-label">*생년월일 :</label>
-                <input 
-                    type="text" 
-                    id="m_birth_date" 
-                    name="m_birth_date"
-                    class="form-control"
-                    placeholder="YYYY-MM-DD"
-                    value="{{ form.m_birth_date.value|default_if_none:'' }}">
-            </div>
-            <div class="mb-3">
-                <label for="m_address" class="form-label">*집 주소 :</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    id="m_address" 
-                    name="m_address" 
-                    placeholder="집 주소를 입력해주세요."
-                    readonly
-                    onclick="searchAddress('m_address')"
-                    value="{{ form.m_address.value|default_if_none:'' }}">
-            </div>
-            <div class="mb-3">
-                <label for="m_jaddress" class="form-label">*직장 주소 :</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    id="m_jaddress" 
-                    name="m_jaddress" 
-                    placeholder="직장 주소를 입력해주세요."
-                    readonly
-                    onclick="searchAddress('m_jaddress')"
-                    value="{{ form.m_jaddress.value|default_if_none:'' }}">
-            </div>
-            <div class="mb-3">
-                <label for="m_phone" class="form-label">전화번호 :</label>
-                <input type="text" class="form-control" id="m_phone" maxlength="11" placeholder="전화번호를 입력해주세요." name="m_phone" value="{{ form.m_phone.value|default_if_none:'' }}">
-            </div>
-            <div class="mb-3">
-                <label for="m_email" class="form-label">이메일 :</label>
-                <input type="text" class="form-control" placeholder="이메일을 입력해주세요." id="m_email" name="m_email" value="{{ form.m_email.value|default_if_none:'' }}">
-                <div id="EmailError" style="display:none;color:red;">
-                    이메일 양식이 틀렸습니다.
-                </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">*성별 :</label>
+    <div class="register-body">
+      <form action="" method="post">
+        {% csrf_token %}
 
-                <div>
-                    <input type="radio" id="sex_male" name="m_sex" value="남성" {% if form.m_sex.value|default:"남성" == "남성" %}checked{% endif %}>
-                    <label for="sex_male">남</label>
+        <h4 class="section-title">회원 정보</h4>
 
-                    <input type="radio" id="sex_female" name="m_sex" value="여성" {% if form.m_sex.value == "남성" %}checked{% endif %}>
-                    <label for="sex_female">여</label>
-                </div>
-            </div>
+        <!-- 이름 -->
+        <div class="input-group-wrap">
+          <label for="m_name">*이름</label>
+          <input type="text" class="form-control" id="m_name" name="m_name" placeholder="이름을 입력해주세요." value="{{ form.m_name.value|default_if_none:'' }}">
+        </div>
 
-            <button type="submit" class="btn btn-primary subbtn">가입하기</button>
-        </form>
+        <!-- 생년월일 -->
+        <div class="input-group-wrap">
+          <label for="m_birth_date">*생년월일</label>
+          <input type="text" class="form-control" id="m_birth_date" name="m_birth_date" placeholder="YYYY-MM-DD" value="{{ form.m_birth_date.value|default_if_none:'' }}">
+        </div>
+
+        <!-- 집 주소 -->
+        <div class="input-group-wrap">
+          <label for="m_address">*집 주소</label>
+          <div class="address-group">
+            <input type="text" class="form-control" id="m_address" name="m_address" placeholder="집 주소를 입력해주세요." readonly onclick="searchAddress('m_address')" value="{{ form.m_address.value|default_if_none:'' }}">
+            <button type="button" class="btn-addr" onclick="searchAddress('m_address')">주소검색</button>
+          </div>
+        </div>
+
+        <!-- 직장 주소 -->
+        <div class="input-group-wrap">
+          <label for="m_jaddress">*직장 주소</label>
+          <div class="address-group">
+            <input type="text" class="form-control" id="m_jaddress" name="m_jaddress" placeholder="직장 주소를 입력해주세요." readonly onclick="searchAddress('m_jaddress')" value="{{ form.m_jaddress.value|default_if_none:'' }}">
+            <button type="button" class="btn-addr" onclick="searchAddress('m_jaddress')">주소검색</button>
+          </div>
+        </div>
+
+        <!-- 전화번호 -->
+        <div class="input-group-wrap">
+          <label for="m_phone">전화번호</label>
+          <input type="text" class="form-control" id="m_phone" maxlength="11" name="m_phone" placeholder="전화번호를 입력해주세요." value="{{ form.m_phone.value|default_if_none:'' }}">
+        </div>
+
+        <!-- 이메일 -->
+        <div class="input-group-wrap">
+          <label for="m_email">이메일</label>
+          <input type="text" class="form-control" id="m_email" name="m_email" placeholder="이메일을 입력해주세요." value="{{ form.m_email.value|default_if_none:'' }}">
+          <div id="EmailError" style="display:none;" class="error-text">이메일 양식이 올바르지 않습니다.</div>
+        </div>
+
+        <!-- 성별 -->
+        <div class="input-group-wrap gender-group">
+          <label>*성별</label>
+          <div class="gender-options">
+            <label><input type="radio" id="sex_male" name="m_sex" value="남성" {% if form.m_sex.value|default:"남성" == "남성" %}checked{% endif %}> 남성</label>
+            <label><input type="radio" id="sex_female" name="m_sex" value="여성" {% if form.m_sex.value == "여성" %}checked{% endif %}> 여성</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-next">가입하기</button>
+      </form>
     </div>
+  </div>
 </div>
-
 {% endblock %}
