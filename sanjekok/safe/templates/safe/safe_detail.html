@@ -46,32 +46,40 @@
                 <strong>출처 :</strong> {{ safe.s_publisher|default:"KOSHA" }}
             </div>
 
-            <!--동영상 자료가 있을 경우-->
-            {% if safe.s_video_url %} 
-                <div class="video-box mt-3">
-                    <iframe width="100%" height="300"
-                            src="{{ safe.s_video_url }}"
-                            title="동영상 자료"
-                            frameborder="0"
-                            allowfullscreen>
-                    </iframe>
-                </div>
-            {% endif %}
-
             <!-- 내용 -->
             <div class="content-box mt-3">
                 <h5>내용</h5>
                 <p>{{ safe.s_contents|linebreaks }}</p>
             </div>
 
-            <!-- 원본 페이지 이동 버튼 -->
-            {% if safe.s_link %}
-            <div class="mt-4">
-                <a href="{{ safe.s_link }}" target="_blank" class="btn btn-primary">
-                    원본 페이지로 이동 (KOSHA)
-                </a>
-            </div>
+            <!--동영상 자료가 있을 경우-->
+            {% if safe.s_video_url %}
+                <div class="video-wrapper mb-3">
+                    <iframe
+                    src="{{ safe.s_video_url }}"
+                    width="100%"
+                    height="450"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                    </iframe>
+
+                    <p class="text-muted mt-2" style="font-size: 0.9rem;">
+                    ※ 본 영상은 외부 플랫폼(YouTube)에서 제공되는 자료입니다.
+                    </p>
+                </div>
             {% endif %}
+
+            <!--모든 자료 공통: 다운로드-->
+            <div class="download-wrapper mt-3">
+                <a href="{{ safe.s_link }}" target="_blank" class="btn btn-primary">
+                    자료 다운로드 (KOSHA 원본)
+                </a>
+
+                <p class="text-muted mt-2" style="font-size: 0.9rem;">
+                    ※ 본 자료는 첨부파일 형태로 제공되며, 원본 페이지에서 다운로드할 수 있습니다.
+                </p>
+            </div>
 
         </div>
     </div>

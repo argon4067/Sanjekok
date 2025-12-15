@@ -59,8 +59,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!slider || !prevBtn || !nextBtn) return;
 
-  const CARD_WIDTH = 220 + 16; // 카드 + gap
-  const STEP = CARD_WIDTH * 3; // 3개씩 이동
+  const cards = slider.querySelectorAll(".recent-card");
+  if (cards.length === 0) return;
+
+  const gap = parseInt(getComputedStyle(slider).gap) || 0;
+  const cardWidth = cards[0].offsetWidth + gap;
+
+  // ✅ 보여줄 카드 수 (PC 최대 3, 모바일 1)
+  const visibleCount =
+    window.innerWidth <= 768 ? 1 : Math.min(3, cards.length);
+
+  // ✅ 슬라이더 폭을 "실제 카드 수"에 맞게 조정
+  slider.style.width = `${cardWidth * visibleCount - gap}px`;
+
+  // 이동 거리
+  const STEP =
+    window.innerWidth <= 768 ? cardWidth : cardWidth * visibleCount;
 
   prevBtn.addEventListener("click", () => {
     slider.scrollBy({ left: -STEP, behavior: "smooth" });
@@ -70,4 +84,5 @@ document.addEventListener("DOMContentLoaded", function () {
     slider.scrollBy({ left: STEP, behavior: "smooth" });
   });
 });
+
 

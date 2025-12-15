@@ -41,8 +41,14 @@ def save_items(items):
         link = BASE_DETAIL_URL + str(seq)  # 
 
         language = item["language"]
-        video_url = item["video_url"]
         publisher = item["publisher"]
+        
+        video_url = item["video_url"]
+        # ytbUrlAddr가 "", None, "null" 같이 비어있으면 None 저장
+        clean_video_url = (video_url or "").strip()
+        if clean_video_url.lower() in ("", "null", "none"):
+            clean_video_url = None
+        
         tag_list = item["tags"]     # 리스트 형태로 들어있음
 
 
@@ -58,7 +64,7 @@ def save_items(items):
                 "s_link": link,
                 "s_language": language,
                 "s_publisher": publisher,
-                "s_video_url": video_url,
+                "s_video_url": clean_video_url,
             }
         )
 
