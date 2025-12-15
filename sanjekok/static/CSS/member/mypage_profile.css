@@ -1,0 +1,135 @@
+/* ================================
+   기본 설정
+================================ */
+body {
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  background-color: #f6f8f7;
+  color: #23333d;
+  margin: 0;
+  padding: 60px 20px 100px;
+}
+
+/* ================================
+   카드 전체
+================================ */
+.card {
+  background: #ffffff;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+  margin-bottom: 70px;
+  overflow: hidden;
+}
+
+/* 카드 헤더 */
+.card-header {
+  background-color: #23333d;
+  color: #ffffff;
+  text-align: center;
+  padding: 24px 28px;
+}
+
+.card-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* 카드 본문 */
+.card-body {
+  padding: 35px 45px 50px;
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #23333d;
+  margin-bottom: 24px;
+  border-left: 4px solid #2fb34a;
+  padding-left: 10px;
+}
+
+/* ================================
+   정보 그룹 (라벨 + 값)
+================================ */
+.info-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e4e4e4;
+  padding: 10px 0;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #23333d;
+  flex: 0 0 120px;
+  font-size: 0.95rem;
+}
+
+.info-value {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #444;
+  background: #f8f9fa;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+/* 첫 번째 항목은 상단 여백 추가 */
+.info-group:first-child {
+  border-top: 1px solid #e4e4e4;
+}
+
+/* ================================
+   버튼 (수정 등 추가 시)
+================================ */
+.subbtn {
+  background-color: #23333d !important;
+  border: none;
+  color: #ffffff;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 12px 0;
+  transition: background-color 0.25s ease;
+  margin-top: 24px;
+}
+
+.subbtn:hover {
+  background-color: #f99b18 !important;
+}
+
+/* ================================
+   반응형
+================================ */
+@media (max-width: 576px) {
+  body {
+    padding: 40px 16px;
+  }
+
+  .card-body {
+    padding: 25px 20px 35px;
+  }
+
+  .info-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .info-label {
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+  }
+
+  .info-value {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .card-header h2 {
+    font-size: 1.5rem;
+  }
+}

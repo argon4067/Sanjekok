@@ -11,8 +11,8 @@ class Member(models.Model):
     ]
 
     SEX_CHOICES = [
-        ('male', '남자'),
-        ('female', '여자'),
+        ('남성', '남성'),
+        ('여성', '여성'),
     ]
 
     m_sex = models.CharField(max_length=6, choices=SEX_CHOICES, verbose_name='성')
@@ -59,6 +59,8 @@ class Individual(models.Model):
     i_injury = models.CharField(max_length=100, null=True, verbose_name='발생형태')
     i_disease_type = models.CharField(max_length=100, null=True, verbose_name='질병')
     i_address = models.CharField(max_length=150, verbose_name='발생주소')
+    i_lat = models.FloatField(null=True, blank=True, verbose_name="사고위치 위도")
+    i_lng = models.FloatField(null=True, blank=True, verbose_name="사고위치 경도")
     i_title = models.CharField(max_length=10, verbose_name='산재제목')
 
     class Meta:

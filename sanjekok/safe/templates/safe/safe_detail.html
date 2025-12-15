@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block contents %}
+<link rel="stylesheet" href="{% static 'css/safe/safe_detail.css' %}">
+
+<div class="container safe-detail-wrapper">
+
+    <!-- 1. 제목 + 작성일 + 조회수 ----------------------------------------- -->
+    <div class="title-box">
+        <h2 class="safe-title">{{ safe.s_title }}</h2>
+        <div class="sub-info">
+            <span>작성일: {{ safe.s_created_at|default:"-" }}</span>
+            <span>조회수: {{ safe.s_view_count }}</span>
+        </div>
+    </div>
+
+    <!-- 2. 본문 영역 ---------------------------------------------------- -->
+    <div class="detail-main-area row">
+        
+        <!-- 왼쪽: 대표 이미지 -->
+        <div class="col-md-4 left-image-box">
+            <img src="{{ safe.s_image_url }}" 
+                 alt="자료 이미지" 
+                 class="safe-main-img"
+                 onclick="openModal('{{ safe.s_image_url }}')">
+        </div>
+
+        <!-- 오른쪽: 정보 + 내용 -->
+        <div class="col-md-8 right-info-box">
+
+            <div class="info-line">
+                <strong>자료 형태 :</strong> {{ safe.s_type }}
+            </div>
+
+            <div class="info-line">
+                <strong>키워드 :</strong>
+                {% for tag in safe.tags.all %}
+                    <span class="tag-item">#{{ tag.st_tag }}</span>
+                {% empty %}
+                    <span>등록된 태그 없음</span>
+                {% endfor %}
+            </div>
+
+            <div class="info-line">
+                <strong>출처 :</strong> {{ safe.s_publisher|default:"KOSHA" }}
+            </div>
+
+            <!-- 내용 -->
+            <div class="content-box mt-3">
+                <h5>내용</h5>
+                <p>{{ safe.s_contents|linebreaks }}</p>
+            </div>
+
+            <!--동영상 자료가 있을 경우-->
+            {% if safe.s_video_url %}
+                <div class="video-wrapper mb-3">
+                    <iframe
+                    src="{{ safe.s_video_url }}"
+                    width="100%"
+                    height="450"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                    </iframe>
+
+                    <p class="text-muted mt-2" style="font-size: 0.9rem;">
+                    ※ 본 영상은 외부 플랫폼(YouTube)에서 제공되는 자료입니다.
+                    </p>
+                </div>
+            {% endif %}
+
+            <!--모든 자료 공통: 다운로드-->
+            <div class="download-wrapper mt-3">
+                <a href="{{ safe.s_link }}" target="_blank" class="btn btn-primary">
+                    자료 다운로드 (KOSHA 원본)
+                </a>
+
+                <p class="text-muted mt-2" style="font-size: 0.9rem;">
+                    ※ 본 자료는 첨부파일 형태로 제공되며, 원본 페이지에서 다운로드할 수 있습니다.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. 연관 콘텐츠 --------------------------------------------------- -->
+    <div class="related-section mt-5">
+        <h4>연관 콘텐츠</h4>
+
+        <div class="related-list row">
+
+            {% for item in related_list %}
+            <div class="col-md-3 related-item">
+                <a href="{% url 'Safe:safe_detail' item.id %}">
+                    <img src="{{ item.s_image_url }}" alt="연관 자료" class="related-img">
+                    <div class="related-title">{{ item.s_title }}</div>
+                </a>
+            </div>
+            {% empty %}
+            <p>연관 콘텐츠가 없습니다.</p>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modal (이미지 클릭 시 확대) -------------------------------------------- -->
+<div id="imgModal" class="modal-image" onclick="closeModal()">
+    <span class="modal-close">&times;</span>
+    <img id="modalImg" class="modal-content-img">
+</div>
+
+
+<script src="{% static 'js/safe/safe_detail.js' %}"></script>
+{% endblock %}

@@ -4,77 +4,195 @@
 {% block title %}안전자료실{% endblock %}
 
 {% block script1 %}
-<link rel="stylesheet" href="{% static 'CSS/safe/safe.css' %}">
+<link rel="stylesheet" href="{% static 'CSS/safe/safe_list.css' %}">
+<script src="{% static 'js/safe/safe.js' %}"></script>
 {% endblock %}
 
 {% block contents %}
+
 <section class="safe-section">
   <div class="container py-5">
 
     <!-- 제목 -->
-    <div class="safe-header text-center mb-5">
+    <div class="safe-header text-center mb-4">
       <p class="subtitle">산업안전 관련 자료를 한곳에</p>
       <h2 class="fw-bold" style="color:#23333d;">안전자료실</h2>
     </div>
 
-    <!-- ============================== -->
-    <!-- 검색 + 필터 영역 -->
-    <!-- ============================== -->
-    <form method="get" class="safe-filter mb-5">
+    <!-- 최근 본 자료  -->
+    {% if recent_list %}   <!--처음 이용하는 사용자의 recent_list가 비어 있으므로 HTML 자체가 렌더링되지 않음-->
+
+    <div class="recent-section mb-5">
+      <h4 class="section-title">최근 본 자료</h4>
+
+      <div class="recent-slider-wrapper">
+        <!-- 이전 버튼 -->
+        <button class="slider-btn prev" type="button">&lt;</button>
+
+        <!-- 슬라이드 트랙 -->
+        <div class="recent-slider">
+          {% for h in recent_list %}
+          <a href="{% url 'Safe:safe_detail' h.safe.id %}" class="recent-card">
+            <img src="{{ h.safe.s_image_url }}" alt="자료 이미지">
+            <p class="recent-title">{{ h.safe.s_title }}</p>
+          </a>
+          {% endfor %}
+        </div>
+
+        <!-- 다음 버튼 -->
+        <button class="slider-btn next" type="button">&gt;</button>
+      </div>
+    </div>
+    {% endif %}
+
+
+    <!-- ------------------------------ -->
+    <!-- 필터 박스 전체 -->
+    <!-- ------------------------------ -->
+    <form method="get" id="filterForm" class="filter-wrapper">
+
+      <!-- 자료유형 -->
       <div class="filter-group">
-        <!-- 언어 필터 -->
-        <select name="lang" class="form-select">
-          <option value="">전체 언어</option>
-          <option value="한국어" {% if lang == "한국어" %}selected{% endif %}>한국어</option>
-          <option value="외국어" {% if lang == "외국어" %}selected{% endif %}>외국어</option>
+        <div class="filter-label">자료유형</div>
+        <div class="filter-controls">
+          {% for val in type_list %}
+          <label class="cb-label">
+              <input type="checkbox" name="type" value="{{ val }}"
+                     {% if val in selected_types %}checked{% endif %}>
+              {{ val }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- 언어 -->
+      <div class="filter-group">
+        <div class="filter-label">언어</div>
+        <div class="filter-controls">
+          {% for lang in language_list %}
+          <label class="cb-label">
+              <input type="checkbox" name="lang" value="{{ lang }}"
+                     {% if selected_language == lang %}checked{% endif %}>
+              {{ lang }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- 검색 -->
+      <div class="filter-group">
+        <div class="filter-label">검색</div>
+        <div class="filter-controls search-box">
+          <input type="text" name="q" class="form-control search-input"
+                 placeholder="제목검색" value="{{ search_keyword }}">
+          <button type="submit" class="btn btn-outline-secondary btn-search">검색</button>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- ------------------------------ -->
+    <!-- 정렬 전용 form -->
+    <!-- ------------------------------ -->
+    <form method="get" id="sortForm" class="sort-wrapper">
+
+      {% for key, value in request.GET.items %}
+        {% if key != "sort" %}
+          <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endif %}
+      {% endfor %}
+
+      <div class="sort-label">정렬:</div>
+      <div class="filter-controls">
+        <select name="sort"
+                class="form-select sort-select"
+                onchange="this.form.submit()">
+          <option value="latest"{% if sort == "latest" %} selected{% endif %}>최신순</option>
+          <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>과거순</option>
+          <option value="views"{% if sort == "views" %} selected{% endif %}>조회순</option>
         </select>
-
-        <!-- 자료형태 필터 -->
-        <select name="type" class="form-select">
-          <option value="">전체 형태</option>
-          <option value="OPS" {% if material_type == "OPS" %}selected{% endif %}>OPS</option>
-          <option value="동영상" {% if material_type == "동영상" %}selected{% endif %}>동영상</option>
-          <option value="책자" {% if material_type == "책자" %}selected{% endif %}>책자</option>
-          <option value="PPT" {% if material_type == "PPT" %}selected{% endif %}>PPT</option>
-          <option value="기타" {% if material_type == "기타" %}selected{% endif %}>기타</option>
-        </select>
-
-        <!-- 검색 -->
-        <input type="text" name="q" placeholder="검색어 입력" value="{{ q }}" class="form-control">
-
-        <button type="submit" class="btn btn-search">검색</button>
       </div>
     </form>
 
-    <!-- ============================== -->
+
+
+
+    <!-- ------------------------------ -->
     <!-- 자료 카드 리스트 -->
-    <!-- ============================== -->
-    <div class="safe-grid">
+    <!-- ------------------------------ -->
+    <div class="safe-card-list">
+
       {% for s in list %}
-      <div class="safe-card">
-        <div class="safe-img">
-          <img src="{{ s.s_image_url }}" alt="자료 이미지">
-        </div>
-        <div class="safe-body">
-          <h3 class="safe-title">{{ s.s_title }}</h3>
-          <p class="safe-meta">
-            {{ s.s_type }} / {{ s.s_language }}<br>
-            등록일: {{ s.s_created_at }}
-          </p>
+      <a href="{% url 'Safe:safe_detail' s.id %}" class="safe-card">
+
+        <!-- 텍스트 영역 -->
+        <div class="card-left">
+          
+          <!-- 제목 -->
+          <h3 class="card-title">{{ s.s_title }}</h3>
 
           <!-- 태그 -->
-          <div class="safe-tags">
+          <div class="card-tags">
             {% for t in s.tags.all %}
-            <a href="?tag={{ t.st_tag }}" class="tag">#{{ t.st_tag }}</a>
+              <span>#{{ t.st_tag }}</span>
             {% endfor %}
           </div>
+
+          <!-- 요약 -->
+          <p class="card-desc">{{ s.s_contents|truncatechars:100 }}</p>
         </div>
-      </div>
+
+        <!-- 이미지 영역 -->
+        <div class="card-right">
+          {% if s.s_image_url %}
+            <img src="{{ s.s_image_url }}" class="card-img">
+          {% else %}
+            <div class="card-noimg">NO IMAGE</div>
+          {% endif %}
+        </div>
+
+      </a>
       {% empty %}
-      <p class="text-center mt-5">등록된 자료가 없습니다.</p>
+      <p class="text-center mt-5">검색 결과가 없습니다.</p>
       {% endfor %}
+
+    </div>
+
+
+    <!-- ------------------------------ -->
+    <!-- 페이지네이션 -->
+    <!-- ------------------------------ -->
+    <div class="container mt-5">
+      <ul class="pagination justify-content-center">
+
+          {% if list.number > 1 %}
+          <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page=1">처음 <<</a></li>
+          {% endif %}
+
+          {% if start_page > 1 %}
+          <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ start_page|add:-1 }}">이전 <</a></li>
+          {% endif %}
+
+          {% for i in page_range %}
+              {% if list.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+          {% endfor %}
+
+          {% if list.paginator.num_pages > end_page %}
+          <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ end_page|add:1 }}">다음 ></a></li>
+          {% endif %}
+
+          {% if list.number < list.paginator.num_pages %}
+          <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ list.paginator.num_pages }}">맨끝 >></a></li>
+          {% endif %}
+
+      </ul>
     </div>
 
   </div>
 </section>
+
 {% endblock %}

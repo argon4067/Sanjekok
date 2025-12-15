@@ -13,7 +13,7 @@ def convert_date(date_raw):
     try:
         # YYYYMMDD
         if len(date_raw) == 8:
-            return datetime.strptime(date_raw, "%Y-%m-%d").date()
+            return datetime.strptime(date_raw, "%Y%m%d").date()
 
     except:
         return None
@@ -34,15 +34,21 @@ def save_items(items):
         img = item["img"]
         type_name = item["type"]
         contents = item["content"]
-        created_at = convert_date(item["created_at"])
+        created_at = convert_date(item["reg_dt"])
 
-        hit = item["hit"] or 0
+        views = item["views"]
         seq = item["seq"]
         link = BASE_DETAIL_URL + str(seq)  # 
 
         language = item["language"]
+        publisher = item["publisher"]
+        
         video_url = item["video_url"]
-        publisher = item["publisher"] or 'KOSHA'
+        # ytbUrlAddr가 "", None, "null" 같이 비어있으면 None 저장
+        clean_video_url = (video_url or "").strip()
+        if clean_video_url.lower() in ("", "null", "none"):
+            clean_video_url = None
+        
         tag_list = item["tags"]     # 리스트 형태로 들어있음
 
 
@@ -54,11 +60,11 @@ def save_items(items):
                 "s_image_url": img,
                 "s_contents": contents,
                 "s_created_at": created_at,
-                "s_view_count": hit,
+                "s_view_count": views,
                 "s_link": link,
                 "s_language": language,
                 "s_publisher": publisher,
-                "s_video_url": video_url,
+                "s_video_url": clean_video_url,
             }
         )
 

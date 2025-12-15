@@ -3,11 +3,8 @@
 {% block title %}회원 정보{% endblock %}
 
 {% block script1 %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'CSS/member/mypage_profile.css' %}">
 {% endblock %}
 {% block mypage_contents %}
 <div class="card col-md-6 mx-auto mt-5">
@@ -53,7 +50,7 @@
         </div>
         <div class="info-group mb-3">
             <p class="info-label">성별:</p>
-            <p class="info-value">{% if member.m_sex == "male" %}남성{% elif member.m_sex == "female" %}여성{% else %}미선택{% endif %}</p>
+            <p class="info-value">{% if member.m_sex == "남성" %}남성{% elif member.m_sex == "여성" %}여성{% else %}미선택{% endif %}</p>
         </div>
     </div>
 </div>

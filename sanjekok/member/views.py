@@ -7,9 +7,24 @@ from .forms import Step1MemberForm, Step2MemberForm
 from .decorators import login_required, mypage_auth_required
 from . import services
 from django.conf import settings
-import requests
 import urllib.parse
 # Create your views here.
+
+# 약관 동의
+def agree(request):
+
+    if request.method == "GET":
+        return render(request, 'member/member_agree.html')
+    
+    if request.method == "POST":
+        agree_term = request.POST.get("agree_term")
+        agree_privacy = request.POST.get("agree_priv")
+
+        if agree_term == "1" and agree_privacy == "1":
+            return redirect('Member:registerf')
+        else:
+            messages.error(request, "약관 및 개인정보처리방침에 동의하셔야 회원가입이 가능합니다.")
+            return render(request, 'member/member_agree.html')
 
 # 회원가입 1단계
 def registerf(request):
@@ -75,17 +90,17 @@ def registers(request):
             # 세션에 사용자 정보 저장
             request.session['member_id'] = int(member.member_id)
             request.session['member_username'] = member.m_username
-            request.session['member_name'] = member.m_name  # 사용자 이름 추가
+            request.session['member_name'] = member.m_name
             request.session['member_provider'] = member.m_provider
 
             if member.m_provider != 'local':
-                # Social login user
+                # 소셜 사용자
                 messages.success(request, f"{member.m_name}님 환영합니다!")
                 return redirect("Main:main")
             else:
-                # Regular user
+                # 로컬 사용자
                 messages.success(request, f"{member.m_name}님, 회원가입을 환영합니다!")
-                return redirect('Main:main') # 'Member:complete' 대신 'Main:main'으로 변경
+                return redirect('Main:main')
 
 
         first_error_field = next(iter(form.errors)) if form.errors else None
@@ -424,7 +439,7 @@ def logout(request):
 def mypage_password_change(request):
     if request.session.get('member_provider') != 'local':
         messages.error(request, "소셜 로그인 사용자는 비밀번호를 변경할 수 없습니다.")
-        return redirect("Main:main")
+        return redirect("Member:mypage_profile")
         
     member_id = request.session.get('member_id')
     member = get_object_or_404(Member, member_id=member_id)

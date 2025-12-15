@@ -1,0 +1,183 @@
+/* ================================
+   1. 전체 공통
+================================ */
+body {
+  background-color: #f6f8f7;
+  color: #23333d;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.subbody {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  max-width: 1200px;
+  margin: 50px auto;
+  gap: 40px;
+}
+
+/* ================================
+   2. 왼쪽 사이드 네비게이션
+================================ */
+.subheader {
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: fit-content;
+}
+
+.subheader p {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.subheader a {
+  text-decoration: none;
+  color: #23333d;
+  display: block;
+  width: 100%;
+}
+
+.subheader p:hover {
+  background-color: #f3fdf6;
+}
+
+.subheader p:hover a {
+  color: #2fb34a;
+}
+
+/* 활성 메뉴 (핵심기능) */
+.subheader p.active,
+.subheader p a.active {
+  background-color: #2fb34a;
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+/* ================================
+   3. 핵심기능 본문
+================================ */
+.tech {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  padding: 40px 50px;
+}
+
+.tech h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #23333d;
+  margin-bottom: 14px;
+}
+
+.tech h4 {
+  font-size: 1rem;
+  color: #2fb34a;
+  margin-bottom: 20px;
+}
+
+/* ================================
+   4. 기능 섹션 리스트
+================================ */
+.tech ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.tech ul li {
+  background: #f6f8f7;
+  border: 1px solid #e3e8e5;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #333;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  transition: all 0.25s ease;
+  text-align: center;
+}
+
+.tech ul li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* 이미지 스타일 */
+.tech ul li img {
+  width: 160px;
+  height: auto;
+  border-radius: 10px;
+  margin: 12px 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* 링크 스타일 */
+.tech ul li a {
+  display: inline-block;
+  color: #2fb34a;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 6px;
+  transition: color 0.25s ease;
+}
+
+.tech ul li a:hover {
+  color: #1e9b40;
+  text-decoration: underline;
+}
+
+/* ================================
+   5. 섹션 간 구분
+================================ */
+.tech h1 + h1 {
+  margin-top: 70px;
+}
+
+.tech h1:first-of-type {
+  margin-top: 0;
+}
+
+/* ================================
+   6. 반응형
+================================ */
+@media (max-width: 1024px) {
+  .subbody {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .subheader {
+    flex-direction: row;
+    justify-content: space-around;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tech {
+    padding: 25px 20px;
+  }
+
+  .tech ul {
+    grid-template-columns: 1fr;
+  }
+
+  .tech ul li img {
+    width: 100%;
+    max-width: 200px;
+  }
+}

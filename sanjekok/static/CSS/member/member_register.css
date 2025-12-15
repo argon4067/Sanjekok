@@ -1,12 +1,153 @@
-/* .input-error-username {
-    color: red;
-} */
-
-.subbtn {
-    background-color: black;
-
+/* ================================
+   기본 설정
+================================ */
+body {
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  background-color: #f6f8f7;
+  color: #23333d;
+  margin: 0;
+  padding: 60px 20px 100px;
 }
 
-/* .hiden-div {
-    display: none;
-} */
+/* ================================
+   회원가입 카드 박스
+================================ */
+.card {
+  background: #ffffff;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  max-width: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* 카드 헤더 */
+.card-header {
+  background-color: #23333d;
+  color: #ffffff;
+  text-align: center;
+  padding: 24px;
+}
+
+.card-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* 카드 본문 */
+.card-body {
+  padding: 35px 35px 45px;
+}
+
+/* ================================
+   섹션 제목
+================================ */
+.card-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #23333d;
+  margin-bottom: 20px;
+  border-left: 4px solid #23333d;
+  padding-left: 10px;
+}
+
+/* ================================
+   입력 필드 스타일
+================================ */
+.form-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #23333d;
+}
+
+.form-control {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  border-color: #f99b18;
+  box-shadow: 0 0 0 3px rgba(47, 179, 74, 0.15);
+  outline: none;
+}
+
+/* ================================
+   중복확인 버튼
+================================ */
+.input-group .btn-outline-secondary {
+  border: 1px solid #23333d;
+  color: #23333d;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: 0.25s;
+}
+
+.input-group .btn-outline-secondary:hover {
+  background-color: #f99b18;
+  color: #fff;
+}
+
+/* ================================
+   경고 메시지
+================================ */
+#usernameCheckMsg,
+#passwordError,
+#rePasswordError {
+  font-size: 0.85rem;
+  color: #e63946;
+  margin-top: 5px;
+}
+
+/* ================================
+   확인 버튼
+================================ */
+.subbtn {
+  background-color: #23333d !important;
+  border: none;
+  color: #ffffff;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 12px 0;
+  transition: background-color 0.25s ease;
+  margin-top: 8px;
+}
+
+.subbtn:hover {
+  background-color: #f99b18 !important;
+}
+
+/* ================================
+   에러 강조
+================================ */
+.input-error {
+  border-color: #e63946 !important;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1) !important;
+}
+
+/* ================================
+   반응형
+================================ */
+@media (max-width: 576px) {
+  body {
+    padding: 40px 16px;
+  }
+
+  .card-body {
+    padding: 25px 20px 35px;
+  }
+
+  .card-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.05rem;
+  }
+}

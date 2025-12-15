@@ -1,0 +1,143 @@
+/* ================================
+   기본 설정
+================================ */
+body {
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  background-color: #f6f8f7;
+  color: #23333d;
+  margin: 0;
+   
+}
+/* ================================
+   카드 전체
+================================ */
+.mypage-card {
+  background: #ffffff;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  margin: 0 auto;
+  margin-bottom: 50px;
+  overflow: hidden;
+}
+
+/* ================================
+   카드 헤더
+================================ */
+.card-header {
+  background-color: #23333d;
+  color: #ffffff;
+  text-align: center;
+  padding: 24px 28px;
+}
+
+.card-header ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-header li {
+  margin-bottom: 10px;
+}
+
+.check-info {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ================================
+   카드 바디
+================================ */
+.card-body {
+  padding: 35px 35px 45px;
+}
+
+.card-body h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #23333d;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ================================
+   입력 필드
+================================ */
+.form-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #23333d;
+}
+
+.form-control {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  border-color: #f99b18;
+  box-shadow: 0 0 0 3px rgba(47, 179, 74, 0.15);
+  outline: none;
+}
+
+/* ================================
+   버튼
+================================ */
+.subbtn {
+  background-color: #23333d !important;
+  border: none;
+  color: #ffffff;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 12px 0;
+  transition: background-color 0.25s ease;
+  margin-top: 8px;
+}
+
+.subbtn:hover {
+  background-color: #f99b18 !important;
+}
+
+/* ================================
+   에러 알림창
+================================ */
+.alert-danger {
+  background: #ffe5e5;
+  color: #b30000;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+/* ================================
+   반응형
+================================ */
+@media (max-width: 576px) {
+  body {
+    padding: 40px 16px;
+  }
+
+  .card-body {
+    padding: 25px 20px 35px;
+  }
+
+  .card-header {
+    padding: 20px;
+  }
+
+  .card-header li {
+    font-size: 0.9rem;
+  }
+
+  .card-body h2 {
+    font-size: 1.2rem;
+  }
+}

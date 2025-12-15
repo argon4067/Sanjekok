@@ -1,12 +1,25 @@
 // static/JS/hospital/hospital_detail.js
 
 document.addEventListener("DOMContentLoaded", function () {
-  const body = document.body;
+  // body가 아니라, data-*가 붙어 있는 루트 div에서 읽기
+  const root = document.getElementById("hospital-detail-page");
+  if (!root) {
+    console.error("hospital-detail-page element not found.");
+    return;
+  }
 
-  const KAKAO_KEY = body.dataset.kakaoKey;
-  const LAT = parseFloat(body.dataset.lat || "0");
-  const LNG = parseFloat(body.dataset.lng || "0");
-  const HOSPITAL_NAME = body.dataset.hospitalName || "";
+  const KAKAO_KEY = root.dataset.kakaoKey;
+  const LAT = parseFloat(root.dataset.lat || "0");
+  const LNG = parseFloat(root.dataset.lng || "0");
+  const HOSPITAL_NAME = root.dataset.hospitalName || "";
+
+  // ✅ 네이버 지도 검색용 (서버에서 URL을 내려주면 그걸 우선 사용)
+  const HOSPITAL_ADDR = root.dataset.hospitalAddress || "";
+  const NAVER_MAP_URL =
+    root.dataset.naverMapUrl ||
+    `https://map.naver.com/v5/search/${encodeURIComponent(
+      (HOSPITAL_ADDR || HOSPITAL_NAME).trim()
+    )}`;
 
   /* =======================
    * 1. 상단 평균 평점 별(반칸) 표시
@@ -54,14 +67,22 @@ document.addEventListener("DOMContentLoaded", function () {
   /* =======================
    * 2. 지도 표시 (카카오맵)
    * ======================= */
-  // 좌표가 없으면 지도만 생략 (위 별 표시에는 영향 없음)
-  if (!KAKAO_KEY || !LAT || !LNG) {
+  // 좌표나 키가 없으면 지도 생략
+  if (!KAKAO_KEY || isNaN(LAT) || isNaN(LNG) || (!LAT && !LNG)) {
+    console.warn("Map not rendered. KAKAO_KEY or coords missing.", {
+      KAKAO_KEY,
+      LAT,
+      LNG,
+    });
     return;
   }
 
   function initDetailMap() {
     const container = document.getElementById("detail-map");
-    if (!container) return;
+    if (!container) {
+      console.error("#detail-map element not found.");
+      return;
+    }
 
     const options = {
       center: new kakao.maps.LatLng(LAT, LNG),
@@ -74,6 +95,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const marker = new kakao.maps.Marker({
       position: markerPosition,
       map: map,
+    });
+
+    // ✅ 마커 클릭 → 네이버 지도 새 탭
+    kakao.maps.event.addListener(marker, "click", () => {
+      window.open(NAVER_MAP_URL, "_blank", "noopener");
     });
 
     const iwContent =
