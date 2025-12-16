@@ -176,7 +176,7 @@ LOGGING = {
 }
 
 
-# (django-crontab) 
+# (django-crontab) 배포할 경우에만 들어감.
 if not DEBUG:
     INSTALLED_APPS += ["django_crontab"]
 
