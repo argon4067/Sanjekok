@@ -297,7 +297,8 @@ def mypage_profile_modify(request):
         form = Step2MemberForm(request.POST, instance=member)
 
         if form.is_valid():
-            form.save()
+            member = form.save()
+            request.session['member_name'] = member.m_name
             messages.success(request, "프로필이 성공적으로 수정되었습니다.")
             return redirect("Member:mypage_profile")
 
