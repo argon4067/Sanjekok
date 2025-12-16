@@ -5,6 +5,8 @@
 
 {% block script1 %}
 <link rel="stylesheet" href="{% static 'CSS/search/search.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 {% endblock %}
 
 {% block contents %}
@@ -14,18 +16,21 @@
     <!-- 상단 바 -->
     <div class="top-container">
 
-        <!-- 위치선택 -->
         <div class="location-box">
             <div class="title">위치선택:</div>
-            <button class="search-btn" id="btnHome">집</button>
-            <button class="search-btn" id="btnWork">근무지</button>
+
+            <button class="search-btn" id="btnHome">
+                <i class="fa-solid fa-house"></i> 집
+            </button>
+
+            <button class="search-btn" id="btnWork">
+                <i class="fa-solid fa-briefcase"></i> 근무지
+            </button>
 
             <div class="dropdown">
                 <button id="accidentDropdownBtn" class="search-btn dropdown-btn">
-                    사고지역
+                    <i class="fa-solid fa-location-dot"></i> 사고지역
                 </button>
-
-                <!-- ✅ 추가: JS에서 사용하는 드롭다운 메뉴 컨테이너 -->
                 <div id="accidentDropdownMenu" class="dropdown-menu" style="display:none;"></div>
             </div>
         </div>
