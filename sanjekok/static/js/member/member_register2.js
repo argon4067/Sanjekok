@@ -26,6 +26,15 @@ $(document).ready(function () {
 
     // 폼 제출 시 유효성 검사 (선택 사항)
     $('form').on('submit', function(e) {
+        const $submitButton = $('.btn-next');
+
+        // 중복 제출 방지
+        if ($submitButton.is(':disabled')) {
+            e.preventDefault();
+            return;
+        }
+        $submitButton.prop('disabled', true).text('가입 처리 중...');
+
         // 이메일 필드 조합 후 유효성 검사
         const emailId = $('#email_id').val();
         const emailDns = $('#email_dns').val();
@@ -35,10 +44,15 @@ $(document).ready(function () {
             if (!regemail.test(fullEmail)) {
                 $('#EmailError').show();
                 e.preventDefault(); // 폼 제출 중단
+
+                // 유효성 검사 실패 시 버튼 다시 활성화
+                $submitButton.prop('disabled', false).text('가입하기');
                 return;
             }
         }
         $('#EmailError').hide();
+
+        // 폼이 유효하면 제출이 계속 진행됨 (버튼은 비활성화 상태)
     });
     
     if (window.firstErrorField) {
