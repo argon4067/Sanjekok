@@ -19,7 +19,10 @@ def parse_list(data, shpCd):
             continue
 
         try:
-            reg_date = datetime.strptime(reg_dt, "%Y-%m-%d").date()
+            if "-" in reg_dt:
+                reg_date = datetime.strptime(reg_dt, "%Y-%m-%d").date()
+            else:
+                reg_date = datetime.strptime(reg_dt, "%Y%m%d").date()
         except ValueError:
             continue
 
