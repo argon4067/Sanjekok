@@ -65,8 +65,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 <td>{{ forloop.counter }}</td>
                 <td>{{ individual.i_title }}</td>
                 <td>{{ individual.member_industry.i_industry_type2 }}</td>
-                <td>{{ individual.i_disease_type|default:"-" }}</td>
                 <td>{{ individual.i_injury|default:"-" }}</td>
+                <td>{{ individual.i_disease_type|default:"-" }}</td>
                 <td>{{ individual.i_accident_date }}</td>
                 <td>{{ individual.i_address }}</td>
               </tr>

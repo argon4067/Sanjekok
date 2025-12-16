@@ -130,6 +130,30 @@ $(document).ready(function () {
 
     // Form submission validation
     $("#add-info-form").on("submit", function (e) {
+        const title = $("#i_title").val().trim();
+        const titleRegex = /^[가-힣a-zA-Z0-9]+$/;
+
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            e.preventDefault();
+            $("#i_title").focus();
+            return;
+        }
+
+        if (title.length > 10) {
+            alert("제목은 10자 이하로 입력해주세요.");
+            e.preventDefault();
+            $("#i_title").focus();
+            return;
+        }
+
+        if (!titleRegex.test(title)) {
+            alert("제목은 한글, 영어, 숫자만 입력 가능합니다.");
+            e.preventDefault();
+            $("#i_title").focus();
+            return;
+        }
+
         e.preventDefault(); // Stop submission immediately
 
         // Reset all error messages

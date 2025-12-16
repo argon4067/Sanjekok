@@ -20,7 +20,7 @@
 <h2>산재 정보 추가</h2>
 <div class="mb-3">
     <label for="i_title" class="form-label">제목:</label>
-    <input type="text" class="form-control" placeholder="제목을 입력하세요." id="i_title" name="i_title" required>
+    <input type="text" class="form-control" placeholder="1~10자 / 특수기호불가" id="i_title" name="i_title" required maxlength="10" pattern="^[가-힣a-zA-Z0-9]+$">
 </div>
 
 <!--업종 대분류 -->

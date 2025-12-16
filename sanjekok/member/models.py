@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import RegexValidator
 
 class Member(models.Model):
     member_id = models.AutoField(primary_key=True)
@@ -17,7 +17,18 @@ class Member(models.Model):
 
     m_sex = models.CharField(max_length=6, choices=SEX_CHOICES, verbose_name='성')
     m_birth_date = models.DateField(verbose_name='생년월일')
-    m_name = models.CharField(max_length=100, verbose_name='이름')
+    
+    korean_name_validator = RegexValidator(
+        regex=r'^[가-힣]{1,10}$',
+        message='이름은 한글만 입력 가능하며 최대 10글자까지 가능합니다.'
+    )
+
+    m_name = models.CharField(
+        max_length=10,
+        validators=[korean_name_validator],
+        verbose_name='이름'
+    )
+
     m_username = models.CharField(unique=True, max_length=100, verbose_name='회원 아이디')
     m_password = models.CharField(max_length=300, verbose_name='회원 비밀번호')
     m_phone = models.CharField(max_length=11, null=True, verbose_name='회원 전화번호')
@@ -53,6 +64,14 @@ class Member_industry(models.Model):
 
 
 class Individual(models.Model):
+
+    
+    title_validator = RegexValidator(
+        regex=r'^[가-힣a-zA-Z0-9]+$',
+        message='산재제목은 한글, 영어, 숫자만 입력 가능합니다.'
+    )
+
+
     accident_id = models.AutoField(primary_key=True)
     member_industry = models.ForeignKey(Member_industry, on_delete=models.CASCADE, related_name='individuals', verbose_name='회원 업종')
     i_accident_date = models.DateField(null=True, verbose_name='재해일자')
@@ -61,7 +80,11 @@ class Individual(models.Model):
     i_address = models.CharField(max_length=150, verbose_name='발생주소')
     i_lat = models.FloatField(null=True, blank=True, verbose_name="사고위치 위도")
     i_lng = models.FloatField(null=True, blank=True, verbose_name="사고위치 경도")
-    i_title = models.CharField(max_length=10, verbose_name='산재제목')
+    i_title = models.CharField(
+        max_length=10,
+        validators=[title_validator],
+        verbose_name='산재제목'
+    )
 
     class Meta:
         db_table = 't_individual'
