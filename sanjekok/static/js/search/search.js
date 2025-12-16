@@ -26,24 +26,30 @@ const OVERLAY_GAP_PX = 20;
 
 function makeSvgPinMarkerImage(colorHex) {
   const svg =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="35" viewBox="0 0 24 35">' +
-    '<path d="M12 0C6.6 0 2.2 4.4 2.2 9.8c0 7.2 9.8 25.2 9.8 25.2s9.8-18 9.8-25.2C21.8 4.4 17.4 0 12 0z" ' +
-    'fill="' + colorHex + '" stroke="#333" stroke-width="1"/>' +
-    '<circle cx="12" cy="10" r="4.2" fill="#fff" opacity="0.95"/>' +
-    "</svg>";
+    `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="38" viewBox="0 0 28 38">
+      <defs>
+        <radialGradient id="grad" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="${colorHex}" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="${colorHex}" stop-opacity="1"/>
+        </radialGradient>
+        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="rgba(0,0,0,0.3)"/>
+        </filter>
+      </defs>
+      <path d="M14 1C7 1 1.5 6.5 1.5 13.5c0 8.5 12.5 22.5 12.5 22.5S26.5 22 26.5 13.5C26.5 6.5 21 1 14 1z"
+            fill="url(#grad)" stroke="#fff" stroke-width="2" filter="url(#shadow)"/>
+      <circle cx="14" cy="13.5" r="4.2" fill="#fff" stroke="${colorHex}" stroke-width="1.2" opacity="0.95"/>
+    </svg>`;
 
   const src = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
-
-  return new kakao.maps.MarkerImage(
-    src,
-    new kakao.maps.Size(24, 35),
-    { offset: new kakao.maps.Point(12, 35) }
-  );
+  return new kakao.maps.MarkerImage(src, new kakao.maps.Size(28, 38), {
+    offset: new kakao.maps.Point(14, 38)
+  });
 }
 
-const MY_ACCIDENT_IMG = makeSvgPinMarkerImage("#e53935");    // red
-const OTHER_ACCIDENT_IMG = makeSvgPinMarkerImage("#fbc02d"); // yellow
-const MY_PLACE_IMG = makeSvgPinMarkerImage("#1e88e5");       // blue
+const MY_ACCIDENT_IMG = makeSvgPinMarkerImage("#f99b18");    // red
+const OTHER_ACCIDENT_IMG = makeSvgPinMarkerImage("#bcbcbc"); // yellow
+const MY_PLACE_IMG = makeSvgPinMarkerImage("#23333d");       // blue
 
 function setDetail(htmlOrText) {
   const detailEl = document.getElementById("detail");
