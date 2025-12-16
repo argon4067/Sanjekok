@@ -19,12 +19,15 @@ def parse_list(data, shpCd):
             continue
 
         try:
-            reg_date = datetime.strptime(reg_dt, "%Y%m%d").date()
+            if "-" in reg_dt:
+                reg_date = datetime.strptime(reg_dt, "%Y-%m-%d").date()
+            else:
+                reg_date = datetime.strptime(reg_dt, "%Y%m%d").date()
         except ValueError:
             continue
 
         # ✅ 최근 5년 초과 자료는 제외
-        if reg_date <= FIVE_YEARS_AGO:
+        if reg_date < FIVE_YEARS_AGO:
             continue
         
         # 자료 제목
