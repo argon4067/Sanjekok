@@ -1,147 +1,3 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}안전자료실{% endblock %}
-
-{% block script1 %}
-<link rel="stylesheet" href="{% static 'CSS/safe/safe_list.css' %}">
-<script src="{% static 'js/safe/safe.js' %}"></script>
-{% endblock %}
-
-{% block contents %}
-<section class="safe-section">
-  <div class="container py-5">
-
-    <!-- 제목 -->
-    <div class="safe-header text-center mb-4">
-      <p class="subtitle">산업안전 관련 자료를 한곳에</p>
-      <h2 class="fw-bold">안전자료실</h2>
-    </div>
-
-    <!-- 최근 본 자료 -->
-    {% if recent_list %}
-    <div class="recent-section mb-5">
-      <h4 class="section-title">최근 본 자료</h4>
-      <div class="recent-slider-wrapper">
-        <button class="slider-btn prev" type="button">&lt;</button>
-        <div class="recent-slider">
-          {% for h in recent_list %}
-          <a href="{% url 'Safe:safe_detail' h.safe.id %}" class="recent-card">
-            <img src="{{ h.safe.s_image_url }}" alt="자료 이미지">
-            <p class="recent-title">{{ h.safe.s_title }}</p>
-          </a>
-          {% endfor %}
-        </div>
-        <button class="slider-btn next" type="button">&gt;</button>
-      </div>
-    </div>
-    {% endif %}
-
-    <!-- 필터 -->
-    <form method="get" id="filterForm" class="filter-wrapper shadow-sm">
-      <div class="filter-group">
-        <div class="filter-label">자료유형</div>
-        <div class="filter-controls">
-          {% for val in type_list %}
-          <label class="cb-label">
-            <input type="checkbox" name="type" value="{{ val }}" {% if val in selected_types %}checked{% endif %}>
-            {{ val }}
-          </label>
-          {% endfor %}
-        </div>
-      </div>
-
-      <div class="filter-group">
-        <div class="filter-label">언어</div>
-        <div class="filter-controls">
-          {% for lang in language_list %}
-          <label class="cb-label">
-            <input type="checkbox" name="lang" value="{{ lang }}" {% if selected_language == lang %}checked{% endif %}>
-            {{ lang }}
-          </label>
-          {% endfor %}
-        </div>
-      </div>
-
-      <div class="filter-group">
-        <div class="filter-label">검색</div>
-        <div class="filter-controls search-box">
-          <input type="text" name="q" class="form-control search-input" placeholder="제목검색" value="{{ search_keyword }}">
-          <button type="submit" class="btn btn-outline-secondary btn-search">검색</button>
-        </div>
-      </div>
-    </form>
-
-    <!-- 정렬 -->
-    <form method="get" id="sortForm" class="sort-wrapper">
-      {% for key, value in request.GET.items %}
-        {% if key != "sort" %}
-          <input type="hidden" name="{{ key }}" value="{{ value }}">
-        {% endif %}
-      {% endfor %}
-      <div class="sort-label">정렬:</div>
-      <div class="filter-controls">
-        <select name="sort" class="form-select sort-select" onchange="this.form.submit()">
-          <option value="latest"{% if sort == "latest" %} selected{% endif %}>최신순</option>
-          <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>과거순</option>
-          <option value="views"{% if sort == "views" %} selected{% endif %}>조회순</option>
-        </select>
-      </div>
-    </form>
-
-    <!-- 카드 리스트 -->
-    <div class="safe-card-list">
-      {% for s in list %}
-      <a href="{% url 'Safe:safe_detail' s.id %}" class="safe-card">
-        <div class="card-left">
-          <h3 class="card-title">{{ s.s_title }}</h3>
-          <div class="card-tags">
-            {% for t in s.tags.all %}
-              <span>#{{ t.st_tag }}</span>
-            {% endfor %}
-          </div>
-          <p class="card-desc">{{ s.s_contents|truncatechars:100 }}</p>
-        </div>
-        <div class="card-right">
-          {% if s.s_image_url %}
-            <img src="{{ s.s_image_url }}" class="card-img">
-          {% else %}
-            <div class="card-noimg">NO IMAGE</div>
-          {% endif %}
-        </div>
-      </a>
-      {% empty %}
-      <p class="text-center mt-5">검색 결과가 없습니다.</p>
-      {% endfor %}
-    </div>
-
-    <!-- 페이지네이션 -->
-    <div class="mt-5">
-      <ul class="pagination justify-content-center">
-        {% if list.has_previous %}
-        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page=1">처음</a></li>
-        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ list.previous_page_number }}">이전</a></li>
-        {% endif %}
-        {% for i in page_range %}
-          {% if list.number == i %}
-            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-          {% else %}
-            <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ i }}">{{ i }}</a></li>
-          {% endif %}
-        {% endfor %}
-        {% if list.has_next %}
-        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ list.next_page_number }}">다음</a></li>
-        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ list.paginator.num_pages }}">끝</a></li>
-        {% endif %}
-      </ul>
-    </div>
-
-  </div>
-</section>
-{% endblock %}
-
-
-
 /* ===========================
    1. 기본 배경/폰트
 =========================== */
@@ -268,13 +124,19 @@ body {
   margin-bottom: 8px;
 }
 
+/* 카드 내 태그 영역 정렬 */
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .card-tags span {
   display: inline-block;
   background: #edf1f5;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 13px;
-  margin-right: 5px;
   color: #58616c;
 }
 

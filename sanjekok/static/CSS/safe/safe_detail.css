@@ -79,7 +79,18 @@
 .info-line {
   margin-bottom: 12px;
   font-size: 1rem;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 6px;
 }
+
+/* '키워드 :' 라벨은 고정 */
+.info-line strong {
+  white-space: nowrap;
+  margin-right: 6px;
+}
+
 .tag-item {
   background: #edf1f5;
   color: #23333d;
