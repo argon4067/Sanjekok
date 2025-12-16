@@ -1,74 +1,74 @@
-/* ================================
+/* ==============================
    기본 설정
-================================ */
+============================== */
 body {
   font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
   background-color: #f6f8f7;
   color: #23333d;
   margin: 0;
-  padding: 60px 20px 100px;
+  padding: 0;
 }
 
-/* ================================
-   카드 전체
-================================ */
-.card {
+/* ✅ 중앙정렬용 래퍼 */
+.mypage-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 50px 20px;
+}
+
+/* ==============================
+   카드
+============================== */
+.mypage-card {
   background: #ffffff;
-  border: none;
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
   overflow: hidden;
 }
 
-/* ================================
-   카드 헤더
-================================ */
-.card-header {
+/* 헤더 */
+.mypage-header {
   background-color: #23333d;
   color: #ffffff;
   text-align: center;
   padding: 24px 28px;
+  line-height: 1.6;
 }
 
-.card-header ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.card-header li {
-  margin-bottom: 10px;
-}
-
-.check-info {
+.mypage-header p {
+  margin: 0 0 8px;
   font-size: 0.95rem;
-  line-height: 1.5;
 }
 
-/* ================================
-   카드 바디
-================================ */
-.card-body {
+/* 본문 */
+.mypage-body {
   padding: 35px 35px 45px;
 }
 
-.card-body h2 {
+/* 제목 */
+.mypage-body h2 {
   font-size: 1.4rem;
   font-weight: 700;
   color: #23333d;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   text-align: center;
 }
 
-/* ================================
-   입력 필드
-================================ */
+/* 입력 필드 */
+.input-wrap {
+  margin-bottom: 20px;
+}
+
 .form-label {
   font-weight: 600;
   font-size: 0.95rem;
   color: #23333d;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .form-control {
@@ -76,38 +76,35 @@ body {
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 0.95rem;
+  width: 100%;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-control:focus {
-  border-color: #f99b18;
-  box-shadow: 0 0 0 3px rgba(47, 179, 74, 0.15);
+  border-color: #2fb34a;
+  box-shadow: 0 0 0 3px rgba(47, 179, 74, 0.2);
   outline: none;
 }
 
-/* ================================
-   버튼
-================================ */
-.subbtn {
-  background-color: #23333d !important;
-  border: none;
-  color: #ffffff;
+/* 버튼 */
+.btn-next {
+  background-color: #23333d;
+  color: #fff;
   width: 100%;
+  border: none;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 10px;
   padding: 12px 0;
-  transition: background-color 0.25s ease;
-  margin-top: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s;
 }
 
-.subbtn:hover {
-  background-color: #f99b18 !important;
+.btn-next:hover {
+  background-color: #f99b18;
 }
 
-/* ================================
-   에러 알림창
-================================ */
+/* 에러 알림창 */
 .alert-danger {
   background: #ffe5e5;
   color: #b30000;
@@ -115,29 +112,24 @@ body {
   border-radius: 8px;
   font-size: 0.9rem;
   margin-bottom: 20px;
+  text-align: center;
 }
 
-/* ================================
-   반응형
-================================ */
+/* 반응형 */
 @media (max-width: 576px) {
-  body {
-    padding: 40px 16px;
-  }
-
-  .card-body {
+  .mypage-body {
     padding: 25px 20px 35px;
   }
 
-  .card-header {
+  .mypage-header {
     padding: 20px;
   }
 
-  .card-header li {
+  .mypage-header p {
     font-size: 0.9rem;
   }
 
-  .card-body h2 {
+  .mypage-body h2 {
     font-size: 1.2rem;
   }
 }

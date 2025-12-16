@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (cbAll.checked) {
             cbItems.forEach(cb => cb.checked = false);
         }
-        form.submit();
     });
 
     // 하위 유형 클릭 시 → 전체 상태 자동 관리
@@ -30,8 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 // 하나라도 빠짐 → 전체 체크 해제
                 cbAll.checked = false;
             }
-
-            form.submit();
         });
     });
 
@@ -47,9 +44,45 @@ document.addEventListener("DOMContentLoaded", function () {
             langCheckboxes.forEach(other => {
                 if (other !== cb) other.checked = false;
             });
-
-            form.submit();
         });
     });
-
 });
+
+    // ------------------------------------------
+    // 3) 최근 본 자료 슬라이드
+    // ------------------------------------------
+
+document.addEventListener("DOMContentLoaded", function () {
+  const slider = document.querySelector(".recent-slider");
+  const prevBtn = document.querySelector(".slider-btn.prev");
+  const nextBtn = document.querySelector(".slider-btn.next");
+
+  if (!slider || !prevBtn || !nextBtn) return;
+
+  const cards = slider.querySelectorAll(".recent-card");
+  if (cards.length === 0) return;
+
+  const gap = parseInt(getComputedStyle(slider).gap) || 0;
+  const cardWidth = cards[0].offsetWidth + gap;
+
+  // ✅ 보여줄 카드 수 (PC 최대 3, 모바일 1)
+  const visibleCount =
+    window.innerWidth <= 768 ? 1 : Math.min(3, cards.length);
+
+  // ✅ 슬라이더 폭을 "실제 카드 수"에 맞게 조정
+  slider.style.width = `${cardWidth * visibleCount - gap}px`;
+
+  // 이동 거리
+  const STEP =
+    window.innerWidth <= 768 ? cardWidth : cardWidth * visibleCount;
+
+  prevBtn.addEventListener("click", () => {
+    slider.scrollBy({ left: -STEP, behavior: "smooth" });
+  });
+
+  nextBtn.addEventListener("click", () => {
+    slider.scrollBy({ left: STEP, behavior: "smooth" });
+  });
+});
+
+

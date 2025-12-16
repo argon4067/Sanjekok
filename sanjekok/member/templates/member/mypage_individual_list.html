@@ -1,90 +1,92 @@
 {% extends "member/mypage_base.html" %}
 {% load static %}
-{% block title %}산재 관리{% endblock %}
+{% block title %}산재 관리 | 산재콕{% endblock %}
 
 {% block script1 %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'CSS/member/mypage_individual_list.css' %}">
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const selectAllCheckbox = document.getElementById('select-all');
-    if (!selectAllCheckbox) return;
+  const selectAllCheckbox = document.getElementById('select-all');
+  if (!selectAllCheckbox) return;
 
-    const itemCheckboxes = document.querySelectorAll('input[name="selected_ids"]');
+  const itemCheckboxes = document.querySelectorAll('input[name="selected_ids"]');
 
-    selectAllCheckbox.addEventListener('change', function() {
-        itemCheckboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
-        });
-    });
-
+  selectAllCheckbox.addEventListener('change', function() {
     itemCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            if (!this.checked) {
-                selectAllCheckbox.checked = false;
-            } else {
-                // 모든 개별 체크박스가 선택되었는지 확인
-                const allChecked = Array.from(itemCheckboxes).every(item => item.checked);
-                if (allChecked) {
-                    selectAllCheckbox.checked = true;
-                }
-            }
-        });
+      checkbox.checked = this.checked;
     });
+  });
+
+  itemCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      if (!this.checked) {
+        selectAllCheckbox.checked = false;
+      } else {
+        const allChecked = Array.from(itemCheckboxes).every(item => item.checked);
+        if (allChecked) selectAllCheckbox.checked = true;
+      }
+    });
+  });
 });
 </script>
 {% endblock %}
+
 {% block mypage_contents %}
-    <div class="card col-md-6 mx-auto mt-5">
-        <div class="card-header text-center">
-            <h2>산재 정보</h2>
-        </div>
-        <div class="card-body">
-            {% if individuals %}
-            <form method="post" action="{% url 'Member:mypage_individual_bulk_delete' %}">
-                {% csrf_token %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col"><input type="checkbox" id="select-all" title="전체 선택"></th>
-                            <th scope="col">일련번호</th>
-                            <th scope="col">제목</th>
-                            <th scope="col">업종</th>
-                            <th scope="col">발생형태</th>
-                            <th scope="col">질병</th>
-                            <th scope_col="col">재해일자</th>
-                            <th scope="col">주소</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for individual in individuals %}
-                        <tr>
-                            <!-- individual.accident_id에 일치하는 산재 정보 삭제할려고 체크하는 체크박스  -->
-                            <td><input type="checkbox" name="selected_ids" value="{{ individual.accident_id }}"></td>
-                            <!-- 1~ 리스트 개수만큼 일련번호 -->
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ individual.i_title }}</td>
-                            <td>{{ individual.member_industry.i_industry_type2 }}</td>
-                            <td>{{ individual.i_disease_type|default:"-" }}</td>
-                            <td>{{ individual.i_injury|default:"-" }}</td>
-                            <td>{{ individual.i_accident_date }}</td>
-                            <td>{{ individual.i_address }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <a href="{% url 'Member:mypage_individual_add' %}" class="btn btn-primary">산재 정보 추가</a>
-                    <!-- 체크된 산재정보 삭제 -->
-                    <button type="submit" class="btn btn-danger">선택 항목 삭제</button>
-                </div>
-            </form>
-            {% else %}
-            <div class="text-center">
-                <p>등록된 산재 정보가 없습니다.</p>
-                <a href="{% url 'Member:mypage_individual_add' %}" class="btn btn-primary">산재 정보 추가</a>
-            </div>
-            {% endif %}
-        </div>
+<div class="mypage-wrapper">
+  <div class="mypage-card">
+    <div class="mypage-header">
+      <h2>산재 정보 관리</h2>
+      <p>등록된 산재 정보를 확인하고 수정 또는 삭제할 수 있습니다.</p>
     </div>
+
+    <div class="mypage-body">
+      {% if individuals %}
+      <form method="post" action="{% url 'Member:mypage_individual_bulk_delete' %}">
+        {% csrf_token %}
+        <div class="table-wrap">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="select-all" title="전체 선택"></th>
+                <th>번호</th>
+                <th>제목</th>
+                <th>업종</th>
+                <th>발생형태</th>
+                <th>질병</th>
+                <th>재해일자</th>
+                <th>주소</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for individual in individuals %}
+              <tr>
+                <td><input type="checkbox" name="selected_ids" value="{{ individual.accident_id }}"></td>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ individual.i_title }}</td>
+                <td>{{ individual.member_industry.i_industry_type2 }}</td>
+                <td>{{ individual.i_disease_type|default:"-" }}</td>
+                <td>{{ individual.i_injury|default:"-" }}</td>
+                <td>{{ individual.i_accident_date }}</td>
+                <td>{{ individual.i_address }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="btn-group-center">
+          <a href="{% url 'Member:mypage_individual_add' %}" class="btn-primary">산재 정보 추가</a>
+          <button type="submit" class="btn-danger">선택 항목 삭제</button>
+        </div>
+      </form>
+      {% else %}
+      <div class="text-center empty-wrap">
+        <p>등록된 산재 정보가 없습니다.</p>
+        <a href="{% url 'Member:mypage_individual_add' %}" class="btn-primary">산재 정보 추가</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock mypage_contents %}

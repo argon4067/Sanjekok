@@ -148,6 +148,14 @@ body {
   padding: 18px 26px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.mid-title-left {
+  min-width: 0;
 }
 
 .main-title {
@@ -161,6 +169,34 @@ body {
   margin-top: 6px;
   font-size: 0.9rem;
 }
+
+.marker-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #23333d;
+  white-space: nowrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-pin {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #333;
+  display: inline-block;
+}
+
+/* 색상 의미 */
+.legend-red { background: #e53935; }     /* 나의 산재 */
+.legend-blue { background: #1e88e5; }    /* 나의 집/근무지 */
+.legend-yellow { background: #fbc02d; }  /* 다른 산재 */
 
 /* ================================
    7. 지도 및 상세정보
@@ -239,5 +275,17 @@ body {
 
   #map {
     height: 400px;
+  }
+  
+  .mid-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .marker-legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+    white-space: normal;
+    gap: 10px;
   }
 }

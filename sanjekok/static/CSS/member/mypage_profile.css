@@ -1,4 +1,4 @@
-/* ================================
+/* ===============================
    기본 설정
 ================================ */
 body {
@@ -6,57 +6,77 @@ body {
   background-color: #f6f8f7;
   color: #23333d;
   margin: 0;
-  padding: 60px 20px 100px;
+  padding: 0;
 }
 
-/* ================================
-   카드 전체
+/* ✅ 중앙 정렬 컨테이너 */
+.mypage-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 50px 20px;
+}
+
+/* ===============================
+   카드 영역
 ================================ */
-.card {
-  background: #ffffff;
-  border: none;
+.mypage-card {
+  background: #fff;
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   max-width: 700px;
-  margin-bottom: 70px;
+  width: 100%;
   overflow: hidden;
 }
 
-/* 카드 헤더 */
-.card-header {
+/* 헤더 */
+.mypage-header {
   background-color: #23333d;
-  color: #ffffff;
+  color: #fff;
   text-align: center;
-  padding: 24px 28px;
+  padding: 28px 20px 22px;
 }
 
-.card-header h2 {
-  font-size: 1.8rem;
+.mypage-header h2 {
+  font-size: 1.7rem;
   font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.mypage-header p {
+  font-size: 0.9rem;
+  opacity: 0.85;
   margin: 0;
 }
 
-/* 카드 본문 */
-.card-body {
-  padding: 35px 45px 50px;
+/* 본문 */
+.mypage-body {
+  padding: 35px 40px 45px;
 }
 
-.card-title {
+.section-title {
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   color: #23333d;
-  margin-bottom: 24px;
   border-left: 4px solid #2fb34a;
   padding-left: 10px;
+  margin-bottom: 25px;
 }
 
-/* ================================
-   정보 그룹 (라벨 + 값)
+/* ===============================
+   정보 리스트
 ================================ */
-.info-group {
+.info-list {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.info-row {
+  display: flex;
   justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #e4e4e4;
   padding: 10px 0;
 }
@@ -75,61 +95,54 @@ body {
   background: #f8f9fa;
   padding: 8px 14px;
   border-radius: 8px;
+  text-align: left;
 }
 
-/* 첫 번째 항목은 상단 여백 추가 */
-.info-group:first-child {
-  border-top: 1px solid #e4e4e4;
-}
-
-/* ================================
-   버튼 (수정 등 추가 시)
+/* ===============================
+   버튼 (추가 버튼용)
 ================================ */
-.subbtn {
-  background-color: #23333d !important;
-  border: none;
-  color: #ffffff;
+.btn-next {
+  background-color: #2fb34a;
+  color: #fff;
   width: 100%;
+  border: none;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 10px;
   padding: 12px 0;
-  transition: background-color 0.25s ease;
   margin-top: 24px;
+  cursor: pointer;
+  transition: background-color 0.25s;
 }
 
-.subbtn:hover {
-  background-color: #f99b18 !important;
+.btn-next:hover {
+  background-color: #25913c;
 }
 
-/* ================================
+/* ===============================
    반응형
 ================================ */
 @media (max-width: 576px) {
-  body {
-    padding: 40px 16px;
-  }
-
-  .card-body {
+  .mypage-body {
     padding: 25px 20px 35px;
   }
 
-  .info-group {
+  .mypage-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .info-row {
     flex-direction: column;
     align-items: flex-start;
+    gap: 5px;
   }
 
   .info-label {
-    margin-bottom: 4px;
     font-size: 0.9rem;
   }
 
   .info-value {
     width: 100%;
     font-size: 0.9rem;
-  }
-
-  .card-header h2 {
-    font-size: 1.5rem;
   }
 }

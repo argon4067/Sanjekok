@@ -1,166 +1,475 @@
-/* 제목 */
-.safe-header .subtitle {
-    font-size: 14px;
-    color: #6c757d;
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}안전자료실{% endblock %}
+
+{% block script1 %}
+<link rel="stylesheet" href="{% static 'CSS/safe/safe_list.css' %}">
+<script src="{% static 'js/safe/safe.js' %}"></script>
+{% endblock %}
+
+{% block contents %}
+<section class="safe-section">
+  <div class="container py-5">
+
+    <!-- 제목 -->
+    <div class="safe-header text-center mb-4">
+      <p class="subtitle">산업안전 관련 자료를 한곳에</p>
+      <h2 class="fw-bold">안전자료실</h2>
+    </div>
+
+    <!-- 최근 본 자료 -->
+    {% if recent_list %}
+    <div class="recent-section mb-5">
+      <h4 class="section-title">최근 본 자료</h4>
+      <div class="recent-slider-wrapper">
+        <button class="slider-btn prev" type="button">&lt;</button>
+        <div class="recent-slider">
+          {% for h in recent_list %}
+          <a href="{% url 'Safe:safe_detail' h.safe.id %}" class="recent-card">
+            <img src="{{ h.safe.s_image_url }}" alt="자료 이미지">
+            <p class="recent-title">{{ h.safe.s_title }}</p>
+          </a>
+          {% endfor %}
+        </div>
+        <button class="slider-btn next" type="button">&gt;</button>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 필터 -->
+    <form method="get" id="filterForm" class="filter-wrapper shadow-sm">
+      <div class="filter-group">
+        <div class="filter-label">자료유형</div>
+        <div class="filter-controls">
+          {% for val in type_list %}
+          <label class="cb-label">
+            <input type="checkbox" name="type" value="{{ val }}" {% if val in selected_types %}checked{% endif %}>
+            {{ val }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">언어</div>
+        <div class="filter-controls">
+          {% for lang in language_list %}
+          <label class="cb-label">
+            <input type="checkbox" name="lang" value="{{ lang }}" {% if selected_language == lang %}checked{% endif %}>
+            {{ lang }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">검색</div>
+        <div class="filter-controls search-box">
+          <input type="text" name="q" class="form-control search-input" placeholder="제목검색" value="{{ search_keyword }}">
+          <button type="submit" class="btn btn-outline-secondary btn-search">검색</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- 정렬 -->
+    <form method="get" id="sortForm" class="sort-wrapper">
+      {% for key, value in request.GET.items %}
+        {% if key != "sort" %}
+          <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endif %}
+      {% endfor %}
+      <div class="sort-label">정렬:</div>
+      <div class="filter-controls">
+        <select name="sort" class="form-select sort-select" onchange="this.form.submit()">
+          <option value="latest"{% if sort == "latest" %} selected{% endif %}>최신순</option>
+          <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>과거순</option>
+          <option value="views"{% if sort == "views" %} selected{% endif %}>조회순</option>
+        </select>
+      </div>
+    </form>
+
+    <!-- 카드 리스트 -->
+    <div class="safe-card-list">
+      {% for s in list %}
+      <a href="{% url 'Safe:safe_detail' s.id %}" class="safe-card">
+        <div class="card-left">
+          <h3 class="card-title">{{ s.s_title }}</h3>
+          <div class="card-tags">
+            {% for t in s.tags.all %}
+              <span>#{{ t.st_tag }}</span>
+            {% endfor %}
+          </div>
+          <p class="card-desc">{{ s.s_contents|truncatechars:100 }}</p>
+        </div>
+        <div class="card-right">
+          {% if s.s_image_url %}
+            <img src="{{ s.s_image_url }}" class="card-img">
+          {% else %}
+            <div class="card-noimg">NO IMAGE</div>
+          {% endif %}
+        </div>
+      </a>
+      {% empty %}
+      <p class="text-center mt-5">검색 결과가 없습니다.</p>
+      {% endfor %}
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div class="mt-5">
+      <ul class="pagination justify-content-center">
+        {% if list.has_previous %}
+        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page=1">처음</a></li>
+        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ list.previous_page_number }}">이전</a></li>
+        {% endif %}
+        {% for i in page_range %}
+          {% if list.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if list.has_next %}
+        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ list.next_page_number }}">다음</a></li>
+        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ list.paginator.num_pages }}">끝</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+
+
+
+/* ===========================
+   1. 기본 배경/폰트
+=========================== */
+body {
+  background-color: #f6f8f7;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  color: #23333d;
 }
 
-/* -------------------------
-   필터 전체 박스
--------------------------- */
+/* ===========================
+   2. 제목 영역
+=========================== */
+.safe-header .subtitle {
+  color: #f99b18;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.safe-header h2 {
+  color: #23333d;
+  font-weight: 700;
+  font-size: 1.9rem;
+}
+
+/* ===========================
+   3. 필터 박스
+=========================== */
 .filter-wrapper {
-    background: #e1e3e6;
-    border: 1px solid #c8cdd3;
-    padding: 20px;
-    border-radius: 6px;
-    margin-bottom: 25px;
+  background: #ffffff;
+  border: 1px solid #e3e6ea;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  padding: 24px 28px;
+  margin-bottom: 30px;
 }
 
 .filter-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
 }
 
 .filter-label {
-    width: 90px;
-    font-weight: 600;
-    color: #23333d;
+  width: 90px;
+  font-weight: 700;
+  color: #23333d;
 }
 
 .filter-controls {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .cb-label {
-    display: flex;
-    align-items: center;
-    gap: 3px;
+  font-size: 0.95rem;
 }
 
-/* 검색 */
 .search-box {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .search-input {
-    width: 400px;
+  width: 320px;
+  border-radius: 8px;
 }
 
-/* -------------------------
-   카드 레이아웃
--------------------------- */
+/* ===========================
+   4. 정렬 드롭다운
+=========================== */
+.sort-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.sort-select {
+  width: 120px;
+  border-radius: 8px;
+}
+
+/* ===========================
+   5. 카드형 자료 리스트
+=========================== */
 .safe-card-list {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .safe-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    background: #fff;
-    border: 1px solid #dfe3e8;
-    border-radius: 10px;
-
-    padding: 20px;
-    text-decoration: none;
-    color: inherit;
-
-    transition: 0.2s ease;
+  background: #fff;
+  border: 1px solid #e3e6ea;
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.25s ease;
+  border-left: 4px solid #f99b18;
 }
 
 .safe-card:hover {
-    background: #f3f6f9;
-    border-color: #cfd6dd;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
 /* 카드 왼쪽 */
 .card-left {
-    width: 75%;
+  flex: 1;
+  padding-right: 16px;
 }
 
 .card-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 
 .card-tags span {
-    display: inline-block;
-    background: #edf1f5;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    margin-right: 6px;
-    margin-bottom: 3px;
-    color: #58616c;
+  display: inline-block;
+  background: #edf1f5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-right: 5px;
+  color: #58616c;
 }
 
 .card-desc {
-    margin-top: 10px;
-    font-size: 15px;
-    color: #5c636a;
+  margin-top: 10px;
+  font-size: 15px;
+  color: #5c636a;
 }
 
 /* 카드 오른쪽 이미지 */
 .card-right {
-    width: 130px;
-    height: 180px;
-    border-radius: 5px;
-    overflow: hidden;
+  width: 140px;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f1f3f4;
 }
 
 .card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .card-noimg {
-    width: 100%;
-    height: 100%;
-    background: #d8dde3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #565d64;
-    font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 13px;
 }
 
-/* 페이지네이션 */
+/* ================================
+  페이지네이션 (산재뉴스 동일)
+================================ */
 .pagination {
-    margin-top: 20px;
+  margin-top: 40px;
+  justify-content: center;
 }
 
-/* 기본 페이지 버튼 */
 .pagination .page-link {
-    color: #4a4a4a;
-    border-radius: 6px;
-    font-size: 14px;
-    padding: 6px 12px;
+  border: none;
+  background-color: transparent;
+  color: #23333d;
+  font-weight: 500;
+  padding: 6px 12px;
+  margin: 0 3px;
+  border-radius: 8px;
+  transition: all 0.25s ease;
 }
 
 .pagination .page-link:hover {
-    background-color: #e6ecff;
-    color: #1a1a1a;
+  background-color: #f99b18;
+  color: #fff;
 }
 
-/* active (현재 페이지) */
 .pagination .page-item.active .page-link {
-    background-color: #5a76ff;
-    border-color: #5a76ff;
-    color: white !important;
+  background-color: #23333d;
+  color: #fff !important;
+  font-weight: 700;
+}
+
+.safe-section {
+  min-height: calc(100vh - 300px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* ================================
+   🧭 최근 본 자료 슬라이더 (리뉴얼)
+================================ */
+.recent-section {
+  margin: 60px auto;
+  text-align: center;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #23333d;
+  margin-bottom: 20px;
+}
+
+/* 슬라이더 전체 영역 */
+.recent-slider-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 좌우 버튼 */
+.slider-btn {
+  background-color: #ffffff;
+  border: 1px solid #dcdfe3;
+  color: #23333d;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-weight: 700;
+}
+.slider-btn:hover {
+  background-color: #f99b18;
+  color: #fff;
+}
+
+/* 슬라이드 내부 */
+.recent-slider {
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+  width: 850px;
+  scroll-behavior: smooth;
+}
+
+/* 카드 개별 */
+.recent-card {
+  flex: 0 0 300px;
+  background: #fff;
+  border: 1px solid #e3e6ea;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #23333d;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+.recent-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* 카드 이미지 */
+.recent-card img {
+  width:100%;
+  height: 300px;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* 제목 */
+.recent-title {
+  padding: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #23333d;
+  text-align: center;
+  line-height: 1.4;
+  height: 42px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===========================
+   7. 반응형
+=========================== */
+@media (max-width: 768px) {
+  .safe-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .card-right {
+    width: 100%;
+    max-width: 250px;
+    height: 160px;
+    margin-top: 12px;
+  }
+  .filter-wrapper {
+    padding: 16px;
+  }
+  .search-input {
+    width: 100%;
+  }
+  .recent-slider {
+    width: 100%;
+    overflow-x: auto;
+    padding: 0 10px;
+  }
+  .recent-card {
+    flex: 0 0 200px;
+  }
+  .recent-card img {
+    height: 140px;
+  }
+  .slider-btn {
+    display: none;
+  }
 }
 
 
-/* 아이콘 크기 조정 */
-.pagination i {
-    font-size: 14px;
-    vertical-align: middle;
-}
+
 

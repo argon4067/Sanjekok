@@ -3,6 +3,11 @@
 
 {% block title %}산재콕 | 메인{% endblock %}
 
+{% block script1 %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+{% endblock %}
+
+
 {% block contents %}
 
 <section class="hero">
@@ -15,27 +20,144 @@
     </div>
 </section>
 
-<section class="stats-section">
-        <h2>전국 산업재해 통계</h2>
+<!-- ================== 메인 콘텐츠 ================== -->
+<div class="contents">
 
-        <div class="chart">
-            <div class="chart-buttons">
-            <button onclick="showChart('age')">연령</button>
-            <button onclick="showChart('gender')">성별</button>
-            <button onclick="showChart('industry')">산업</button>
+    <!-- 왼쪽 : 차트 -->
+    <div class="contents1">
+        <section class="stats-section">
+            <h2>전국 산업재해 통계</h2>
+
+            <div class="chart">
+                <div class="chart-buttons">
+                    <button onclick="showChart('age')">연령</button>
+                    <button onclick="showChart('gender')">성별</button>
+                    <button onclick="showChart('industry')">산업</button>
+                </div>
+            </div>
+
+            <div id="chartArea">
+                <p>산출년도: 2021년~2023년</p>
+                <canvas id="mainChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <!-- 오른쪽 -->
+    <div class="contents2">
+
+        <!-- 오른쪽 상단 -->
+        <div class="right-top">
+            <div class="clock">
+                <div class="clock-date">
+                    {{ now|date:"Y.m.d" }}
+                    <span class="day">{{ now|date:"l"|cut:"day" }}</span>
+                </div>
+                <div class="clock-time">
+                    <span class="ampm">
+                        {% if now|date:"A" == "AM" %}오전{% else %}오후{% endif %}
+                    </span>
+                    <span class="time">{{ now|date:"h:i" }}</span>
+                </div>
+            </div>
+
+            <!-- poster (GRID 방식) -->
+            <div class="poster">
+                <div class="poster-wrap">
+                    <img src="{% static 'img/poster.png' %}" alt="오늘의 안전 글귀" class="poster-img">
+                    <div class="poster-text">
+                        <h4>오늘의 안전 글귀</h4>
+                        <p>
+                            안전한 삶을 만들기 전에 <br>
+                            완전한 삶을 이야기 하지 말라
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div id="chartArea">
-            <p>산출년도: 2021년~2023년</p>
-            <canvas id="mainChart"></canvas>
+        <!-- 오른쪽 하단 -->
+        <div class="right-bottom">
+            <div class="video-wrap">
+                <img src="https://images.stockcake.com/public/8/5/1/8516f929-1cae-4dfe-9f86-020c39b80f5b_large/construction-workers-smiling-stockcake.jpg" alt="">
+            </div>
         </div>
 
-        <!-- 기사 더보기 버튼 -->
-        <div class="stats-more">
-            <a href="{% url 'Stats:stats_home' %}" class="more-btn1">나만의 통계정보 보러가기 ▾</a>
+    </div>
+</div>
+
+<!-- 통계 더보기 -->
+<div class="stats-more">
+    <a href="{% url 'Stats:stats_home' %}" class="more-btn1">
+        나만의 통계정보 보러가기 ▾
+    </a>
+</div>
+
+
+<section class="quick-section">
+  <div class="quick-container">
+    <div class="quick-header">
+      <p class="quick-subtitle">산재콕 서비스</p>
+      <h2>한 번에 콕! 필요한 메뉴로 이동</h2>
+      <p class="quick-desc">산재 뉴스, 통계, 지도검색, 안전자료실까지 빠르게 이동하세요.</p>
+    </div>
+
+    <div class="quick-grid quick-grid-5">
+      <!-- 산재뉴스 -->
+      <a class="quick-card" href="{% url 'News:news_list' %}">
+        <div class="quick-icon bg-orange"><i class="fa-solid fa-newspaper"></i></div>
+        <div class="quick-body">
+          <h3>산재뉴스</h3>
+          <p>최신 산업재해/안전 관련 뉴스를 모아보기</p>
         </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+
+      <!-- 산재통계 -->
+      <a class="quick-card" href="{% url 'Stats:stats_home' %}">
+        <div class="quick-icon bg-navy"><i class="fa-solid fa-chart-column"></i></div>
+        <div class="quick-body">
+          <h3>산재통계</h3>
+          <p>업종·성별·연령 기반 맞춤 통계와 위험도</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+
+      <!-- 주변 산재(지정의료기관) 찾기 -->
+      <a class="quick-card" href="{% url 'Search:search_page' %}">
+        <div class="quick-icon bg-green"><i class="fa-solid fa-location-crosshairs"></i></div>
+        <div class="quick-body">
+          <h3>주변 산재찾기</h3>
+          <p>내 위치 기준 산재 지정의료기관 빠르게 찾기</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+
+      <!-- 주변 병원 찾기 -->
+      <a class="quick-card" href="{% url 'Hospital:hospital_search' %}">
+        <div class="quick-icon bg-gray"><i class="fa-solid fa-hospital"></i></div>
+        <div class="quick-body">
+          <h3>주변 병원찾기</h3>
+          <p>응급/일반 병원을 지도에서 확인하고 길찾기</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+
+      <!-- 안전자료실 -->
+      <a class="quick-card" href="{% url 'Safe:safe_list' %}">
+        <div class="quick-icon bg-navy"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="quick-body">
+          <h3>안전자료실</h3>
+          <p>예방 가이드·체크리스트·교육자료 모음</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+    </div>
+  </div>
 </section>
+
+
+
 
 <section class="news-section">
         <div class="news-header">
@@ -43,7 +165,8 @@
             <h2>산재뉴스</h2>
         </div>
 
-        
+
+       
         <div class="news-grid">
             {% for news in list %}
             <article class="news-card">

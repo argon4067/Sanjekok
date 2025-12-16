@@ -1,13 +1,15 @@
 from django.shortcuts import render
 from django.conf import settings
-from member.models import Member, Individual
 from django.http import JsonResponse
+from member.models import Member, Individual
 import requests
 import traceback
-from math import radians, sin, cos, sqrt, atan2, exp, atan, pi  # ← 추가: exp, atan, pi
+from math import radians, sin, cos, sqrt, atan2, exp, atan, pi
+from django.shortcuts import redirect
+from django.contrib import messages
 
 
-# 위·경도 거리 계산 (단위: km)
+# 위·경도 거리 계산 (단위: km) 
 def haversine(lat1, lng1, lat2, lng2):
     R = 6371  # 지구 반지름(km)
     dlat = radians(lat2 - lat1)
@@ -19,12 +21,8 @@ def haversine(lat1, lng1, lat2, lng2):
     return 2 * R * atan2(sqrt(a), sqrt(1 - a))
 
 
-# SAFEMAP x,y(웹 메르카토, EPSG:3857 가정) → WGS84(lat, lng) 변환
+# (구버전 SAFEMAP 호환 함수 - 현재 DB 기반 산재에서는 사용하지 않음)
 def mercator_to_wgs84(x, y):
-    """
-    SAFEMAP IF_0060 응답의 x, y 값을 위도/경도(도 단위)로 변환.
-    x, y 가 Web Mercator(EPSG:3857) 기준이라고 보고 변환합니다.
-    """
     R = 6378137.0  # 지구 반지름 (m)
     lon_rad = x / R
     lat_rad = 2 * atan(exp(y / R)) - pi / 2
@@ -37,28 +35,24 @@ def search_page(request):
     work_address = ""
     accidents = []
 
-    # member/views.py 의 login 에서 세션에 저장한 값 사용
     member_id = request.session.get("member_id")
-
+    
+    if not member_id:
+        messages.error(request, "로그인이 필요합니다.")
+        return redirect('Member:login')
+    
     if member_id:
         try:
             member = Member.objects.get(member_id=member_id)
-
-            # 집 / 근무지 주소
             home_address = member.m_address or ""
             work_address = member.m_jaddress or ""
-
-            # 이 회원이 가진 업종(related_name='industries' 가정)
             member_industries = member.industries.all()
-
-            # 해당 업종에 속한 산재(사고지역 리스트)
             accidents = (
                 Individual.objects
                 .filter(member_industry__in=member_industries)
                 .order_by("-i_accident_date")
             )
         except Member.DoesNotExist:
-            # 회원 정보가 없으면 기본값(빈 값) 유지
             pass
 
     return render(request, "search/search.html", {
@@ -66,10 +60,12 @@ def search_page(request):
         "work_address": work_address,
         "accidents": accidents,
         "KAKAO_JS_KEY": settings.KAKAO_JS_KEY,
+
+        # ✅ 추가: JS 캐시 깨기용 버전(값은 아무 문자열이어도 됨)
+        "JS_VERSION": "v3",
     })
 
-
-# 단일 주소 좌표 변환 API
+# 단일 주소 좌표 변환 API (집/근무지/드롭다운 이동용으로 유지)
 def geocode_api(request):
     query = request.GET.get("query")
     if not query:
@@ -92,93 +88,118 @@ def geocode_api(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-# 주변 산재 검색
+def _parse_float(name: str, value: str):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{name} 값이 올바르지 않습니다.")
+
+
+# 주변/화면 내 산재 검색 (DB: t_individual 기반)
 def incidents_api(request):
-    # 중심 좌표 파라미터
-    lat = request.GET.get("lat")
-    lng = request.GET.get("lng")
-    radius_param = request.GET.get("radius")  # 선택(없으면 기본 5km)
+    """
+    프론트에서 지도 bounds(남서/북동)를 보내면,
+    그 화면 안에 보이는 산재만 반환하여 totalCount도 '보이는 만큼'만 집계됩니다.
 
-    if lat is None or lng is None:
-        return JsonResponse({"error": "lat, lng 파라미터가 필요합니다."}, status=400)
+    Query:
+      - swLat, swLng, neLat, neLng  (권장)
+      - (구버전 호환) lat, lng, radius(km)
+    """
+    member_id = request.session.get("member_id")
 
-    try:
-        center_lat = float(lat)
-        center_lng = float(lng)
-    except ValueError:
-        return JsonResponse({"error": "lat, lng 값이 올바르지 않습니다."}, status=400)
+    swLat = request.GET.get("swLat")
+    swLng = request.GET.get("swLng")
+    neLat = request.GET.get("neLat")
+    neLng = request.GET.get("neLng")
 
-    try:
-        radius_km = float(radius_param) if radius_param is not None else 5.0
-    except ValueError:
-        radius_km = 5.0  # 잘못된 값이 들어오면 기본 5km
+    qs = (
+        Individual.objects
+        .select_related("member_industry", "member_industry__member")
+        .exclude(i_lat__isnull=True)
+        .exclude(i_lng__isnull=True)
+    )
 
-    # SAFEMAP API 호출
-    try:
-        safemap_resp = requests.get(
-            "https://www.safemap.go.kr/openapi2/IF_0060",
-            params={
-                "serviceKey": settings.SAFEMAP_KEY,
-                "pageNo": 1,
-                "numOfRows": 200,
-                "returnType": "json",
-            },
-            timeout=10,
-        )
-        safemap_resp.raise_for_status()
-        safemap = safemap_resp.json()
-    except Exception as e:
-        print("SAFEMAP ERROR:", e)
-        traceback.print_exc()
-        return JsonResponse({"error": "SAFEMAP API 호출 실패"}, status=502)
+    # ✅ 1) bounds 기반(권장): 화면에 보이는 만큼만 반환
+    if swLat is not None and swLng is not None and neLat is not None and neLng is not None:
+        try:
+            sw_lat = _parse_float("swLat", swLat)
+            sw_lng = _parse_float("swLng", swLng)
+            ne_lat = _parse_float("neLat", neLat)
+            ne_lng = _parse_float("neLng", neLng)
+        except ValueError as e:
+            return JsonResponse({"error": str(e)}, status=400)
 
-    # 응답 파싱
-    items = safemap.get("body", {}).get("items", {}).get("item", [])
+        # 남/북, 서/동 정렬 보정
+        low_lat, high_lat = (sw_lat, ne_lat) if sw_lat <= ne_lat else (ne_lat, sw_lat)
+        low_lng, high_lng = (sw_lng, ne_lng) if sw_lng <= ne_lng else (ne_lng, sw_lng)
 
-    # item 이 단일 객체(dict)로 오는 경우를 위해 처리
-    if not items:
-        items = []
-    elif not isinstance(items, list):
-        items = [items]
+        qs = qs.filter(i_lat__gte=low_lat, i_lat__lte=high_lat, i_lng__gte=low_lng, i_lng__lte=high_lng)
 
-    results = []
+    # ✅ 2) (구버전 호환) 중심+반경
+    else:
+        lat = request.GET.get("lat")
+        lng = request.GET.get("lng")
+        radius_param = request.GET.get("radius")  # km
 
-    for it in items:
-        # SAFEMAP 의 좌표값
-        x = it.get("x")
-        y = it.get("y")
-        if x is None or y is None:
-            continue
+        if lat is None or lng is None:
+            return JsonResponse({"error": "swLat,swLng,neLat,neLng 또는 lat,lng 파라미터가 필요합니다."}, status=400)
 
         try:
-            x = float(x)
-            y = float(y)
-        except (TypeError, ValueError):
-            continue
+            center_lat = _parse_float("lat", lat)
+            center_lng = _parse_float("lng", lng)
+        except ValueError as e:
+            return JsonResponse({"error": str(e)}, status=400)
 
-        # x, y → 위도/경도(도 단위) 변환
-        item_lat, item_lng = mercator_to_wgs84(x, y)
+        try:
+            radius_km = float(radius_param) if radius_param is not None else 5.0
+        except ValueError:
+            radius_km = 5.0
 
-        # 중심점과 거리 계산
-        dist = haversine(center_lat, center_lng, item_lat, item_lng)
+        # 1차: 대략적인 bbox 필터로 DB 부담 감소
+        lat_delta = radius_km / 111.0
+        lng_delta = radius_km / (111.0 * max(cos(radians(center_lat)), 0.1))
+        qs = qs.filter(
+            i_lat__gte=center_lat - lat_delta,
+            i_lat__lte=center_lat + lat_delta,
+            i_lng__gte=center_lng - lng_delta,
+            i_lng__lte=center_lng + lng_delta,
+        )
 
-        # 반경 이내만 포함
-        if dist <= radius_km:
-            results.append({
-                "lat": item_lat,
-                "lng": item_lng,
-                "area": it.get("area_nm"),
-                "location": it.get("locplc"),   # 소재지(주소)
-                "count": it.get("dsps_co"),
-                "year": it.get("syd_year"),
-                "org_nm": it.get("org_nm"),
-                "distance": round(dist, 2),
-            })
+        # 2차: haversine 정확 거리 필터
+        filtered = []
+        for it in qs:
+            dist = haversine(center_lat, center_lng, float(it.i_lat), float(it.i_lng))
+            if dist <= radius_km:
+                filtered.append(it)
+        qs = filtered
 
-    # 거리 순으로 정렬(가까운 순)
-    results.sort(key=lambda x: x["distance"])
+    # 결과 구성
+    items = []
+    if isinstance(qs, list):
+        iterable = qs
+        total_count = len(qs)
+    else:
+        iterable = qs.order_by("-i_accident_date", "-accident_id")
+        total_count = iterable.count()
+
+    for it in iterable:
+        ind = it.member_industry
+        mem = ind.member if ind else None
+
+        items.append({
+            "accident_id": it.accident_id,
+            "lat": float(it.i_lat),
+            "lng": float(it.i_lng),
+            "is_mine": (member_id is not None and mem is not None and int(member_id) == int(mem.member_id)),
+            "i_accident_date": it.i_accident_date.isoformat() if it.i_accident_date else None,
+            "i_injury": it.i_injury,
+            "i_disease_type": it.i_disease_type,
+            "i_address": it.i_address,
+            "i_industry_type1": getattr(ind, "i_industry_type1", None),
+            "i_industry_type2": getattr(ind, "i_industry_type2", None),
+        })
 
     return JsonResponse({
-        "totalCount": len(results),
-        "items": results,
+        "totalCount": total_count,
+        "items": items,
     })
