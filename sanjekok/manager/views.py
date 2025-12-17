@@ -30,13 +30,7 @@ def login(request):
         request.session['member_username'] = member.m_username
 
         request.session['manager_login'] = True
-
-        messages.success(request, f"{member.m_name}님 환영합니다!")
-    return render(request, "manager_main.html")
-
-def main(request):
-    
-    return render(request, 'manager_main.html')
+    return redirect("Manager:dash")
 
 def dash(request):
     # 전체 회원수

@@ -12,17 +12,6 @@
     {% block script1 %}{% endblock %}
 </head>
 <body>
-
-    {% if messages %}
-        <div class="container mt-2">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    
     <aside class="sidebar">
         <li><a href="{% url 'Manager:dash' %}" 
             class="{% if 'dash' in request.path %}active{% endif %}">대시보드</a></li>
