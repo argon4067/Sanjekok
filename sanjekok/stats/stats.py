@@ -917,7 +917,7 @@ def get_risk_analysis(industry_name, age, gender, years=3, member_name=None):
         "message":  f"{member_name}님과 같은 조건({industry_name}, {age_group}, {gender})에서 최근 {years}년간 가장 많이 발생한 재해 유형입니다.",
         
         # 종합 위험도 점수 (새로 추가)
-        "total_score": round(total_score, 1),
+        "total_score": round(total_score, 0),
         "risk_level": risk_level,
         "color": color,
         "breakdown": {

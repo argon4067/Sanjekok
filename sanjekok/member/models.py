@@ -18,14 +18,15 @@ class Member(models.Model):
     m_sex = models.CharField(max_length=6, choices=SEX_CHOICES, verbose_name='성')
     m_birth_date = models.DateField(verbose_name='생년월일')
     
-    korean_name_validator = RegexValidator(
-        regex=r'^[가-힣]{1,10}$',
-        message='이름은 한글만 입력 가능하며 최대 10글자까지 가능합니다.'
+    # 한글, 영어, 숫자만 허용, 1~20자
+    name_validator = RegexValidator(
+        regex=r'^[가-힣a-zA-Z0-9]{1,20}$',
+        message='이름은 한글, 영어, 숫자만 입력 가능하며 1~20글자까지 가능합니다.'
     )
 
     m_name = models.CharField(
-        max_length=10,
-        validators=[korean_name_validator],
+        max_length=20,
+        validators=[name_validator],
         verbose_name='이름'
     )
 

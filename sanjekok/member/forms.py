@@ -37,6 +37,20 @@ class Step2MemberForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
+        # m_name 필드의 유효성 검사 속성을 모델에서 가져와 위젯에 추가
+        m_name_field = Member._meta.get_field('m_name')
+        
+        # maxlength 속성 설정
+        max_length = m_name_field.max_length
+        self.fields['m_name'].widget.attrs['maxlength'] = max_length
+        
+        # pattern 속성 설정 (RegexValidator가 있는 경우)
+        # validator.regex는 정규식 객체이므로 .pattern으로 문자열을 가져옵니다.
+        for validator in m_name_field.validators:
+            if hasattr(validator, 'regex'):
+                self.fields['m_name'].widget.attrs['pattern'] = validator.regex.pattern
+                break  # 첫 번째 RegexValidator만 사용
+
         # 인스턴스가 있는 경우 (수정 시) 필드 초기값 설정
         if self.instance and self.instance.pk:
             # 이메일 분리
