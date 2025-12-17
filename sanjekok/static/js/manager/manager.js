@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
             plugins: {
                 title: {
                     display: true,
-                    text: '월별 신규가입',
+                    text: '일별 신규가입',
                     font: { size: 20 }
                 },
                 legend: { display: true }
@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { stepSize: 1 }
                 }
             }
         }
