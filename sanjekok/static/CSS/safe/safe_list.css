@@ -302,23 +302,7 @@ body {
    7. 반응형
 =========================== */
 @media (max-width: 768px) {
-  .safe-card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .card-right {
-    width: 100%;
-    max-width: 250px;
-    height: 160px;
-    margin-top: 12px;
-  }
-  .filter-wrapper {
-    padding: 16px;
-  }
-  .search-input {
-    width: 100%;
-  }
+  /* 최근 본 자료 */
   .recent-slider {
     width: 100%;
     overflow-x: auto;
@@ -333,8 +317,94 @@ body {
   .slider-btn {
     display: none;
   }
+  .safe-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .card-right {
+    width: 100%;
+    max-width: 250px;
+    height: 160px;
+    margin-top: 12px;
+  }
+    /* 필터 카드: 모바일은 좌측 기준 */
+  .filter-wrapper{
+    text-align: left;              /* ✅ 가운데 몰림 방지 */
+  }
+
+  /* 그룹: 레이블 위, 컨트롤 아래(뉴스처럼) + 좌측 정렬 */
+  .filter-group{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: flex-start;       /* ✅ 그룹 자체 좌측 고정 */
+  }
+
+  .filter-label{
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: left;              /* ✅ 레이블 좌측 */
+    width: 100%;                   /* ✅ 줄 전체 사용 */
+  }
+
+  /* 자료유형/언어 체크박스: 가로 + 줄바꿈, 좌측 시작 */
+  .filter-controls{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    justify-content: flex-start;   /* ✅ 좌측부터 배치 */
+    align-items: flex-start;       /* ✅ 위쪽 기준 */
+    width: 100%;
+  }
+
+  .filter-controls .form-check{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  /* 검색 영역: input 위, 버튼 아래 */
+  .search-box{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .search-input{
+    width: 100%;
+  }
+
+  .btn-search{
+    display: block;
+    width: 100%;
+  }
+
+  /* 정렬 영역 */
+  .sort-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;   
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px; 
+    margin-left: auto;
+  }
+
+  .sort-label {
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .sort-select {
+    font-size: 0.9rem;
+    width: auto;
+  }
+
+  
 }
-
-
-
 
