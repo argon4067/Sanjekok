@@ -12,15 +12,6 @@
 </head>
 <body>
     
-    {% if messages %}
-        <div class="container">
-            {% for message in messages %}
-                <div class="alert alert-danger {{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
     <main class="login-page">
         <div class="login-wrapper">
             <form method="post" class="loginbox">
