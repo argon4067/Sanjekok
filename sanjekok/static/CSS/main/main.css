@@ -377,19 +377,35 @@ body {
 
 /* contents2 */
 
-.contents2 {
-  width: 50%;
+.contents {
   display: flex;
-  flex-direction: column;
-  gap: 30px;
 }
+
+.contents1,
+.contents2 {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.contents2 {
+  flex: 1 1 0;
+  justify-content: center; /* ⭐ 핵심 */
+}
+
+.contents2 > * {
+  width: 100%;
+  max-width: 820px; /* ⭐ 이 숫자가 관건 */
+}
+
 
 .right-top {
   display: flex;
   gap: 20px;
   align-items: center;
-  margin-top: 10%;
+  width: 100%;
+  min-width: 0;
 }
+
 
 .clock {
     background: #e8f5ec;
@@ -458,15 +474,6 @@ body {
     display: inline-flex;
     width: 65%;
     margin-left: 0;
-}
-
-
-.poster-wrap {
-    display: grid;   /* ⭐ 핵심 */
-}
-
-.poster-wrap > * {
-    grid-area: 1 / 1;  /* 이미지 + 텍스트 겹치기 */
 }
 
 .poster-img {
@@ -741,31 +748,36 @@ footer{
   }
 
 
-  .contents1,
-  .contents2 {
+  .contents1 {
     width: 100%;              /* ⭐ 가로 꽉 채우기 */
   }
 
 
-  .clock {
-    margin-left: 0;           /* ❗ vw 마진 제거 */
-    margin: 0 auto;           /* 가운데 정렬 */
+  .contents2 {
+    position: relative;
+    width: 100%;
+    max-width: 420px;   /* 원하는 중앙 폭 */
+    margin: 0 auto;     /* ⭐ 핵심: 중앙 정렬 */
   }
 
-
-  /* wrapper 너비 제한 */
-  .poster-wrap {
-    width: 90%;
+  .poster {
+    display: none;
   }
 
-  .calender {
-    width: 100%;              /* 캘린더도 가득 */
+  .right-top {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 420px;
   }
 
+  .clock,
+  .poster-wrap,
+  .video-wrap {
+    width: 100%;
+  }
 
-  table {
-    margin-left: auto;
-    margin-right: auto;
+  .video-wrap {
+    max-width: 420px;
   }
 }
 
@@ -781,6 +793,10 @@ footer{
   .news-thumb img {
     height: 200px;
   }
+
+  .quick-body p{
+    display: none;
+  } 
 }
 
 
