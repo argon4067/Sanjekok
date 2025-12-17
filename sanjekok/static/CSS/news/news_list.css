@@ -216,6 +216,8 @@ body {
   }
 
   .filter-label {
+    font-size: 0.9rem;
+    font-weight: 600;
     width: auto;
     margin-bottom: 6px;
   }
@@ -226,5 +228,16 @@ body {
 
   .date-input {
     width: 140px;
+  }
+  /* 검색 영역: input 위, 버튼 아래 */
+  .search-box{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  .btn-search{
+    display: block;
+    width: 100%;
   }
 }

@@ -20,6 +20,19 @@
   <form method="get" id="filterForm" class="filter-wrapper shadow-sm">
 
     <div class="filter-group">
+      <div class="filter-label">작성일</div>
+      <div class="filter-controls">
+        <input type="text" name="start_date" id="startDate"
+               class="form-control date-input" placeholder="시작일"
+               value="{{ start_date }}">
+        <span>~</span>
+        <input type="text" name="end_date" id="endDate"
+               class="form-control date-input" placeholder="종료일"
+               value="{{ end_date }}">
+      </div>
+    </div>
+
+    <div class="filter-group">
       <div class="filter-label">검색범위</div>
       <div class="filter-controls">
         <select name="search_type" class="form-select">
@@ -40,19 +53,7 @@
       </div>
     </div>
 
-    <div class="filter-group">
-      <div class="filter-label">작성일</div>
-      <div class="filter-controls">
-        <input type="text" name="start_date" id="startDate"
-               class="form-control date-input" placeholder="시작일"
-               value="{{ start_date }}">
-        <span>~</span>
-        <input type="text" name="end_date" id="endDate"
-               class="form-control date-input" placeholder="종료일"
-               value="{{ end_date }}">
-      </div>
-    </div>
-
+    
   </form>
 
   {% for n in list %}

@@ -30,7 +30,7 @@ def crawl_news_view(request):
 # 2) 사용자용: 뉴스목록
 
 def news_list(request):
-    posts = News.objects.all().order_by('-n_created_at') # 기사작성일 순 
+    qs = News.objects.all().order_by('-n_created_at') # 기사작성일 순 
     # id로 하면 새로운뉴스 insert될때 뒤에 붙는데 그게 앞에 안나옴
 
     WRITE_PAGES = 5     # 페이지 블록 개수
@@ -41,8 +41,8 @@ def news_list(request):
     # -----------------------
     q = request.GET.get("q", "")
     search_type = request.GET.get("search_type", "all")
-    start_date = request.GET.get("start_date")
-    end_date = request.GET.get("end_date")
+    start_date = request.GET.get("start_date") or ""
+    end_date = request.GET.get("end_date") or ""
 
     # -----------------------
     # 2) 기본 QS + 필터 적용
@@ -65,9 +65,10 @@ def news_list(request):
 
     # 작성일 범위 (n_created_at 기준)
     if start_date:
-        qs = qs.filter(n_created_at__gte=start_date)
+        qs = qs.filter(n_created_at__date__gte=start_date)
+
     if end_date:
-        qs = qs.filter(n_created_at__lte=end_date)
+        qs = qs.filter(n_created_at__date__lte=end_date)
         
     # -----------------------
     # 3) 페이지네이션
@@ -81,7 +82,7 @@ def news_list(request):
     except (TypeError, ValueError):
         page = 1
 
-    paginator = Paginator(posts, PER_PAGE)
+    paginator = Paginator(qs, PER_PAGE)
     page_obj = paginator.get_page(page)
 
     # 페이지네이션 범위 계산
