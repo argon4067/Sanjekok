@@ -31,7 +31,7 @@
         <!-- 이름 -->
         <div class="input-group-wrap">
           <label for="m_name">*이름</label>
-          <input type="text" class="form-control" id="m_name" name="m_name" placeholder="이름을 입력해주세요." value="{{ form.m_name.value|default_if_none:'' }}" maxlength="10" pattern="^[가-힣]{1,10}$">
+          <input type="text" class="form-control" id="m_name" name="m_name" placeholder="이름을 입력해주세요." value="{{ form.m_name.value|default_if_none:'' }}">
         </div>
 
         <!-- 생년월일 -->
