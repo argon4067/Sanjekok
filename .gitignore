@@ -13,3 +13,4 @@ env
 __pycache__
 .__pycache__
 sanjekok/sanjekok/settings.py
+data.json
