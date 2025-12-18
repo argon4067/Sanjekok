@@ -387,6 +387,23 @@
             <div class="risk-no-data" id="riskNoData" style="display:block; padding:40px;">
                 충분한 통계 데이터가 없습니다
             </div>
+            
+        <div class="visual-card cta-card" id="card-cta">
+            <div class="cta-button-group">
+                <a href="{% url 'Search:search_page' %}" class="cta-btn primary">
+                    📍 나의 산재 위치 보러가기
+                </a>
+
+                <a href="{% url 'Hospital:hospital_search' %}" class="cta-btn secondary">
+                    🏥 산재 지정 병원 찾기
+                </a>
+
+                <a href="{% url 'Safe:safe_list' %}" class="cta-btn outline">
+                    📚 안전자료실 보기
+                </a>
+            </div>
+
+        </div>
     </div>
 </div>
 

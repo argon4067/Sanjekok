@@ -679,7 +679,7 @@ body {
     border-radius: 14px;
     padding: 18px 16px;
     box-shadow: 0 4px 14px rgba(255, 152, 0, 0.15);
-    font-size: 14px;
+    font-size: 18px;
     line-height: 1.6;
     color: #23333d;
 }
@@ -694,7 +694,7 @@ body {
 /* 계산 방식 하단 주석 */
 .detail-note {
     margin-top: 50px;
-    font-size: 15px;
+    font-size: 17px;
     color: var(--color-text-light);
     text-align: right;
 }
@@ -715,7 +715,7 @@ body {
     align-items: flex-start;
     /* padding: 12px 0; */
     border-bottom: 1px dashed var(--color-border);
-    font-size: 17px;
+    font-size: 19px;
     line-height: 1.7;
     color: #23333d;
 }
@@ -811,6 +811,75 @@ body {
   color: var(--color-text-light);
   margin-top: 5px;
 }
+
+/* =========================
+   📍 CTA 버튼 카드 (맨 마지막)
+   ========================= */
+
+
+
+/* 버튼 그룹 */
+.cta-button-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* ✅ 데스크톱: 3개 나란히 */
+    gap: 18px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.cta-btn {
+    width: 100%;               /* ✅ 그리드 칸 꽉 채우기 */
+    min-height: 64px;          /* 높이 통일 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 20px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 14px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+  /* 1️⃣ 메인 CTA (주황) */
+.cta-btn.primary {
+    background: linear-gradient(135deg, #ff9800, #ffb74d);
+    color: white;
+}
+
+.cta-btn.primary:hover {
+    background: linear-gradient(135deg, #e68900, #ff9800);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(255, 152, 0, 0.35);
+}
+
+/* 2️⃣ 보조 CTA (청록) */
+.cta-btn.secondary {
+    background: linear-gradient(135deg, #00bcd4, #4dd0e1);
+    color: white;
+}
+
+.cta-btn.secondary:hover {
+    background: linear-gradient(135deg, #0097a7, #00bcd4);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(0, 188, 212, 0.35);
+}
+
+/* 3️⃣ 서브 CTA (아웃라인) */
+.cta-btn.outline {
+    background: white;
+    color: var(--color-text-dark);
+    border: 2px solid var(--color-border);
+}
+
+.cta-btn.outline:hover {
+    background: var(--color-background);
+    border-color: var(--color-secondary);
+    color: var(--color-secondary-dark);
+    transform: translateY(-2px);
+}
+
 
 
 /* =========================
@@ -923,4 +992,13 @@ body {
     width: 100%;
     left: 0;
   }
+  .cta-button-group {
+    grid-template-columns: 1fr; /* ✅ 모바일: 1열 */
+  }
+
+  .cta-btn {
+    font-size: 20px;           /* 모바일 가독성 ↑ */
+    min-height: 68px;
+  }
+
 }
