@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.db.models import Q
 from .decorators import crawl_admin_required
 
+from datetime import datetime, timedelta
+from django.utils import timezone
+
 from .models import News
 from .crawler.run import crawl_news   # ← 크롤링 모듈만 가져오기
 
@@ -63,11 +66,19 @@ def news_list(request):
 
     # 작성일 범위 (n_created_at 기준)
     if start_date:
-        qs = qs.filter(n_created_at__date__gte=start_date)
+        start_dt = timezone.make_aware(
+            datetime.strptime(start_date, "%Y-%m-%d"),
+            timezone=timezone.get_current_timezone()
+        )
+        qs = qs.filter(n_created_at__gte=start_dt)
 
     if end_date:
-        qs = qs.filter(n_created_at__date__lte=end_date)
-        
+        end_dt = timezone.make_aware(
+            datetime.strptime(end_date, "%Y-%m-%d"),
+            timezone=timezone.get_current_timezone()
+        ) + timedelta(days=1)
+        qs = qs.filter(n_created_at__lt=end_dt)
+            
     # -----------------------
     # 3) 페이지네이션
     # ----------------------- 

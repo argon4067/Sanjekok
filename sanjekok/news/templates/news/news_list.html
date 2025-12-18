@@ -78,7 +78,7 @@
       </div>
       <div class="news-meta">
         <span>작성자: {{ n.n_writer }}</span> |
-        <span>작성일: {{ n.n_created_at|slice:":11" }}</span>
+        <span>작성일: {{ n.n_created_at|date:"Y-m-d" }}</span>
       </div>
     </div>
   </div>
