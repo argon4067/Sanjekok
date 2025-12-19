@@ -12,9 +12,6 @@ NEWS_IMG_DIR = os.path.join(settings.BASE_DIR, "static/img/news")
 DEFAULT_IMG = "img/news/default.png"
 
 def download_news_image(img_url, filename):
-    """
-    뉴스 이미지 로컬 저장
-    """
     if not img_url:
         return DEFAULT_IMG
 
@@ -24,7 +21,9 @@ def download_news_image(img_url, filename):
             timeout=5,
             headers={"User-Agent": "Mozilla/5.0"}
         )
-        if r.status_code == 200:
+
+        content_type = r.headers.get("Content-Type", "")
+        if r.status_code == 200 and content_type.startswith("image/"):
             os.makedirs(NEWS_IMG_DIR, exist_ok=True)
             file_path = os.path.join(NEWS_IMG_DIR, filename)
 
@@ -32,6 +31,7 @@ def download_news_image(img_url, filename):
                 f.write(r.content)
 
             return f"img/news/{filename}"
+
     except Exception:
         pass
 

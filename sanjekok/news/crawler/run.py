@@ -46,7 +46,7 @@ def crawl_news():
                 if image_count < 20:
                     art["img_url"] = download_news_image(
                         art.get("img_url"),
-                        f"news_{image_count+1}.jpg"
+                        f"news_{image_count+1}.png"
                     )
                     image_count += 1
                 else:
