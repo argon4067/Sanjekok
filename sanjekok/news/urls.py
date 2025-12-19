@@ -5,5 +5,6 @@ app_name = 'News'
 
 urlpatterns = [
     path('', views.news_list, name='news_list'),
-    path('crawl/', views.crawl_news_view, name="crawl_news")
+    path('crawl/', views.crawl_news_view, name="crawl_news"),
+    path('image-proxy/', views.image_proxy, name='image_proxy'),
 ]

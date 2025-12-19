@@ -11,7 +11,9 @@ from django.utils import timezone
 from .models import News
 from .crawler.run import crawl_news   # ← 크롤링 모듈만 가져오기
 
-
+import requests
+from django.http import HttpResponse, HttpResponseBadRequest
+from urllib.parse import urlparse
 
 # 1) 관리자용: 수동 크롤링 실행
 @crawl_admin_required
@@ -124,3 +126,28 @@ def news_list(request):
     }
 
     return render(request, 'news/news_list.html', context)
+
+
+# 3) 서버 프록시 함수
+def image_proxy(request):
+    url = request.GET.get("url")
+    if not url:
+        return HttpResponseBadRequest()
+
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        return HttpResponseBadRequest()
+
+    r = requests.get(
+        url,
+        timeout=5,
+        headers={"User-Agent": "Mozilla/5.0"}
+    )
+
+    content_type = r.headers.get("Content-Type", "")
+    if not content_type.startswith("image/"):
+        return HttpResponseBadRequest()
+
+    response = HttpResponse(r.content, content_type=content_type)
+    response["Cache-Control"] = "public, max-age=86400"
+    return response
