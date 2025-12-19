@@ -519,7 +519,7 @@ def get_stats8(industry_name8):
     df = pd.DataFrame.from_records(
         qs.values("prd_de", "c2_nm", "dt")
     )
-
+    df = df[~df["c2_nm"].isin(["직업병", "작업관련성 질병"])]
     pivot = (
         df.pivot_table(
             index="prd_de",
@@ -588,7 +588,7 @@ def get_stats9(industry_name9):
     df = pd.DataFrame.from_records(
         qs.values("prd_de", "c2_nm", "dt")
     )
-
+    df = df[~df["c2_nm"].isin(["직업병", "작업관련성 질병"])]
     pivot = (
         df.pivot_table(
             index="prd_de",
@@ -742,6 +742,10 @@ def _get_weighted_top5(industry_name, model_list, weight, years):
             continue
         
         df = pd.DataFrame.from_records(qs.values("prd_de", "c2_nm", "dt"))
+        # Stats8 또는 Stats9인 경우 '직업병'과 '작업관련성 질병' 제외
+        if model.__name__ in ['Stats8', 'Stats9']:
+            df = df[~df["c2_nm"].isin(["직업병", "작업관련성 질병"])]
+
         
         year_list = sorted(df["prd_de"].unique())
         recent_years = year_list[-years:] if len(year_list) >= years else year_list
@@ -869,6 +873,7 @@ def get_risk_analysis(industry_name, age, gender, years=3, member_name=None):
     # ===== 8. 종합 점수 계산 =====
     total_score = base_score + personal_score + severity_score
     
+
     # ===== 9. 위험도 등급 분류 =====
     if total_score >= 85:
         risk_level = "매우 높음"
@@ -876,10 +881,10 @@ def get_risk_analysis(industry_name, age, gender, years=3, member_name=None):
     elif total_score >= 65:
         risk_level = "높음"
         color = "orange"
-    elif total_score >= 50:
+    elif total_score >= 50:  # > 에서 >= 로 변경
         risk_level = "보통"
         color = "yellow"
-    elif total_score >= 25:
+    elif total_score >= 25:  # > 에서 >= 로 변경
         risk_level = "낮음"
         color = "green"
     else:
