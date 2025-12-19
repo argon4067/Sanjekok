@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from news.views import image_proxy
 
 urlpatterns = [
+    path("image-proxy/", image_proxy, name="image_proxy"),
     path('', RedirectView.as_view(url='/main/', permanent=True)),
     path('admin/', admin.site.urls),
     path('manager/', include('manager.urls')),
