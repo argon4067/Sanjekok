@@ -23,7 +23,7 @@ def download_news_image(img_url, filename):
         )
         
         # ⭐ 여기 한 줄 추가
-        if int(r.headers.get("Content-Length", 0)) > 500_000:
+        if int(r.headers.get("Content-Length", 0)) > 100_000:  # 100kb
             return DEFAULT_IMG
 
         content_type = r.headers.get("Content-Type", "")
