@@ -20,6 +20,68 @@
     </div>
 </section>
 
+<section class="quick-section">
+  <div class="quick-container">
+    <div class="quick-header">
+      <p class="quick-subtitle">산재콕 서비스</p>
+      <h2>한 번에 콕! 필요한 메뉴로 이동</h2>
+      <p class="quick-desc">산재 뉴스, 통계, 지도검색, 안전자료실까지 빠르게 이동하세요.</p>
+    </div>
+
+    <div class="quick-grid quick-grid-5">
+      <!-- 산재뉴스 -->
+      <a class="quick-card" href="{% url 'News:news_list' %}">
+        <div class="quick-icon bg-orange"><i class="fa-solid fa-newspaper"></i></div>
+        <div class="quick-body">
+          <h3>산재뉴스</h3>
+          <p>최신 산업재해/안전 관련 뉴스를 모아보기</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+
+      <!-- 산재통계 -->
+      <a class="quick-card" href="{% url 'Stats:stats_home' %}">
+        <div class="quick-icon bg-navy"><i class="fa-solid fa-chart-column"></i></div>
+        <div class="quick-body">
+          <h3>산재통계</h3>
+          <p>업종·성별·연령 기반 맞춤 통계와 위험도</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+
+      <!-- 주변 산재(지정의료기관) 찾기 -->
+      <a class="quick-card" href="{% url 'Search:search_page' %}">
+        <div class="quick-icon bg-green"><i class="fa-solid fa-location-crosshairs"></i></div>
+        <div class="quick-body">
+          <h3>주변 산재찾기</h3>
+          <p>내 위치 기준 산재 지정의료기관 빠르게 찾기</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+
+      <!-- 주변 병원 찾기 -->
+      <a class="quick-card" href="{% url 'Hospital:hospital_search' %}">
+        <div class="quick-icon bg-gray"><i class="fa-solid fa-hospital"></i></div>
+        <div class="quick-body">
+          <h3>주변 병원찾기</h3>
+          <p>응급/일반 병원을 지도에서 확인하고 길찾기</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+
+      <!-- 안전자료실 -->
+      <a class="quick-card" href="{% url 'Safe:safe_list' %}">
+        <div class="quick-icon bg-navy"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="quick-body">
+          <h3>안전자료실</h3>
+          <p>예방 가이드·체크리스트·교육자료 모음</p>
+        </div>
+        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- ================== 메인 콘텐츠 ================== -->
 <div class="contents">
 
@@ -87,67 +149,7 @@
 </div>
 
 
-<section class="quick-section">
-  <div class="quick-container">
-    <div class="quick-header">
-      <p class="quick-subtitle">산재콕 서비스</p>
-      <h2>한 번에 콕! 필요한 메뉴로 이동</h2>
-      <p class="quick-desc">산재 뉴스, 통계, 지도검색, 안전자료실까지 빠르게 이동하세요.</p>
-    </div>
 
-    <div class="quick-grid quick-grid-5">
-      <!-- 산재뉴스 -->
-      <a class="quick-card" href="{% url 'News:news_list' %}">
-        <div class="quick-icon bg-orange"><i class="fa-solid fa-newspaper"></i></div>
-        <div class="quick-body">
-          <h3>산재뉴스</h3>
-          <p>최신 산업재해/안전 관련 뉴스를 모아보기</p>
-        </div>
-        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-      </a>
-
-      <!-- 산재통계 -->
-      <a class="quick-card" href="{% url 'Stats:stats_home' %}">
-        <div class="quick-icon bg-navy"><i class="fa-solid fa-chart-column"></i></div>
-        <div class="quick-body">
-          <h3>산재통계</h3>
-          <p>업종·성별·연령 기반 맞춤 통계와 위험도</p>
-        </div>
-        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-      </a>
-
-      <!-- 주변 산재(지정의료기관) 찾기 -->
-      <a class="quick-card" href="{% url 'Search:search_page' %}">
-        <div class="quick-icon bg-green"><i class="fa-solid fa-location-crosshairs"></i></div>
-        <div class="quick-body">
-          <h3>주변 산재찾기</h3>
-          <p>내 위치 기준 산재 지정의료기관 빠르게 찾기</p>
-        </div>
-        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-      </a>
-
-      <!-- 주변 병원 찾기 -->
-      <a class="quick-card" href="{% url 'Hospital:hospital_search' %}">
-        <div class="quick-icon bg-gray"><i class="fa-solid fa-hospital"></i></div>
-        <div class="quick-body">
-          <h3>주변 병원찾기</h3>
-          <p>응급/일반 병원을 지도에서 확인하고 길찾기</p>
-        </div>
-        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-      </a>
-
-      <!-- 안전자료실 -->
-      <a class="quick-card" href="{% url 'Safe:safe_list' %}">
-        <div class="quick-icon bg-navy"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="quick-body">
-          <h3>안전자료실</h3>
-          <p>예방 가이드·체크리스트·교육자료 모음</p>
-        </div>
-        <span class="quick-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-      </a>
-    </div>
-  </div>
-</section>
 
 
 
