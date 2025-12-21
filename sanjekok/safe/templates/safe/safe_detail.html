@@ -57,7 +57,7 @@
           <p>{{ safe.s_contents|linebreaks }}</p>
         </div>
 
-        <!-- ytburl(safe.s_video_url) 이 있을 시 -->
+        <!-- 유튜브동영상(safe.s_video_url) 이 있을 시 -->
         {% if safe.s_video_url %}
         <div class="video-wrapper mt-4">
           <iframe
@@ -105,8 +105,10 @@
 
 <!-- 이미지 모달 -->
 <div id="imgModal" class="modal-image" onclick="closeModal()">
-  <span class="modal-close">&times;</span>
-  <img id="modalImg" class="modal-content-img">
+  <span class="modal-close" onclick="closeModal()">×</span>
+  <img id="modalImg"
+       class="modal-content-img"
+       onclick="event.stopPropagation();">
 </div>
 
 <script src="{% static 'js/safe/safe_detail.js' %}"></script>

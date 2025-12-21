@@ -2,8 +2,8 @@ function openModal(imgUrl) {
     const modal = document.getElementById("imgModal");
     const modalImg = document.getElementById("modalImg");
 
-    modal.style.display = "block";
-    modalImg.src = imgUrl;
+    modalImg.src = imgUrl; 
+    modal.style.display = "flex";
 }
 
 function closeModal() {
