@@ -55,6 +55,7 @@ def delete_individual_accidents(member_id: int, accident_ids: list) -> int:
     count, _ = individuals_to_delete.delete()
     return count
 
+# 카카오 로그인 처리 함수
 def handle_kakao_login(code):
     """
     카카오 인증 코드를 사용하여 로그인 또는 회원가입을 처리합니다.
