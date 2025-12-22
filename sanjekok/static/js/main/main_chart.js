@@ -1,10 +1,15 @@
-
 // ⭐ datalabels 플러그인 등록 (필수)
 Chart.register(ChartDataLabels);
 
 let currentChart;
 
-function showChart(type) {
+function showChart(type, btn) {
+    // ⭐ 버튼 active 처리
+    document.querySelectorAll('.chart-btn').forEach(b => {
+        b.classList.remove('active');
+    });
+    if (btn) btn.classList.add('active');
+
     let labels = [];
     let data = [];
 
@@ -46,9 +51,7 @@ function showChart(type) {
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    position: 'right'
-                },
+                legend: { position: 'right' },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -59,7 +62,6 @@ function showChart(type) {
                         }
                     }
                 },
-                // ⭐ 화면에 바로 % 보이게 하는 핵심
                 datalabels: {
                     color: '#fff',
                     font: {
@@ -77,10 +79,12 @@ function showChart(type) {
     });
 }
 
-// 페이지 로드 시 연령별 차트 표시
+// ⭐ 페이지 로드 시 연령 버튼 자동 active
 window.onload = function() {
-    showChart('age');
+    const firstBtn = document.querySelector('.chart-btn');
+    showChart('age', firstBtn);
 };
+
 
 
 
