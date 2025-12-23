@@ -100,10 +100,7 @@ def registers(request):
 
         member.save()
 
-        request.session['member_id'] = member.member_id
-        request.session['member_provider'] = member.m_provider
-
-        messages.success(request, f"{member.m_name}님 환영합니다!")
+        messages.success(request, "회원가입이 완료되었습니다.")
         return redirect("Main:main")
 
 # 로그인
@@ -123,6 +120,7 @@ def login(request):
         
         request.session['member_id'] = int(member.member_id)
         request.session['member_provider'] = member.m_provider
+        request.session['member_name'] = member.m_name
 
         messages.success(request, f"{member.m_name}님 환영합니다!")
         return redirect("Main:main")
