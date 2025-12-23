@@ -236,6 +236,7 @@ body {
   .date-input {
     width: 140px;
   }
+
   /* 검색 영역: input 위, 버튼 아래 */
   .search-box {
     display: flex;
