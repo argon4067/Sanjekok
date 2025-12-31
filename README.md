@@ -7,11 +7,23 @@
 한 곳에서 산재 위험도 분석과 예방·대응 정보를 통합 제공하는 서비스를 기획했습니다.
 
 # 사용기술
-Pandas , Kosis API , Chart.js , Notion, ERDCloud, Figma, JQuery
+- 참여도 : 25퍼
+Pandas , Kosis API , Chart.js , Notion, ERDCloud, Figma, 
 Django,  Django ORM, Bootstrap, Kakao map API, MySQL, AWS, Scheduler, Crwaling
 OAuth2, Naver map API,Python,requests, BeautifulSoup 
 MySQL, SQLite, APScheduler, django-crontab, Django Session, Custom Decorators  
-Django Template Engine, Bootstrap 5, JavaScript, ModelForm      
+, 
+
+검색 결과 데이터 요청 및 출력 : jQuery
+웹 화면 구성: HTML, CSS, BootStrap, JavaScript, ModelForm, Django Template Engine
+
+
+참여도: 40%
+검색 결과 데이터 요청 및 출력: jQuery, Ajax, JSON
+웹 화면 구성: HTML, CSS, BootStrap, JavaScript
+결과를 얻어오기 위한 서버 액션: JAVA, Servlet, JSP, EL
+DB액션 처리: JDBC
+개발 Tool : Eclipse, SVN, Apache Tomcat v8.0, VisualSVN Server Manager
 
 버전관리:Git, Github
 
