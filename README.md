@@ -18,14 +18,17 @@ MySQL, SQLite, APScheduler, django-crontab, Django Session, Custom Decorators
 웹 화면 구성: HTML, CSS, BootStrap, JavaScript, ModelForm, Django Template Engine
 
 
+- 참여도 : 25%
+- 데이터 수집 및 처리 : Python, Pandas, KOSIS API, requests, BeautifulSoup, Web Crawling
+- 백엔드 : Django, Django ORM, Django Template Engine, ModelForm, Django Session, Custom Decorators, OAuth2, APScheduler, django-crontab
+
+
 참여도: 40%
 검색 결과 데이터 요청 및 출력: jQuery, Ajax, JSON
 웹 화면 구성: HTML, CSS, BootStrap, JavaScript
 결과를 얻어오기 위한 서버 액션: JAVA, Servlet, JSP, EL
 DB액션 처리: JDBC
 개발 Tool : Eclipse, SVN, Apache Tomcat v8.0, VisualSVN Server Manager
-
-버전관리:Git, Github
 
 # 시연 영상
 
